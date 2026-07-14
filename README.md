@@ -2,7 +2,7 @@
 > **reistrap** is an independent, unofficial fork of the open-source project [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap). It is not affiliated with, maintained by, or endorsed by the original Bloxstrap developers.
 
 <p align="center">
-    <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-dark.png#gh-dark-mode-only" width="380">
+    <img src="Images/reistrap-full-dark.png" width="380">
     <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-light.png#gh-light-mode-only" width="380">
 </p>
 
