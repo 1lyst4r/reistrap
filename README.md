@@ -85,8 +85,8 @@ Thanks to [SignPath.io](https://signpath.io/) for providing a free code signing 
 
 
 <p align="center">
-    <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-dark.png#gh-dark-mode-only" width="380">
-    <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-light.png#gh-light-mode-only" width="380">
+    <img src="Images/reistrap-full-dark.png" width="380">
+    <img src="Images/reistrap-full-light.png" width="380">
 </p>
 
 <div align="center">
