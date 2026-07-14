@@ -85,8 +85,7 @@ Thanks to [SignPath.io](https://signpath.io/) for providing a free code signing 
 
 
 <p align="center">
-    <img src="Images/reistrap-full-dark.png" width="380">
-    <img src="Images/reistrap-full-light.png" width="380">
+    <img src="Images/reistrap-full-dark.png" width="180">
 </p>
 
 <div align="center">
