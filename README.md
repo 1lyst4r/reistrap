@@ -8,14 +8,6 @@
 
 <div align="center">
 
-[![License][shield-repo-license]][repo-license]
-[![GitHub Workflow Status][shield-repo-workflow]][repo-actions]
-[![Crowdin][shield-crowdin-status]][crowdin-project]
-[![Downloads][shield-repo-releases]][repo-releases]
-[![Version][shield-repo-latest]][repo-latest]
-[![Discord][shield-discord-server]][discord-invite]
-[![lol][shield-tenor-meme]][tenor-gif]
-
 </div>
 
 ----
@@ -90,13 +82,6 @@ Thanks to [SignPath.io](https://signpath.io/) for providing a free code signing 
 
 <div align="center">
 
-[![License][shield-repo-license]][repo-license]
-[![GitHub Workflow Status][shield-repo-workflow]][repo-actions]
-[![Crowdin][shield-crowdin-status]][crowdin-project]
-[![Downloads][shield-repo-releases]][repo-releases]
-[![Version][shield-repo-latest]][repo-latest]
-[![Discord][shield-discord-server]][discord-invite]
-[![lol][shield-tenor-meme]][tenor-gif]
 ## Code signing policy
 
 Thanks to [SignPath.io](https://signpath.io/) for providing a free code signing service, and the [SignPath Foundation](https://signpath.org/) for providing the free code signing certificate.
