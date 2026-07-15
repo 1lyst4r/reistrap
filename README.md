@@ -3,7 +3,6 @@
 
 <p align="center">
     <img src="Images/reistrap-full-dark.png" width="380">
-    <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-light.png#gh-light-mode-only" width="380">
 </p>
 
 <div align="center">
