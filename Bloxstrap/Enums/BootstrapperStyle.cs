@@ -11,6 +11,8 @@
         [EnumName(StaticName = "reistrap")]
         FluentDialog,
         FluentAeroDialog,
-        CustomDialog
+        CustomDialog,
+        TwentyFiveDialog,
+        ModernDialog
     }
 }

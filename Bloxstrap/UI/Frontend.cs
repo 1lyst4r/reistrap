@@ -119,6 +119,8 @@ namespace Bloxstrap.UI
                 BootstrapperStyle.ProgressDialog => new ProgressDialog(),
                 BootstrapperStyle.ClassicFluentDialog => new ClassicFluentDialog(),
                 BootstrapperStyle.ByfronDialog => new ByfronDialog(),
+                BootstrapperStyle.ModernDialog => new ByfronDialog(true),
+                BootstrapperStyle.TwentyFiveDialog => new TwentyFiveDialog(),
                 BootstrapperStyle.FluentDialog => new FluentDialog(false),
                 BootstrapperStyle.FluentAeroDialog => new FluentDialog(true),
                 BootstrapperStyle.CustomDialog => GetCustomBootstrapper(),

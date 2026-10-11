@@ -6082,5 +6082,23 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.ModGenerator.Back", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Roblox (2025).
+        /// </summary>
+        public static string Enums_BootstrapperStyle_TwentyFiveDialog {
+            get {
+                return ResourceManager.GetString("Enums.BootstrapperStyle.TwentyFiveDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modern.
+        /// </summary>
+        public static string Enums_BootstrapperStyle_ModernDialog {
+            get {
+                return ResourceManager.GetString("Enums.BootstrapperStyle.ModernDialog", resourceCulture);
+            }
+        }
     }
 }

@@ -3222,4 +3222,10 @@ Switch channels?</value>
   <data name="Menu.ModGenerator.Back" xml:space="preserve">
     <value>Back to Mods</value>
   </data>
+  <data name="Enums.BootstrapperStyle.TwentyFiveDialog" xml:space="preserve">
+    <value>Roblox (2025)</value>
+  </data>
+  <data name="Enums.BootstrapperStyle.ModernDialog" xml:space="preserve">
+    <value>Modern</value>
+  </data>
 </root>

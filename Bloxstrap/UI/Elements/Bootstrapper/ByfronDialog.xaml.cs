@@ -99,10 +99,11 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         }
         #endregion
 
-        public ByfronDialog()
+        public ByfronDialog(bool modern = false)
         {
             string version = Utilities.GetRobloxVersionStr(Bootstrapper?.IsStudioLaunch ?? false);
             _viewModel = new ByfronDialogViewModel(this, version);
+            _viewModel.LogoVisibility = modern ? Visibility.Collapsed : Visibility.Visible;
             DataContext = _viewModel;
             Title = App.Settings.Prop.BootstrapperTitle;
             Icon = App.Settings.Prop.BootstrapperIcon.GetIcon().GetImageSource();
