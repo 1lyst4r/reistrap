@@ -160,6 +160,7 @@ namespace Bloxstrap.Integrations
 
             _activityWatcher.OnRPCMessage += (_, message) => OnMessage(message);
             _activityWatcher.OnLogIdle += (_, _) => FlushMove();
+            _activityWatcher.OnGameJoining += (_, _) => UpdateExposedPermissions();
             _activityWatcher.OnGameJoin += (_, _) => UpdateExposedPermissions();
             _activityWatcher.OnGameLeave += (_, _) =>
             {
@@ -207,13 +208,15 @@ namespace Bloxstrap.Integrations
                 string folder = GetPermissionsPath(_robloxDirectory);
                 Directory.CreateDirectory(folder);
 
-                foreach (var file in new DirectoryInfo(folder).GetFiles().Where(x => x.Name != "enabled.png"))
+                long universeId = _activityWatcher.Data.UniverseId;
+                _gameAllowed = universeId != 0 && IsAllowed(universeId);
+
+                string target = $"{universeId}.png";
+
+                foreach (var file in new DirectoryInfo(folder).GetFiles().Where(x => x.Name != "enabled.png" && (!_gameAllowed || x.Name != target)))
                     file.Delete();
 
-                long universeId = _activityWatcher.Data.UniverseId;
-                _gameAllowed = IsAllowed(universeId);
-
-                if (!_gameAllowed || universeId == 0)
+                if (!_gameAllowed)
                     return;
 
                 var settings = App.Settings.Prop;
@@ -232,7 +235,11 @@ namespace Bloxstrap.Integrations
                 for (int i = 0; i < permissions.Length; i++)
                     bitmap.SetPixel(i, 0, permissions[i] ? System.Drawing.Color.White : System.Drawing.Color.Transparent);
 
-                bitmap.Save(Path.Combine(folder, $"{universeId}.png"), System.Drawing.Imaging.ImageFormat.Png);
+                string path = Path.Combine(folder, target);
+                string temp = path + ".tmp";
+
+                bitmap.Save(temp, System.Drawing.Imaging.ImageFormat.Png);
+                File.Move(temp, path, true);
             }
             catch (Exception ex)
             {
@@ -483,7 +490,11 @@ namespace Bloxstrap.Integrations
 
             if (message.Command == "RequestWindowPermission")
             {
-                RequestPermission();
+                if (IsAllowed(_activityWatcher.Data.UniverseId))
+                    UpdateExposedPermissions();
+                else
+                    RequestPermission();
+
                 return;
             }
 

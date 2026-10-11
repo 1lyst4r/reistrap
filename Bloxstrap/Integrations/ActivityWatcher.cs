@@ -41,6 +41,7 @@ namespace Bloxstrap.Integrations
         private bool _reservedTeleportMarker = false;
         
         public event EventHandler<string>? OnLogEntry;
+        public event EventHandler? OnGameJoining;
         public event EventHandler? OnGameJoin;
         public event EventHandler? OnGameLeave;
         public event EventHandler? OnLogOpen;
@@ -293,6 +294,8 @@ namespace Bloxstrap.Integrations
 
                     Data.UniverseId = Int64.Parse(match.Groups[1].Value);
                     Data.UserId = Int64.Parse(match.Groups[2].Value);
+
+                    OnGameJoining?.Invoke(this, EventArgs.Empty);
 
                     var referralMatch = Regex.Match(logMessage, GameJoinReferralPattern);
 
