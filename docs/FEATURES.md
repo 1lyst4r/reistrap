@@ -1,6 +1,6 @@
 # reistrap features
 
-Everything reistrap can do, as of v1.3.5.
+Everything reistrap can do, as of v1.3.6.
 
 ## Settings window
 
@@ -17,6 +17,7 @@ Everything reistrap can do, as of v1.3.5.
 ## First launch and updates
 
 - Installer
+- Launch menu with Launch Player (and a dropdown for Studio and About), Settings, Discord and a Recent games dropdown, using the same window effect and background as settings
 - Welcome setup for fresh installs only, with an animated intro, import from Bloxstrap, Fishstrap, Froststrap or Voidstrap, theme and accent with live preview, the main features as tiles, and a performance preset (leave it to Roblox, More FPS, Best quality)
 - Optional automatic updates when launching Roblox, including pre-releases
 - Checks for new versions whenever settings opens and offers to install them
