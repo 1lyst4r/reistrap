@@ -252,7 +252,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
             get => App.Settings.Prop.WindowControlTransparency;
             set
             {
-                if (value && !App.Settings.Prop.WindowControlTransparency)
+                if (value && !App.Settings.Prop.WindowControlTransparency && !App.Settings.Prop.WindowControlDisableFso && !WindowsRegistry.FullscreenOptimizationsDisabled(new AppData.RobloxPlayerData().ExecutablePath))
                     App.Settings.Prop.WindowControlDisableFso = Frontend.ShowMessageBox(Strings.Menu_Integrations_WindowControl_Fso_Confirm, MessageBoxImage.Warning, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
 
                 App.Settings.Prop.WindowControlTransparency = value;

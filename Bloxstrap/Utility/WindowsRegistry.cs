@@ -8,6 +8,21 @@ namespace Bloxstrap.Utility
         
         public static readonly List<RegistryKey> Roots = new() { Registry.CurrentUser, Registry.LocalMachine };
 
+        public static bool FullscreenOptimizationsDisabled(string exePath)
+        {
+            foreach (var root in Roots)
+            {
+                using var key = root.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers");
+
+                if ((key?.GetValue(exePath) as string)?.Contains("DISABLEDXMAXIMIZEDWINDOWEDMODE", StringComparison.OrdinalIgnoreCase) == true)
+                    return true;
+            }
+
+            using var gameConfig = Registry.CurrentUser.OpenSubKey(@"System\GameConfigStore");
+
+            return gameConfig?.GetValue("GameDVR_FSEBehaviorMode") is int mode && mode == 2;
+        }
+
         public static void RegisterProtocol(string key, string name, string handler, string handlerParam = "%1")
         {
             string handlerArgs = $"\"{handler}\" {handlerParam}";
