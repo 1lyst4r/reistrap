@@ -234,12 +234,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 {
                     _hex = value;
                     OnPropertyChanged(nameof(Hex));
-                    OnPropertyChanged(nameof(Swatch));
                     _changed();
                 }
             }
-
-            public Brush Swatch => ModGenerator.TryParseColor(Hex, out var color) ? new SolidColorBrush(color) : Brushes.Transparent;
         }
 
         private readonly DispatcherTimer _previewTimer;

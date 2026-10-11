@@ -119,6 +119,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
                     return;
 
                 App.Settings.Prop.AccentColor = value.Trim();
+                OnPropertyChanged(nameof(AccentColor));
                 OnPropertyChanged(nameof(SelectedAccentTheme));
                 ReapplyTheme();
             }
@@ -213,12 +214,10 @@ namespace Bloxstrap.UI.ViewModels.Settings
                     return;
 
                 App.Settings.Prop.BackgroundColor = value.Trim();
-                OnPropertyChanged(nameof(BackgroundColorSwatch));
+                OnPropertyChanged(nameof(BackgroundColor));
                 QueueBackground();
             }
         }
-
-        public Brush BackgroundColorSwatch => ModGenerator.TryParseColor(BackgroundColor, out var color) ? new SolidColorBrush(color) : Brushes.Transparent;
 
         public ObservableCollection<ModsViewModel.GradientStopItem> BackgroundStops { get; } = new();
 
