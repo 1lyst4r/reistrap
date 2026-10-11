@@ -146,7 +146,7 @@
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Roblox_GameTitlePlayers_Title}"
             Description="{x:Static resources:Strings.Menu_Roblox_GameTitlePlayers_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=GameTitleOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=GameTitleOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding RobloxGameTitlePlayerCount, Mode=TwoWay}" />
         </controls:OptionControl>
 
@@ -216,7 +216,7 @@
             <ui:ToggleSwitch IsChecked="{Binding CrosshairEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <StackPanel IsEnabled="{Binding InnerContent.IsChecked, ElementName=CrosshairOption, Mode=OneWay}">
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=CrosshairOption, Mode=OneWay}">
             <controls:OptionControl Header="{x:Static resources:Strings.Menu_Roblox_Crosshair_Style}">
                 <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding CrosshairStyles, Mode=OneTime}" SelectedItem="{Binding CrosshairStyle, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
@@ -261,7 +261,7 @@
             <ui:ToggleSwitch IsChecked="{Binding SocdEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <StackPanel IsEnabled="{Binding InnerContent.IsChecked, ElementName=SocdOption, Mode=OneWay}">
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=SocdOption, Mode=OneWay}">
             <controls:OptionControl Header="{x:Static resources:Strings.Menu_Roblox_Socd_Layout_Title}" Description="{x:Static resources:Strings.Menu_Roblox_Socd_Layout_Description}">
                 <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding SocdLayouts, Mode=OneTime}" SelectedItem="{Binding SocdLayout, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>

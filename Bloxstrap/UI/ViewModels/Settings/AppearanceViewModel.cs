@@ -1,13 +1,17 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 using CommunityToolkit.Mvvm.Input;
 using ICSharpCode.SharpZipLib.Zip;
 
 using Microsoft.Win32;
 
+using Bloxstrap.UI.Elements.Base;
 using Bloxstrap.UI.Elements.Settings;
 using Bloxstrap.UI.Elements.Editor;
 using Bloxstrap.UI.Elements.Dialogs;
@@ -62,6 +66,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 Icons.Add(new BootstrapperIconEntry { IconType = entry });
 
             PopulateCustomThemes();
+            LoadBackgroundStops();
         }
 
         public IEnumerable<Theme> Themes { get; } = Enum.GetValues(typeof(Theme)).Cast<Theme>();
@@ -164,18 +169,129 @@ namespace Bloxstrap.UI.ViewModels.Settings
             {
                 App.Settings.Prop.BackgroundImage = value;
                 OnPropertyChanged(nameof(BackgroundImage));
+                OnPropertyChanged(nameof(BackgroundImageName));
+
+                if (!String.IsNullOrEmpty(value))
+                    BackgroundMode = BackgroundMode.Image;
+                else
+                    ReapplyTheme();
+            }
+        }
+
+        public string BackgroundImageName => String.IsNullOrEmpty(BackgroundImage) ? "" : Path.GetFileName(BackgroundImage);
+
+        public IEnumerable<BackgroundMode> BackgroundModes { get; } = Enum.GetValues<BackgroundMode>();
+
+        public BackgroundMode BackgroundMode
+        {
+            get => App.Settings.Prop.BackgroundMode;
+            set
+            {
+                App.Settings.Prop.BackgroundMode = value;
+                OnPropertyChanged(nameof(BackgroundMode));
+                OnPropertyChanged(nameof(IsColorBackground));
+                OnPropertyChanged(nameof(IsGradientBackground));
+                OnPropertyChanged(nameof(IsImageBackground));
+                OnPropertyChanged(nameof(IsCustomBackground));
                 ReapplyTheme();
             }
         }
 
-        public string BackgroundGradient
+        public bool IsColorBackground => BackgroundMode == BackgroundMode.Color;
+
+        public bool IsGradientBackground => BackgroundMode == BackgroundMode.Gradient;
+
+        public bool IsImageBackground => BackgroundMode == BackgroundMode.Image;
+
+        public bool IsCustomBackground => BackgroundMode != BackgroundMode.Default;
+
+        public string BackgroundColor
         {
-            get => App.Settings.Prop.BackgroundGradient;
+            get => App.Settings.Prop.BackgroundColor;
             set
             {
-                App.Settings.Prop.BackgroundGradient = value;
-                ReapplyTheme();
+                App.Settings.Prop.BackgroundColor = value;
+                OnPropertyChanged(nameof(BackgroundColorSwatch));
+                QueueBackground();
             }
+        }
+
+        public Brush BackgroundColorSwatch => ModGenerator.TryParseColor(BackgroundColor, out var color) ? new SolidColorBrush(color) : Brushes.Transparent;
+
+        public ObservableCollection<ModsViewModel.GradientStopItem> BackgroundStops { get; } = new();
+
+        public ICommand AddBackgroundStopCommand => new RelayCommand(() =>
+        {
+            BackgroundStops.Add(new ModsViewModel.GradientStopItem(1, "#FFFFFF", SaveBackgroundStops));
+            SaveBackgroundStops();
+        });
+
+        public ICommand RemoveBackgroundStopCommand => new RelayCommand<ModsViewModel.GradientStopItem>(item =>
+        {
+            if (item is null || BackgroundStops.Count <= 1)
+                return;
+
+            BackgroundStops.Remove(item);
+            SaveBackgroundStops();
+        });
+
+        private void LoadBackgroundStops()
+        {
+            var stops = WpfUiWindow.ParseGradient(App.Settings.Prop.BackgroundGradient);
+
+            if (stops.Count == 0)
+                stops = new() { ("#1E3C72", 0), ("#2A5298", 1) };
+
+            foreach (var (hex, offset) in stops)
+                BackgroundStops.Add(new ModsViewModel.GradientStopItem(offset, hex, SaveBackgroundStops));
+
+            App.Settings.Prop.BackgroundGradient = String.Join(", ", stops.Select(x => $"{x.Hex} {x.Offset.ToString("0.###", CultureInfo.InvariantCulture)}"));
+        }
+
+        private void SaveBackgroundStops()
+        {
+            App.Settings.Prop.BackgroundGradient = String.Join(", ", BackgroundStops.Select(x => $"{x.Hex.Trim()} {x.Offset.ToString("0.###", CultureInfo.InvariantCulture)}"));
+            QueueBackground();
+        }
+
+        public double BackgroundGradientAngle
+        {
+            get => App.Settings.Prop.BackgroundGradientAngle;
+            set
+            {
+                App.Settings.Prop.BackgroundGradientAngle = value;
+                OnPropertyChanged(nameof(BackgroundGradientAngle));
+                QueueBackground();
+            }
+        }
+
+        public bool BackgroundGradientRadial
+        {
+            get => App.Settings.Prop.BackgroundGradientRadial;
+            set
+            {
+                App.Settings.Prop.BackgroundGradientRadial = value;
+                OnPropertyChanged(nameof(BackgroundGradientRadial));
+                QueueBackground();
+            }
+        }
+
+        private DispatcherTimer? _backgroundTimer;
+
+        private void QueueBackground()
+        {
+            if (_backgroundTimer is null)
+            {
+                _backgroundTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
+                _backgroundTimer.Tick += (_, _) =>
+                {
+                    _backgroundTimer.Stop();
+                    ReapplyTheme();
+                };
+            }
+
+            _backgroundTimer.Stop();
+            _backgroundTimer.Start();
         }
 
         public double BackgroundOpacity
@@ -184,7 +300,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set
             {
                 App.Settings.Prop.BackgroundOpacity = Math.Clamp(value, 0.05, 1);
-                ReapplyTheme();
+                QueueBackground();
             }
         }
 

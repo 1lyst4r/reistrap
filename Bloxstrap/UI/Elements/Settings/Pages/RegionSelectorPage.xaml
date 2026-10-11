@@ -23,7 +23,7 @@
             <ui:ToggleSwitch IsChecked="{Binding BetterMatchmaking, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <StackPanel IsEnabled="{Binding InnerContent.IsChecked, ElementName=MatchmakingOption, Mode=OneWay}">
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=MatchmakingOption, Mode=OneWay}">
             <controls:OptionControl
                 Header="{x:Static resources:Strings.Menu_RegionSelector_Preferred_Title}"
                 Description="{x:Static resources:Strings.Menu_RegionSelector_Preferred_Description}">

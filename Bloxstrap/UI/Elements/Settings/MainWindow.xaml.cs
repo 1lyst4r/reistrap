@@ -254,6 +254,9 @@ namespace Bloxstrap.UI.Elements.Settings
             if (target is null)
                 return;
 
+            Collapsible.ExpandTo(target);
+            target.UpdateLayout();
+
             var scrollViewer = FindAncestor<ScrollViewer>(target);
 
             if (scrollViewer is null)

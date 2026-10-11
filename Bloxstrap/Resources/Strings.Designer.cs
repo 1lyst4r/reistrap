@@ -5947,5 +5947,104 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Behaviour.Channels.Failed", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background.
+        /// </summary>
+        public static string Menu_Appearance_Background_Title {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use a solid color, a gradient or an image behind every reistrap window..
+        /// </summary>
+        public static string Menu_Appearance_Background_Description {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string Enums_BackgroundMode_Default {
+            get {
+                return ResourceManager.GetString("Enums.BackgroundMode.Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solid color.
+        /// </summary>
+        public static string Enums_BackgroundMode_Color {
+            get {
+                return ResourceManager.GetString("Enums.BackgroundMode.Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gradient.
+        /// </summary>
+        public static string Enums_BackgroundMode_Gradient {
+            get {
+                return ResourceManager.GetString("Enums.BackgroundMode.Gradient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        public static string Enums_BackgroundMode_Image {
+            get {
+                return ResourceManager.GetString("Enums.BackgroundMode.Image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Color.
+        /// </summary>
+        public static string Menu_Appearance_Background_Color_Title {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.Color.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hex color, like #1E1E2E..
+        /// </summary>
+        public static string Menu_Appearance_Background_Color_Description {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.Color.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gradient angle.
+        /// </summary>
+        public static string Menu_Appearance_Background_GradientAngle_Title {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.GradientAngle.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radial gradient.
+        /// </summary>
+        public static string Menu_Appearance_Background_Radial_Title {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.Radial.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spread the colors out from the center instead of in a line..
+        /// </summary>
+        public static string Menu_Appearance_Background_Radial_Description {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.Background.Radial.Description", resourceCulture);
+            }
+        }
     }
 }

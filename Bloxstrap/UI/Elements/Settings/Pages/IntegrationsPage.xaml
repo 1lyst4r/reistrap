@@ -28,14 +28,14 @@
             Header="{x:Static resources:Strings.Menu_Integrations_QueryServerLocation_Title}" 
             Description="{Binding Source={x:Static resources:Strings.Menu_Integrations_QueryServerLocation_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://www.rovalra.com'}"
             HelpLink="https://bloxstraplabs.com/wiki/features/server-location-hints/"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding ShowServerDetailsEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_ServerUptime_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_ServerUptime_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding ShowServerUptimeEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
@@ -43,19 +43,19 @@
             Header="{x:Static resources:Strings.Menu_Integrations_DesktopApp_Title}" 
             Description="{Binding Source={x:Static resources:Strings.Menu_Integrations_DesktopApp_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/features/dont-exit-to-desktop-app/'}"
             HelpLink="https://bloxstraplabs.com/wiki/features/dont-exit-to-desktop-app/"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding DisableAppPatchEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_AutoRejoin_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_AutoRejoin_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
             x:Name="AutoRejoinOption">
             <ui:ToggleSwitch IsChecked="{Binding AutoRejoinEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <StackPanel IsEnabled="{Binding InnerContent.IsChecked, ElementName=AutoRejoinOption, Mode=OneWay}">
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=AutoRejoinOption, Mode=OneWay}">
             <controls:OptionControl
                 Header="{x:Static resources:Strings.Menu_Integrations_RejoinIdle_Title}"
                 Description="{x:Static resources:Strings.Menu_Integrations_RejoinIdle_Description}">
@@ -102,14 +102,14 @@
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_PlaytimeCounter_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_PlaytimeCounter_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding PlaytimeCounterEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_TrayDoubleClick_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_TrayDoubleClick_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
             <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding TrayDoubleClickActions, Mode=OneTime}" SelectedItem="{Binding TrayDoubleClickAction, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -142,7 +142,7 @@
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Integrations_ShowGameActivity_Title}" 
             Description="{Binding Source={x:Static resources:Strings.Menu_Integrations_ShowGameActivity_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/help/discord-rich-presence-not-working/'}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
             x:Name="DiscordActivityOption">
             <ui:ToggleSwitch IsChecked="{Binding DiscordActivityEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
@@ -150,28 +150,28 @@
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Integrations_AllowActivityJoining_Title}" 
             Description="{x:Static resources:Strings.Menu_Integrations_AllowActivityJoining_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding DiscordActivityJoinEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Integrations_ShowAccountOnProfile_Title}" 
             Description="{x:Static resources:Strings.Menu_Integrations_ShowAccountOnProfile_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding DiscordAccountOnProfile, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_CustomStatusDisplay_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_CustomStatusDisplay_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding CustomStatusDisplayEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_UsingReistrap_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_UsingReistrap_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding UsingReistrapEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
@@ -185,35 +185,35 @@
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_StudioGameName_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_StudioGameName_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding StudioShowGameName, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_StudioGameIcon_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_StudioGameIcon_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding StudioShowGameIcon, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_StudioTesting_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_StudioTesting_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding StudioShowTesting, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_StudioGameButton_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_StudioGameButton_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding StudioShowGameButton, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_StudioScript_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_StudioScript_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=StudioRichPresenceOption, Mode=OneWay}">
             <ui:ToggleSwitch IsChecked="{Binding StudioShowScript, Mode=TwoWay}" />
         </controls:OptionControl>
 
@@ -225,12 +225,12 @@
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_WindowControl_Enabled_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_WindowControl_Enabled_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
             x:Name="WindowControlOption">
             <ui:ToggleSwitch IsChecked="{Binding WindowControlEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <StackPanel IsEnabled="{Binding InnerContent.IsChecked, ElementName=WindowControlOption, Mode=OneWay}">
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=WindowControlOption, Mode=OneWay}">
             <controls:OptionControl
                 Header="{x:Static resources:Strings.Menu_Integrations_WindowControl_Move_Title}"
                 Description="{x:Static resources:Strings.Menu_Integrations_WindowControl_Move_Description}">

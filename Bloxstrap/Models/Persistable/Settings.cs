@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 
 namespace Bloxstrap.Models.Persistable
 {
@@ -15,9 +15,14 @@ namespace Bloxstrap.Models.Persistable
         public string AppFont { get; set; } = "";
         public string BackgroundImage { get; set; } = "";
         public string BackgroundGradient { get; set; } = "";
+        public BackgroundMode BackgroundMode { get; set; } = BackgroundMode.Default;
+        public string BackgroundColor { get; set; } = "#1E1E2E";
+        public double BackgroundGradientAngle { get; set; } = 45;
+        public bool BackgroundGradientRadial { get; set; } = false;
         public double BackgroundOpacity { get; set; } = 0.3;
         public BackgroundStretch BackgroundStretch { get; set; } = BackgroundStretch.UniformToFill;
         public bool DisableAnimations { get; set; } = false;
+        public List<string> CollapsedSections { get; set; } = new();
         public bool CycleCustomThemes { get; set; } = false;
         public ThemeCycleInterval CycleCustomThemesInterval { get; set; } = ThemeCycleInterval.EveryLaunch;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

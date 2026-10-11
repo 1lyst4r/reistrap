@@ -3177,4 +3177,37 @@ Switch channels?</value>
   <data name="Menu.Behaviour.Channels.Failed" xml:space="preserve">
     <value>Couldn't check</value>
   </data>
+  <data name="Menu.Appearance.Background.Title" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="Menu.Appearance.Background.Description" xml:space="preserve">
+    <value>Use a solid color, a gradient or an image behind every reistrap window.</value>
+  </data>
+  <data name="Enums.BackgroundMode.Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Enums.BackgroundMode.Color" xml:space="preserve">
+    <value>Solid color</value>
+  </data>
+  <data name="Enums.BackgroundMode.Gradient" xml:space="preserve">
+    <value>Gradient</value>
+  </data>
+  <data name="Enums.BackgroundMode.Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Menu.Appearance.Background.Color.Title" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="Menu.Appearance.Background.Color.Description" xml:space="preserve">
+    <value>Hex color, like #1E1E2E.</value>
+  </data>
+  <data name="Menu.Appearance.Background.GradientAngle.Title" xml:space="preserve">
+    <value>Gradient angle</value>
+  </data>
+  <data name="Menu.Appearance.Background.Radial.Title" xml:space="preserve">
+    <value>Radial gradient</value>
+  </data>
+  <data name="Menu.Appearance.Background.Radial.Description" xml:space="preserve">
+    <value>Spread the colors out from the center instead of in a line.</value>
+  </data>
 </root>

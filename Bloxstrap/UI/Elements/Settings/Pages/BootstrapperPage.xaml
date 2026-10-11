@@ -85,7 +85,7 @@
             <ui:ToggleSwitch IsChecked="{Binding MemoryTrimmer, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <StackPanel IsEnabled="{Binding InnerContent.IsChecked, ElementName=MemoryTrimmerOption, Mode=OneWay}">
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=MemoryTrimmerOption, Mode=OneWay}">
             <controls:OptionControl
                 Header="{x:Static resources:Strings.Menu_Behaviour_MemoryThreshold_Title}"
                 Description="{x:Static resources:Strings.Menu_Behaviour_MemoryThreshold_Description}">

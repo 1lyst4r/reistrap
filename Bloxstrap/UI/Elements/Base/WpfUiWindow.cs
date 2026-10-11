@@ -57,9 +57,16 @@ namespace Bloxstrap.UI.Elements.Base
         {
             const string LOG_IDENT = "WpfUiWindow::GetCustomBackground";
 
-            string image = App.Settings.Prop.BackgroundImage;
+            var settings = App.Settings.Prop;
+            string image = settings.BackgroundImage;
 
-            if (!String.IsNullOrEmpty(image) && File.Exists(image))
+            if (settings.BackgroundMode == BackgroundMode.Color)
+                return ModGenerator.TryParseColor(settings.BackgroundColor, out var color) ? new SolidColorBrush(color) { Opacity = settings.BackgroundOpacity } : null;
+
+            if (settings.BackgroundMode == BackgroundMode.Gradient)
+                return GetGradient(settings);
+
+            if (settings.BackgroundMode == BackgroundMode.Image && !String.IsNullOrEmpty(image) && File.Exists(image))
             {
                 try
                 {
@@ -86,12 +93,48 @@ namespace Bloxstrap.UI.Elements.Base
                 }
             }
 
-            string[] gradient = App.Settings.Prop.BackgroundGradient.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-            if (gradient.Length == 2 && ModGenerator.TryParseColor(gradient[0], out var start) && ModGenerator.TryParseColor(gradient[1], out var end))
-                return new LinearGradientBrush(start, end, 45) { Opacity = App.Settings.Prop.BackgroundOpacity };
-
             return null;
+        }
+
+        public static List<(string Hex, double Offset)> ParseGradient(string value)
+        {
+            var stops = new List<(string, double)>();
+            string[] entries = value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < entries.Length; i++)
+            {
+                string[] parts = entries[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                double offset = entries.Length == 1 ? 0 : i / (double)(entries.Length - 1);
+
+                if (parts.Length > 1 && double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed))
+                    offset = Math.Clamp(parsed, 0, 1);
+
+                stops.Add((parts[0], offset));
+            }
+
+            return stops;
+        }
+
+        private static Brush? GetGradient(Models.Persistable.Settings settings)
+        {
+            var stops = new GradientStopCollection();
+
+            foreach (var (hex, offset) in ParseGradient(settings.BackgroundGradient))
+            {
+                if (ModGenerator.TryParseColor(hex, out var color))
+                    stops.Add(new GradientStop(color, offset));
+            }
+
+            if (stops.Count == 0)
+                return null;
+
+            if (settings.BackgroundGradientRadial)
+                return new RadialGradientBrush(stops) { Opacity = settings.BackgroundOpacity };
+
+            double radians = settings.BackgroundGradientAngle * Math.PI / 180;
+            double x = Math.Cos(radians) / 2, y = Math.Sin(radians) / 2;
+
+            return new LinearGradientBrush(stops, new Point(0.5 - x, 0.5 - y), new Point(0.5 + x, 0.5 + y)) { Opacity = settings.BackgroundOpacity };
         }
 
         private void ApplyCustomBackground()

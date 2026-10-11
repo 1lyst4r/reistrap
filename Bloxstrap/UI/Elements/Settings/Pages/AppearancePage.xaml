@@ -51,36 +51,102 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_Background_Image_Title}"
-            Description="{x:Static resources:Strings.Menu_Appearance_Background_Image_Description}">
-            <StackPanel Orientation="Horizontal">
-                <ui:Button Icon="Image24" Content="{x:Static resources:Strings.Common_Browse}" Command="{Binding BrowseBackgroundImageCommand}" />
-                <ui:Button Margin="8,0,0,0" Icon="Delete24" Appearance="Danger" Command="{Binding RemoveBackgroundImageCommand}" />
-            </StackPanel>
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_Background_Gradient_Title}"
-            Description="{x:Static resources:Strings.Menu_Appearance_Background_Gradient_Description}">
-            <ui:TextBox Width="200" Padding="10,5,10,5" PlaceholderText="#1E3C72, #2A5298" Text="{Binding BackgroundGradient, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_Background_Opacity_Title}">
-            <Slider Width="200" Minimum="0.05" Maximum="1" SmallChange="0.05" LargeChange="0.1" Value="{Binding BackgroundOpacity, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_BackgroundStretch_Title}"
-            Description="{x:Static resources:Strings.Menu_Appearance_BackgroundStretch_Description}">
-            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding BackgroundStretchs, Mode=OneTime}" SelectedItem="{Binding BackgroundStretch, Mode=TwoWay}">
+            Header="{x:Static resources:Strings.Menu_Appearance_Background_Title}"
+            Description="{x:Static resources:Strings.Menu_Appearance_Background_Description}">
+            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding BackgroundModes, Mode=OneTime}" SelectedItem="{Binding BackgroundMode, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Path=., Converter={StaticResource EnumNameConverter}}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Appearance_Background_Color_Title}"
+            Description="{x:Static resources:Strings.Menu_Appearance_Background_Color_Description}"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding IsColorBackground, Mode=OneWay}">
+            <StackPanel Orientation="Horizontal">
+                <Border Width="24" Height="24" CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" Background="{Binding BackgroundColorSwatch}" />
+                <ui:TextBox Width="160" Margin="8,0,0,0" Padding="10,5,10,5" Text="{Binding BackgroundColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </controls:OptionControl>
+
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding IsGradientBackground, Mode=OneWay}">
+            <ui:Card Margin="0,8,0,0" Padding="16">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="16" FontWeight="Medium" Text="{x:Static resources:Strings.Menu_Mods_ColorMods_Colors}" />
+                        <ui:Button Grid.Column="1" Icon="Add24" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_AddColor}" Command="{Binding AddBackgroundStopCommand}" />
+                    </Grid>
+                    <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding BackgroundStops}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="44" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="24" Height="24" CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" Background="{Binding Swatch}" />
+                                    <Slider Grid.Column="1" Margin="12,0" VerticalAlignment="Center" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1" Value="{Binding Offset, Mode=TwoWay}" />
+                                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Offset, StringFormat={}{0:0.00}}" />
+                                    <ui:TextBox Grid.Column="3" Width="110" Margin="8,0,0,0" Padding="10,5,10,5" Text="{Binding Hex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ui:Button Grid.Column="4" Margin="8,0,0,0" Icon="Delete24" Command="{Binding DataContext.RemoveBackgroundStopCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}" CommandParameter="{Binding}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ui:Card>
+
+            <controls:OptionControl
+                Header="{x:Static resources:Strings.Menu_Appearance_Background_Radial_Title}"
+                Description="{x:Static resources:Strings.Menu_Appearance_Background_Radial_Description}">
+                <ui:ToggleSwitch IsChecked="{Binding BackgroundGradientRadial, Mode=TwoWay}" />
+            </controls:OptionControl>
+
+            <controls:OptionControl Header="{x:Static resources:Strings.Menu_Appearance_Background_GradientAngle_Title}">
+                <StackPanel Orientation="Horizontal">
+                    <Slider Width="180" Minimum="0" Maximum="360" IsSnapToTickEnabled="True" TickFrequency="15" Value="{Binding BackgroundGradientAngle, Mode=TwoWay}" />
+                    <TextBlock Width="40" Margin="8,0,0,0" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding BackgroundGradientAngle, Mode=OneWay, StringFormat={}{0:0}°}" />
+                </StackPanel>
+            </controls:OptionControl>
+        </StackPanel>
+
+        <StackPanel controls:Reveal.Enabled="True" IsEnabled="{Binding IsImageBackground, Mode=OneWay}">
+            <controls:OptionControl
+                Header="{x:Static resources:Strings.Menu_Appearance_Background_Image_Title}"
+                Description="{Binding BackgroundImageName}">
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="Image24" Content="{x:Static resources:Strings.Common_Browse}" Command="{Binding BrowseBackgroundImageCommand}" />
+                    <ui:Button Margin="8,0,0,0" Icon="Delete24" Appearance="Danger" Command="{Binding RemoveBackgroundImageCommand}" />
+                </StackPanel>
+            </controls:OptionControl>
+
+            <controls:OptionControl
+                Header="{x:Static resources:Strings.Menu_Appearance_BackgroundStretch_Title}"
+                Description="{x:Static resources:Strings.Menu_Appearance_BackgroundStretch_Description}">
+                <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding BackgroundStretchs, Mode=OneTime}" SelectedItem="{Binding BackgroundStretch, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=., Converter={StaticResource EnumNameConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </controls:OptionControl>
+        </StackPanel>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Appearance_Background_Opacity_Title}"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding IsCustomBackground, Mode=OneWay}">
+            <Slider Width="200" Minimum="0.05" Maximum="1" SmallChange="0.05" LargeChange="0.1" Value="{Binding BackgroundOpacity, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
@@ -99,7 +165,7 @@
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Appearance_CycleInterval_Title}"
             Description="{x:Static resources:Strings.Menu_Appearance_CycleInterval_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=CycleThemesOption, Mode=OneWay}">
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=CycleThemesOption, Mode=OneWay}">
             <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding ThemeCycleIntervals, Mode=OneTime}" SelectedItem="{Binding CycleCustomThemesInterval, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
