@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Windows;
 using Bloxstrap.Models.RobloxApi;
 using DiscordRPC;
@@ -8,7 +9,7 @@ namespace Bloxstrap.Integrations
     {
         private readonly DiscordRpcClient _rpcClient = new("1005469189907173486");
         private readonly ActivityWatcher _activityWatcher;
-        private readonly Queue<Message> _messageQueue = new();
+        private readonly ConcurrentQueue<Message> _messageQueue = new();
 
         private DiscordRPC.RichPresence? _currentPresence;
         private DiscordRPC.RichPresence? _originalPresence;
@@ -81,7 +82,7 @@ namespace Bloxstrap.Integrations
             }
             else if (message.Command == "SetRichPresence")
             {
-                ProcessSetRichPresence(message, implicitUpdate);
+                ProcessSetRichPresence(message);
             }
 
             if (implicitUpdate)
@@ -94,7 +95,7 @@ namespace Bloxstrap.Integrations
                 _thumbnailCache.Add(new ThumbnailCacheEntry { Id = id, Url = url });
         }
 
-        private async Task UpdatePresenceIconsAsync(ulong? smallImg, ulong? largeImg, bool implicitUpdate, CancellationToken token)
+        private async Task UpdatePresenceIconsAsync(ulong? smallImg, ulong? largeImg, CancellationToken token)
         {
             Debug.Assert(smallImg != null || largeImg != null);
 
@@ -164,11 +165,10 @@ namespace Bloxstrap.Integrations
             _smallImgBeingFetched = null;
             _largeImgBeingFetched = null;
 
-            if (implicitUpdate)
-                UpdatePresence();
+            UpdatePresence();
         }
 
-        private void ProcessSetRichPresence(Message message, bool implicitUpdate)
+        private void ProcessSetRichPresence(Message message)
         {
             const string LOG_IDENT = "DiscordRichPresence::ProcessSetRichPresence";
             Models.BloxstrapRPC.RichPresence? presenceData;
@@ -322,7 +322,7 @@ namespace Bloxstrap.Integrations
             if (_smallImgBeingFetched != null || _largeImgBeingFetched != null)
             {
                 _fetchThumbnailsToken = new CancellationTokenSource();
-                Task.Run(() => UpdatePresenceIconsAsync(_smallImgBeingFetched, _largeImgBeingFetched, implicitUpdate, _fetchThumbnailsToken.Token));
+                Task.Run(() => UpdatePresenceIconsAsync(_smallImgBeingFetched, _largeImgBeingFetched, _fetchThumbnailsToken.Token));
             }
         }
 
@@ -341,6 +341,11 @@ namespace Bloxstrap.Integrations
         public async Task<bool> SetCurrentGame()
         {
             const string LOG_IDENT = "DiscordRichPresence::SetCurrentGame";
+
+            _fetchThumbnailsToken?.Cancel();
+            _fetchThumbnailsToken = null;
+            _smallImgBeingFetched = null;
+            _largeImgBeingFetched = null;
             
             if (!_activityWatcher.InGame)
             {
@@ -443,11 +448,11 @@ namespace Bloxstrap.Integrations
             // this is used for configuration from BloxstrapRPC
             _originalPresence = _currentPresence.Clone();
 
-            if (_messageQueue.Any())
-            {
+            if (!_messageQueue.IsEmpty)
                 App.Logger.WriteLine(LOG_IDENT, "Processing queued messages");
-                ProcessRPCMessage(_messageQueue.Dequeue(), false);
-            }
+
+            while (_messageQueue.TryDequeue(out var queued))
+                ProcessRPCMessage(queued, false);
             
             UpdatePresence();
 
@@ -471,11 +476,19 @@ namespace Bloxstrap.Integrations
 
                 if (show)
                 {
-                    buttons.Add(new Button
+                    string deeplink = data.GetInviteDeeplink();
+
+                    if (deeplink.Length > 512 && data.ServerType == ServerType.Public)
+                        deeplink = data.GetInviteDeeplink(false);
+
+                    if (deeplink.Length <= 512)
                     {
-                        Label = "Join server",
-                        Url = data.GetInviteDeeplink()
-                    });
+                        buttons.Add(new Button
+                        {
+                            Label = "Join server",
+                            Url = deeplink
+                        });
+                    }
                 }
             }
 

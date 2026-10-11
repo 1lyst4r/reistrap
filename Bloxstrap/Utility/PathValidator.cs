@@ -64,7 +64,7 @@ namespace Bloxstrap.Utility
 
         public static ValidationResult IsFileNameValid(string fileName)
         {
-            if (fileName.IndexOfAny(_invalidPathChars) != -1)
+            if (fileName.IndexOfAny(_invalidPathChars) != -1 || fileName.EndsWith('.') || fileName.EndsWith(' '))
                 return ValidationResult.IllegalCharacter;
 
             string fileNameNoExt = Path.GetFileNameWithoutExtension(fileName).ToUpperInvariant();

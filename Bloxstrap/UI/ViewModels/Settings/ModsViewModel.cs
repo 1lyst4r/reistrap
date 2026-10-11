@@ -480,7 +480,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
         {
             string name = NewCursorSetName.Trim();
 
-            if (String.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+            if (String.IsNullOrEmpty(name) || PathValidator.IsFileNameValid(name) != PathValidator.ValidationResult.Ok)
             {
                 Frontend.ShowMessageBox(Strings.Menu_FastFlags_Profiles_InvalidName, MessageBoxImage.Error);
                 return;

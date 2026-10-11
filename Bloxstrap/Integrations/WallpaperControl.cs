@@ -71,13 +71,13 @@ namespace Bloxstrap.Integrations
             {
                 var saved = _saved;
 
-                SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, saved.Wallpaper, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
-
                 using (var key = Registry.CurrentUser.OpenSubKey(DesktopKey, true))
                 {
                     key?.SetValue("WallpaperStyle", saved.Style);
                     key?.SetValue("TileWallpaper", saved.Tile);
                 }
+
+                SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, saved.Wallpaper, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
                 RestoreHistory();
             }

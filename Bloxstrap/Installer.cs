@@ -317,12 +317,7 @@ namespace Bloxstrap
                 });
             }
 
-            bool deleteFolder = Directory.GetFiles(Paths.Base).Length <= 3;
-
-            if (deleteFolder)
-                cleanupSequence.Add(() => Directory.Delete(Paths.Base, true));
-
-            if (!playerStillInstalled && !studioStillInstalled && Directory.Exists(robloxFolder))
+            if (!keepData && !playerStillInstalled && !studioStillInstalled && Directory.Exists(robloxFolder))
                 cleanupSequence.Add(() => Directory.Delete(robloxFolder, true));
 
             cleanupSequence.Add(() => Registry.CurrentUser.DeleteSubKey(App.UninstallKey));
@@ -336,6 +331,20 @@ namespace Bloxstrap
                 catch (Exception ex)
                 {
                     App.Logger.WriteLine(LOG_IDENT, $"Encountered exception when running cleanup sequence (#{cleanupSequence.IndexOf(process)})");
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                }
+            }
+
+            bool deleteFolder = !keepData && Directory.Exists(Paths.Base) && Directory.GetFiles(Paths.Base).Length <= 3;
+
+            if (deleteFolder)
+            {
+                try
+                {
+                    Directory.Delete(Paths.Base, true);
+                }
+                catch (Exception ex)
+                {
                     App.Logger.WriteException(LOG_IDENT, ex);
                 }
             }

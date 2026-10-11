@@ -141,7 +141,17 @@ namespace Bloxstrap.Integrations
                     await Task.Delay(PollDelay);
                 }
                 else
-                    ReadLogEntry(log);
+                {
+                    try
+                    {
+                        ReadLogEntry(log);
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, "Failed to handle log entry");
+                        App.Logger.WriteException(LOG_IDENT, ex);
+                    }
+                }
             }
         }
 
@@ -176,9 +186,11 @@ namespace Bloxstrap.Integrations
                 
                 OnAppClose?.Invoke(this, EventArgs.Empty);
 
-                if (Data.PlaceId != 0 && !InGame)
+                if (!InGame)
                 {
-                    App.Logger.WriteLine(LOG_IDENT, "User appears to be leaving from a cancelled/errored join");
+                    if (Data.PlaceId != 0)
+                        App.Logger.WriteLine(LOG_IDENT, "User appears to be leaving from a cancelled/errored join");
+
                     Data = new();
                 }
 
@@ -208,7 +220,7 @@ namespace Bloxstrap.Integrations
                 return;
             }
 
-            if (!InGame && Data.PlaceId == 0)
+            if (!InGame && (Data.PlaceId == 0 || logMessage.StartsWith(GameJoiningEntry, StringComparison.Ordinal)))
             {
                 // We are not in a game, nor are in the process of joining one
                 
@@ -446,15 +458,7 @@ namespace Bloxstrap.Integrations
                         Data.RPCLaunchData = data;
                     }
 
-                    try
-                    {
-                        OnRPCMessage?.Invoke(this, message);
-                    }
-                    catch (Exception ex)
-                    {
-                        App.Logger.WriteLine(LOG_IDENT, $"Failed to handle {message.Command}");
-                        App.Logger.WriteException(LOG_IDENT, ex);
-                    }
+                    OnRPCMessage?.Invoke(this, message);
 
                     if (rateLimited)
                         LastRPCRequest = DateTime.Now;

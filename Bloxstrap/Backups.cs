@@ -16,10 +16,12 @@ namespace Bloxstrap
 
         private static readonly string[] BackupFolders = { "Modifications", "FastFlagProfiles", "CursorSets", "CustomThemes" };
 
-        private static void AddFolder(ZipArchive archive, string folder, string entryPrefix, Func<string, bool>? include = null)
+        private static int AddFolder(ZipArchive archive, string folder, string entryPrefix, Func<string, bool>? include = null)
         {
+            int added = 0;
+
             if (!Directory.Exists(folder))
-                return;
+                return added;
 
             foreach (string file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories))
             {
@@ -29,7 +31,10 @@ namespace Bloxstrap
                     continue;
 
                 archive.CreateEntryFromFile(file, entryPrefix + relative);
+                added++;
             }
+
+            return added;
         }
 
         private static string? GetSafeTarget(string root, string relative)
@@ -55,9 +60,7 @@ namespace Bloxstrap
 
             using var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
 
-            AddFolder(archive, Paths.Modifications, ModPackFolder, x => !x.StartsWith("ClientSettings/", StringComparison.OrdinalIgnoreCase));
-
-            return archive.Entries.Count;
+            return AddFolder(archive, Paths.Modifications, ModPackFolder, x => !x.StartsWith("ClientSettings/", StringComparison.OrdinalIgnoreCase));
         }
 
         public static int ImportModPack(string zipPath)

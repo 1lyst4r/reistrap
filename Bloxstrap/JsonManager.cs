@@ -39,7 +39,7 @@
             {
                 if (File.Exists(FileLocation))
                 {
-                    string contents = File.ReadAllText(FileLocation);
+                    string contents = ReadFile();
 
                     T? settings = JsonSerializer.Deserialize<T>(contents);
 
@@ -95,6 +95,21 @@
                 Save();
 
                 return false;
+            }
+        }
+
+        private string ReadFile()
+        {
+            for (int i = 1; ; i++)
+            {
+                try
+                {
+                    return File.ReadAllText(FileLocation);
+                }
+                catch (IOException) when (i < 10 && File.Exists(FileLocation))
+                {
+                    Thread.Sleep(50);
+                }
             }
         }
 

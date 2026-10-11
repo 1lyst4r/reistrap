@@ -213,24 +213,21 @@ namespace Bloxstrap
         public static bool SaveCursorSet(string name)
         {
             string folder = Path.Combine(CursorSetsFolder, name);
-            bool any = false;
+
+            var sources = CursorSetFiles.Select(x => Path.Combine(Paths.Modifications, x)).Where(File.Exists).ToList();
+
+            if (!sources.Any())
+                return false;
 
             if (Directory.Exists(folder))
                 Directory.Delete(folder, true);
 
-            foreach (string relativePath in CursorSetFiles)
-            {
-                string source = Path.Combine(Paths.Modifications, relativePath);
+            Directory.CreateDirectory(folder);
 
-                if (!File.Exists(source))
-                    continue;
+            foreach (string source in sources)
+                File.Copy(source, Path.Combine(folder, Path.GetFileName(source)), true);
 
-                Directory.CreateDirectory(folder);
-                File.Copy(source, Path.Combine(folder, Path.GetFileName(relativePath)), true);
-                any = true;
-            }
-
-            return any;
+            return true;
         }
 
         public static void ApplyCursorSet(string name)

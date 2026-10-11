@@ -47,6 +47,7 @@ namespace Bloxstrap.Integrations
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
         private const int DWMWA_BORDER_COLOR = 34;
         private const int DWMWA_CAPTION_COLOR = 35;
+        private const uint DWMWA_COLOR_DEFAULT = 0xFFFFFFFF;
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, string lParam);
@@ -98,6 +99,8 @@ namespace Bloxstrap.Integrations
         private IntPtr _window;
 
         private long _originalExStyle;
+
+        private long _originalStyle;
 
         private bool _gameAllowed;
 
@@ -153,6 +156,7 @@ namespace Bloxstrap.Integrations
             _activityWatcher.OnGameLeave += (_, _) =>
             {
                 _lastPrompted = 0;
+                _gameAllowed = false;
                 Stop();
             };
         }
@@ -318,6 +322,9 @@ namespace Bloxstrap.Integrations
 
             UpdateMonitor();
 
+            if (!_changedWindow)
+                _originalStyle = GetWindowLongPtr(_window, GWL_STYLE).ToInt64();
+
             _startX = _setX = rect.Left;
             _startY = _setY = rect.Top;
             _x = rect.Left - _monitorX;
@@ -385,15 +392,16 @@ namespace Bloxstrap.Integrations
 
         private void ResetColors()
         {
-            bool dark = App.Settings.Prop.Theme.GetFinal() == Theme.Dark;
+            uint value = DWMWA_COLOR_DEFAULT;
 
-            SetColor(DWMWA_CAPTION_COLOR, dark ? "1F1F1F" : "FFFFFF");
-            SetColor(DWMWA_BORDER_COLOR, "1F1F1F");
+            DwmSetWindowAttribute(_window, DWMWA_CAPTION_COLOR, ref value, sizeof(uint));
+            DwmSetWindowAttribute(_window, DWMWA_BORDER_COLOR, ref value, sizeof(uint));
         }
 
         private void Stop()
         {
             Active = false;
+            _wallpaperAsset = 0;
             _activityWatcher.PollDelay = 1000;
 
             if (_window == IntPtr.Zero)
@@ -403,7 +411,8 @@ namespace Bloxstrap.Integrations
             {
                 MoveWindow(_startX, _startY, _startWidth, _startHeight);
                 SetWindowLongPtr(_window, GWL_EXSTYLE, new IntPtr(_originalExStyle));
-                SetBorderless(false);
+                SetWindowLongPtr(_window, GWL_STYLE, new IntPtr(_originalStyle));
+                SetWindowPos(_window, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_ASYNCWINDOWPOS | SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
                 _changedWindow = false;
             }
 
@@ -546,6 +555,9 @@ namespace Bloxstrap.Integrations
                         uint color = data.Color is null ? 0 : Convert.ToUInt32(data.Color.TrimStart('#'), 16);
                         uint mode = data.UseAlpha == true ? LWA_ALPHA : LWA_COLORKEY;
 
+                        if (!_changedWindow)
+                            SaveWindow();
+
                         _changedWindow = true;
 
                         if (alpha == 255)
@@ -565,6 +577,9 @@ namespace Bloxstrap.Integrations
                     {
                         if (!settings.WindowControlMove)
                             break;
+
+                        if (!_changedWindow)
+                            SaveWindow();
 
                         SetBorderless(Read<bool>(message));
                         _changedWindow = true;
@@ -663,7 +678,16 @@ namespace Bloxstrap.Integrations
                         if (Read<NotificationMessage>(message) is not NotificationMessage data)
                             break;
 
-                        ShowNotification?.Invoke(data.Title ?? "", data.Caption ?? "", Math.Clamp(data.Duration ?? 5, 1, 30));
+                        string title = data.Title ?? "";
+                        string caption = data.Caption ?? "";
+
+                        if (String.IsNullOrWhiteSpace(caption))
+                            (title, caption) = ("", title);
+
+                        if (String.IsNullOrWhiteSpace(caption))
+                            break;
+
+                        ShowNotification?.Invoke(title, caption, Math.Clamp(data.Duration ?? 5, 1, 30));
                         break;
                     }
                 }

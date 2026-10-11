@@ -126,7 +126,10 @@ namespace Bloxstrap.Models.Entities
             const string LOG_IDENT = "ActivityData::QueryServerLocation";
 
             if (!MachineAddressValid)
-                throw new InvalidOperationException($"Machine address is invalid ({MachineAddress})");
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Machine address is invalid ({MachineAddress})");
+                return null;
+            }
 
             await serverQuerySemaphore.WaitAsync();
 

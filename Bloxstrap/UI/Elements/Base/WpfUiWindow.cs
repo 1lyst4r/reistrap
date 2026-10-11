@@ -17,9 +17,13 @@ namespace Bloxstrap.UI.Elements.Base
 
         private BackgroundType _backdrop = BackgroundType.None;
 
+        private readonly RectangleGeometry _backgroundArea = new(new Rect(0, 0, 1, 1));
+
         public WpfUiWindow()
         {
             ApplyTheme();
+
+            SizeChanged += (_, e) => _backgroundArea.Rect = new Rect(0, 0, Math.Max(e.NewSize.Width, 1), Math.Max(e.NewSize.Height, 1));
         }
 
         public void ApplyTheme()
@@ -139,11 +143,12 @@ namespace Bloxstrap.UI.Elements.Base
 
         private void ApplyCustomBackground()
         {
-            if (!AllowCustomBackground)
-                return;
+            if (AllowCustomBackground)
+                SetCustomBackground(GetCustomBackground());
+        }
 
-            var custom = GetCustomBackground();
-
+        private void SetCustomBackground(Brush? custom)
+        {
             if (custom is null)
             {
                 if (_backdrop != BackgroundType.None && new WindowInteropHelper(this).Handle != IntPtr.Zero)
@@ -158,13 +163,13 @@ namespace Bloxstrap.UI.Elements.Base
 
             var group = new DrawingBrush
             {
-                Stretch = Stretch.UniformToFill,
+                Stretch = Stretch.Fill,
                 Drawing = new DrawingGroup
                 {
                     Children =
                     {
-                        new GeometryDrawing(themeBackground ?? Brushes.Black, null, new RectangleGeometry(new Rect(0, 0, 16, 9))),
-                        new GeometryDrawing(custom, null, new RectangleGeometry(new Rect(0, 0, 16, 9)))
+                        new GeometryDrawing(themeBackground ?? Brushes.Black, null, _backgroundArea),
+                        new GeometryDrawing(custom, null, _backgroundArea)
                     }
                 }
             };
@@ -202,11 +207,16 @@ namespace Bloxstrap.UI.Elements.Base
                 _backdrop = WindowBackdropType;
             }
 
-            ApplyCustomBackground();
+            var custom = AllowCustomBackground ? GetCustomBackground() : null;
+
+            if (AllowCustomBackground)
+                SetCustomBackground(custom);
 
             base.OnSourceInitialized(e);
 
-            if (_backdrop == BackgroundType.Aero && GetCustomBackground() is null)
+            if (custom is not null)
+                SetCustomBackground(custom);
+            else if (_backdrop == BackgroundType.Aero)
                 Wpf.Ui.Appearance.Background.Apply(this, BackgroundType.Aero, true);
         }
     }

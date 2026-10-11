@@ -34,7 +34,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
         {
             IBootstrapperDialog dialog = App.Settings.Prop.BootstrapperStyle.GetNew();
 
-            if (App.Settings.Prop.BootstrapperStyle == BootstrapperStyle.ByfronDialog)
+            if (App.Settings.Prop.BootstrapperStyle is BootstrapperStyle.ByfronDialog or BootstrapperStyle.ModernDialog)
                 dialog.Message = Strings.Bootstrapper_StylePreview_ImageCancel;
             else
                 dialog.Message = Strings.Bootstrapper_StylePreview_TextCancel;
@@ -209,7 +209,10 @@ namespace Bloxstrap.UI.ViewModels.Settings
             get => App.Settings.Prop.BackgroundColor;
             set
             {
-                App.Settings.Prop.BackgroundColor = value;
+                if (!ModGenerator.TryParseColor(value, out _))
+                    return;
+
+                App.Settings.Prop.BackgroundColor = value.Trim();
                 OnPropertyChanged(nameof(BackgroundColorSwatch));
                 QueueBackground();
             }
@@ -580,7 +583,11 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public BackgroundStretch BackgroundStretch
         {
             get => App.Settings.Prop.BackgroundStretch;
-            set => App.Settings.Prop.BackgroundStretch = value;
+            set
+            {
+                App.Settings.Prop.BackgroundStretch = value;
+                QueueBackground();
+            }
         }
 
         public bool DisableAnimations

@@ -164,14 +164,14 @@ namespace Bloxstrap
                 if (Settings.Prop.UpdateToPreReleases)
                 {
                     var releases = await Http.GetJson<List<GithubRelease>>($"https://api.github.com/repos/{ProjectRepository}/releases?per_page=10");
-                    releaseInfo = releases?.FirstOrDefault(x => x.Assets is not null && x.Assets.Any());
+                    releaseInfo = releases?.FirstOrDefault(x => x.Assets is not null && x.Assets.Any() && IsVersionTag(x.TagName));
                 }
                 else
                 {
                     releaseInfo = await Http.GetJson<GithubRelease>($"https://api.github.com/repos/{ProjectRepository}/releases/latest");
                 }
 
-                if (releaseInfo is null || releaseInfo.Assets is null)
+                if (releaseInfo is null || releaseInfo.Assets is null || !IsVersionTag(releaseInfo.TagName))
                 {
                     Logger.WriteLine(LOG_IDENT, "Encountered invalid data");
                     return null;
@@ -185,6 +185,22 @@ namespace Bloxstrap
             }
 
             return null;
+        }
+
+        private static bool IsVersionTag(string? tag)
+        {
+            if (String.IsNullOrEmpty(tag))
+                return false;
+
+            try
+            {
+                Utilities.GetVersionFromString(tag);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static async void SendStat(string key, string value)

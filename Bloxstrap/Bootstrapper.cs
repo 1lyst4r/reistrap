@@ -781,10 +781,13 @@ namespace Bloxstrap
             catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
                 // 1223 = ERROR_CANCELLED, gets thrown if a UAC prompt is cancelled
+                RestoreGameProfileSettings();
                 return;
             }
             catch (Exception)
             {
+                RestoreGameProfileSettings();
+
                 // attempt a reinstall on next launch
                 File.Delete(AppData.ExecutablePath);
                 throw;
@@ -797,6 +800,7 @@ namespace Bloxstrap
             if (String.IsNullOrEmpty(logFileName))
             {
                 App.Logger.WriteLine(LOG_IDENT, "Unable to identify log file");
+                RestoreGameProfileSettings();
                 Frontend.ShowPlayerErrorDialog();
                 return;
             }
@@ -861,6 +865,15 @@ namespace Bloxstrap
 
             // allow for window to show, since the log is created pretty far beforehand
             Thread.Sleep(1000);
+        }
+
+        private void RestoreGameProfileSettings()
+        {
+            if (_restoreRobloxSettings is null)
+                return;
+
+            GameProfiles.RestoreRobloxSettings(_restoreRobloxSettings);
+            _restoreRobloxSettings = null;
         }
 
         private void RemoveWindowControlMarker()
@@ -1030,10 +1043,17 @@ namespace Bloxstrap
                 
                 if (!File.Exists(downloadLocation))
                 {
-                    var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl);
+                    string partial = downloadLocation + ".part";
 
-                    await using var fileStream = new FileStream(downloadLocation, FileMode.OpenOrCreate, FileAccess.Write);
-                    await response.Content.CopyToAsync(fileStream);
+                    using (var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl))
+                    {
+                        response.EnsureSuccessStatusCode();
+
+                        await using var fileStream = new FileStream(partial, FileMode.Create, FileAccess.Write);
+                        await response.Content.CopyToAsync(fileStream);
+                    }
+
+                    File.Move(partial, downloadLocation, true);
                 }
 #endif
 
@@ -1044,10 +1064,10 @@ namespace Bloxstrap
                     FileName = downloadLocation,
                 };
 
-                startInfo.ArgumentList.Add("-upgrade");
-
                 foreach (string arg in App.LaunchSettings.Args)
                     startInfo.ArgumentList.Add(arg);
+
+                startInfo.ArgumentList.Add("-upgrade");
 
                 if (_launchMode == LaunchMode.Player && !startInfo.ArgumentList.Contains("-player"))
                     startInfo.ArgumentList.Add("-player");
@@ -1109,6 +1129,12 @@ namespace Bloxstrap
             if (App.LaunchSettings.BackgroundUpdaterFlag.Active)
             {
                 App.Logger.WriteLine(LOG_IDENT, "Background updater tried to cleanup, stopping!");
+                return;
+            }
+
+            if (Utilities.DoesMutexExist($"{App.ProjectName}-BackgroundUpdater-{LaunchMode.Player}") || Utilities.DoesMutexExist($"{App.ProjectName}-BackgroundUpdater-{LaunchMode.Studio}"))
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Background updater is running, skipping cleanup.");
                 return;
             }
 

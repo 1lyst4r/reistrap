@@ -73,7 +73,7 @@ namespace Bloxstrap.UI
         #region Activity handlers
         public async void OnGameJoin(object? sender, EventArgs e)
         {
-            if (_activityWatcher is null)
+            if (_activityWatcher is null || !_activityWatcher.Data.MachineAddressValid)
                 return;
             
             string? serverLocation = await _activityWatcher.Data.QueryServerLocation();
