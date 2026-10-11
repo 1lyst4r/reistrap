@@ -6109,5 +6109,14 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Integrations.WindowControl.Fso.Confirm", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uses window control, so it can move and change your Roblox window. Turn off "Allow every game without asking" to be asked first..
+        /// </summary>
+        public static string Dialog_WindowPermission_AllGamesNotice {
+            get {
+                return ResourceManager.GetString("Dialog.WindowPermission.AllGamesNotice", resourceCulture);
+            }
+        }
     }
 }

@@ -3233,4 +3233,7 @@ Switch channels?</value>
 
 Do you want reistrap to turn them off? This applies the next time Roblox launches.</value>
   </data>
+  <data name="Dialog.WindowPermission.AllGamesNotice" xml:space="preserve">
+    <value>{0} uses window control, so it can move and change your Roblox window. Turn off "Allow every game without asking" to be asked first.</value>
+  </data>
 </root>

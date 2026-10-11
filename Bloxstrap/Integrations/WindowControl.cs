@@ -114,6 +114,8 @@ namespace Bloxstrap.Integrations
 
         private long _lastPrompted;
 
+        private long _lastNotified;
+
         private bool _changedWindow;
 
         private bool _changedWallpaper;
@@ -279,6 +281,20 @@ namespace Bloxstrap.Integrations
                 _permissions.Save();
                 UpdateExposedPermissions();
             });
+        }
+
+        private void NotifyAllowedByDefault()
+        {
+            long universeId = _activityWatcher.Data.UniverseId;
+
+            if (!App.Settings.Prop.WindowControlAllGames || universeId == 0 || _lastNotified == universeId || _permissions.Prop.Allowed.Contains(universeId))
+                return;
+
+            _lastNotified = universeId;
+
+            string gameName = _activityWatcher.Data.UniverseDetails?.Data.Name ?? universeId.ToString();
+
+            ShowNotification?.Invoke(Strings.Dialog_WindowPermission_Title, String.Format(Strings.Dialog_WindowPermission_AllGamesNotice, gameName), 8);
         }
 
         private bool FindRobloxWindow()
@@ -491,7 +507,10 @@ namespace Bloxstrap.Integrations
             if (message.Command == "RequestWindowPermission")
             {
                 if (IsAllowed(_activityWatcher.Data.UniverseId))
+                {
                     UpdateExposedPermissions();
+                    NotifyAllowedByDefault();
+                }
                 else
                     RequestPermission();
 
@@ -500,6 +519,9 @@ namespace Bloxstrap.Integrations
 
             if (!_gameAllowed && !AllowedWithoutPermission.Contains(message.Command))
                 return;
+
+            if (!AllowedWithoutPermission.Contains(message.Command))
+                NotifyAllowedByDefault();
 
             if (!FindRobloxWindow())
                 return;
