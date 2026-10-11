@@ -6,6 +6,8 @@ Everything reistrap can do, as of v1.2.0.
 
 - Collapsible sidebar with pages grouped by dividers
 - Search any setting and jump straight to it
+- Collapse any section by clicking its title, remembered between sessions
+- Extra options slide open only when the setting they belong to is turned on
 - Page headers with an icon, title and description
 - Bottom bar with Save and Launch Player, a dropdown for Save and Launch Studio and Test mode, Restart, Save and Close
 - Version number with an update button when a new version is out
@@ -78,7 +80,7 @@ Everything reistrap can do, as of v1.2.0.
 - Custom cursor, Shift Lock icon, death sound and font
 - Mod packs (import and export)
 - Cursor sets (save, apply, delete)
-- Color mods with a multi-color gradient, angle and live icon preview, for Roblox UI icons, cursors, Shift Lock icon and emote wheel
+- Mod generator page: color mods with a multi-color gradient, angle and live icon preview, for Roblox UI icons, cursors, Shift Lock icon and emote wheel
 - Custom skybox packs
 - Apply mods to Roblox Player and/or Studio
 - Compatibility settings and open the mods folder
@@ -88,10 +90,10 @@ Everything reistrap can do, as of v1.2.0.
 - Theme (System, Light, Dark), language and accent color
 - Window effect (Mica, Acrylic, Aero, None)
 - App font
-- Background image or gradient with strength and fit
+- Background: default, solid color, gradient with as many colors as you want (angle or radial) or an image, with strength and fit
 - Smooth scrolling in every window
 - Turn off animations, which also turns off smooth scrolling
-- Loading window style, custom themes with an editor, import and export, theme cycling on every launch or every hour, day or week, icon and title
+- Loading window style (including Roblox 2025 and Modern), custom themes with an editor, import and export, theme cycling on every launch or every hour, day or week, icon and title
 
 ## Engine Settings (Fast Flags)
 
