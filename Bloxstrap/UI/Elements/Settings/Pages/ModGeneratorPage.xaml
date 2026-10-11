@@ -22,6 +22,7 @@
             <ui:Card Margin="0,8,0,0" Padding="16">
                 <StackPanel>
                     <TextBlock FontSize="16" FontWeight="Medium" Text="{x:Static resources:Strings.Menu_Mods_ColorMods_Preview}" />
+                    <ui:ProgressRing Margin="0,12,0,4" Width="28" Height="28" HorizontalAlignment="Left" IsIndeterminate="True" Visibility="{Binding PreviewLoadingVisibility}" />
                     <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding IconPreview}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

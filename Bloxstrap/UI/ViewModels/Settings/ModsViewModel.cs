@@ -22,7 +22,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
     {
         public ModsViewModel()
         {
-            _previewTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(250) };
+            _previewTimer = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(150) };
             _previewTimer.Tick += (_, _) => RefreshPreview();
 
             GradientStops.Add(new GradientStopItem(0, "#FFFFFF", QueuePreview));
@@ -247,6 +247,23 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ObservableCollection<BitmapSource> IconPreview { get; } = new();
 
+        private int _previewVersion;
+
+        private bool _previewLoading;
+
+        public bool PreviewLoading
+        {
+            get => _previewLoading;
+            private set
+            {
+                _previewLoading = value;
+                OnPropertyChanged(nameof(PreviewLoading));
+                OnPropertyChanged(nameof(PreviewLoadingVisibility));
+            }
+        }
+
+        public System.Windows.Visibility PreviewLoadingVisibility => _previewLoading ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+
         public double GradientAngle
         {
             get => _gradientAngle;
@@ -313,19 +330,27 @@ namespace Bloxstrap.UI.ViewModels.Settings
             if (ParseStops() is not List<IconGenerator.Stop> stops)
                 return;
 
-            var sheets = IconGenerator.FindSheets(new RobloxPlayerData().Directory)
-                .Where(x => x.Contains("_2x_", StringComparison.Ordinal))
-                .Select(ModGenerator.GetOriginal)
-                .OfType<string>()
-                .ToList();
-
-            if (!sheets.Any())
-                return;
-
             double angle = GradientAngle;
+            string directory = new RobloxPlayerData().Directory;
+            int version = ++_previewVersion;
 
-            Task.Run(() => IconGenerator.Preview(sheets, stops, angle, 40)).ContinueWith(task =>
+            PreviewLoading = !IconPreview.Any();
+
+            Task.Factory.StartNew(() =>
             {
+                var sheets = IconGenerator.FindSheets(directory)
+                    .Where(x => x.Contains("_2x_", StringComparison.Ordinal))
+                    .Select(ModGenerator.GetOriginal)
+                    .OfType<string>();
+
+                return IconGenerator.Preview(sheets, stops, angle, 40);
+            }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default).ContinueWith(task =>
+            {
+                if (version != _previewVersion)
+                    return;
+
+                PreviewLoading = false;
+
                 if (task.IsFaulted)
                 {
                     App.Logger.WriteException("ModsViewModel::RefreshPreview", task.Exception!);
