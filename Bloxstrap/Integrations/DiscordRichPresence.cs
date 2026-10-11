@@ -25,6 +25,8 @@ namespace Bloxstrap.Integrations
 
         private bool _sendQueued;
 
+        private const ulong MaxTimestamp = 253402300799;
+
         public DiscordRichPresence(ActivityWatcher activityWatcher)
         {
             const string LOG_IDENT = "DiscordRichPresence";
@@ -218,11 +220,15 @@ namespace Bloxstrap.Integrations
 
             if (presenceData.TimestampStart == 0)
                 _currentPresence.Timestamps.Start = null;
+            else if (presenceData.TimestampStart > MaxTimestamp)
+                App.Logger.WriteLine(LOG_IDENT, "timeStart must be a Unix timestamp in seconds");
             else if (presenceData.TimestampStart is not null)
                 _currentPresence.Timestamps.StartUnixMilliseconds = presenceData.TimestampStart * 1000;
 
             if (presenceData.TimestampEnd == 0)
                 _currentPresence.Timestamps.End = null;
+            else if (presenceData.TimestampEnd > MaxTimestamp)
+                App.Logger.WriteLine(LOG_IDENT, "timeEnd must be a Unix timestamp in seconds");
             else if (presenceData.TimestampEnd is not null)
                 _currentPresence.Timestamps.EndUnixMilliseconds = presenceData.TimestampEnd * 1000;
 
@@ -264,7 +270,9 @@ namespace Bloxstrap.Integrations
                         }
                     }
 
-                    if (presenceData.SmallImage.HoverText is not null)
+                    if (presenceData.SmallImage.HoverText?.Length > 128)
+                        App.Logger.WriteLine(LOG_IDENT, "Small image hover text cannot be longer than 128 characters");
+                    else if (presenceData.SmallImage.HoverText is not null)
                         _currentPresence.Assets.SmallImageText = presenceData.SmallImage.HoverText;
                 }
             }
@@ -299,7 +307,9 @@ namespace Bloxstrap.Integrations
                         }
                     }
 
-                    if (presenceData.LargeImage.HoverText is not null)
+                    if (presenceData.LargeImage.HoverText?.Length > 128)
+                        App.Logger.WriteLine(LOG_IDENT, "Large image hover text cannot be longer than 128 characters");
+                    else if (presenceData.LargeImage.HoverText is not null)
                         _currentPresence.Assets.LargeImageText = presenceData.LargeImage.HoverText;
                 }
             }

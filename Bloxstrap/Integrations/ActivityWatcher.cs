@@ -446,7 +446,15 @@ namespace Bloxstrap.Integrations
                         Data.RPCLaunchData = data;
                     }
 
-                    OnRPCMessage?.Invoke(this, message);
+                    try
+                    {
+                        OnRPCMessage?.Invoke(this, message);
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, $"Failed to handle {message.Command}");
+                        App.Logger.WriteException(LOG_IDENT, ex);
+                    }
 
                     if (rateLimited)
                         LastRPCRequest = DateTime.Now;

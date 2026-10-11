@@ -10,13 +10,11 @@ namespace Bloxstrap.Extensions
     {
         public static async Task<HttpResponseMessage> GetWithRetriesAsync(this HttpClient client, string url, int retries, CancellationToken token)
         {
-            HttpResponseMessage response = null!;
-
-            for (int i = 1; i <= retries; i++)
+            for (int i = 1; ; i++)
             {
                 try
                 {
-                    response = await client.GetAsync(url, token);
+                    return await client.GetAsync(url, token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -26,23 +24,19 @@ namespace Bloxstrap.Extensions
                 {
                     App.Logger.WriteException("HttpClientEx::GetWithRetriesAsync", ex);
 
-                    if (i == retries)
+                    if (i >= retries)
                         throw;
                 }
             }
-
-            return response;
         }
 
         public static async Task<HttpResponseMessage> PostWithRetriesAsync(this HttpClient client, string url, HttpContent? content, int retries, CancellationToken token)
         {
-            HttpResponseMessage response = null!;
-
-            for (int i = 1; i <= retries; i++)
+            for (int i = 1; ; i++)
             {
                 try
                 {
-                    response = await client.PostAsync(url, content, token);
+                    return await client.PostAsync(url, content, token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -52,12 +46,10 @@ namespace Bloxstrap.Extensions
                 {
                     App.Logger.WriteException("HttpClientEx::PostWithRetriesAsync", ex);
 
-                    if (i == retries)
+                    if (i >= retries)
                         throw;
                 }
             }
-
-            return response;
         }
 
         public static async Task<T?> GetFromJsonWithRetriesAsync<T>(this HttpClient client, string url, int retries, CancellationToken token) where T : class
