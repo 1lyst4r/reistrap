@@ -6172,5 +6172,32 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Blocked", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Launch Player.
+        /// </summary>
+        public static string LaunchMenu_LaunchPlayer {
+            get {
+                return ResourceManager.GetString("LaunchMenu.LaunchPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string LaunchMenu_Settings {
+            get {
+                return ResourceManager.GetString("LaunchMenu.Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discord.
+        /// </summary>
+        public static string LaunchMenu_Discord {
+            get {
+                return ResourceManager.GetString("LaunchMenu.Discord", resourceCulture);
+            }
+        }
     }
 }

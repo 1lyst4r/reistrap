@@ -20,7 +20,7 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
         public event EventHandler<NextAction>? CloseWindowRequest;
 
-        public IReadOnlyList<GameStatsEntry> RecentGames { get; } = App.Settings.Prop.TrackGameStats ? GameStatsTracker.GetRecent(3).ToList() : new();
+        public IReadOnlyList<GameStatsEntry> RecentGames { get; } = App.Settings.Prop.TrackGameStats ? GameStatsTracker.GetRecent(5).ToList() : new();
 
         public Visibility RecentGamesVisibility => RecentGames.Any() ? Visibility.Visible : Visibility.Collapsed;
 

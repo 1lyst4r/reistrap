@@ -1835,7 +1835,7 @@ Build: {2}</value>
     <value>Freed {0:0.#} MB of disk space.</value>
   </data>
   <data name="LaunchMenu.RecentGames" xml:space="preserve">
-    <value>Jump back in</value>
+    <value>Recent games</value>
   </data>
   <data name="Menu.Roblox.Title" xml:space="preserve">
     <value>Roblox</value>
@@ -3253,5 +3253,14 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   </data>
   <data name="Menu.Integrations.WindowControl.Games.Blocked" xml:space="preserve">
     <value>Blocked</value>
+  </data>
+  <data name="LaunchMenu.LaunchPlayer" xml:space="preserve">
+    <value>Launch Player</value>
+  </data>
+  <data name="LaunchMenu.Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="LaunchMenu.Discord" xml:space="preserve">
+    <value>Discord</value>
   </data>
 </root>
