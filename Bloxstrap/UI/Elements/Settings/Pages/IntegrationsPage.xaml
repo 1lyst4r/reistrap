@@ -299,6 +299,46 @@
                 Description="{Binding WindowPermissionsText}">
                 <ui:Button Icon="ArrowReset24" Content="{x:Static resources:Strings.Common_Reset}" Command="{Binding ResetWindowPermissionsCommand}" />
             </controls:OptionControl>
+
+            <TextBlock Margin="0,12,0,0" FontSize="14" FontWeight="Medium" Text="{x:Static resources:Strings.Menu_Integrations_WindowControl_Games_Title}" />
+            <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{x:Static resources:Strings.Menu_Integrations_WindowControl_Games_Description}" />
+            <TextBlock Margin="0,8,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Visibility="{Binding NoWindowGamesVisibility, Mode=OneWay}" Text="{x:Static resources:Strings.Menu_Integrations_WindowControl_Games_Empty}" />
+
+            <ItemsControl ItemsSource="{Binding WindowGames, Mode=OneTime}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ui:Card Margin="0,8,0,0" Padding="12">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="6" Background="{DynamicResource ControlFillColorDefaultBrush}">
+                                        <Image Source="{Binding IconUrl, TargetNullValue={x:Null}}" RenderOptions.BitmapScalingMode="HighQuality" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                                        <TextBlock FontWeight="Medium" TextTrimming="CharacterEllipsis" Text="{Binding Name}" />
+                                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding IdText, Mode=OneTime}" />
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="2" Width="130" Padding="10,5,10,5" VerticalAlignment="Center" ItemsSource="{Binding DataContext.WindowGameStatuses, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" SelectedIndex="{Binding Status, Mode=TwoWay}" />
+                                    <ui:Button Grid.Column="3" Margin="8,0,0,0" VerticalAlignment="Center" Icon="Delete24" Command="{Binding DataContext.RemoveWindowGameCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding}" />
+                                </Grid>
+                                <WrapPanel Margin="52,10,0,0" IsEnabled="{Binding FeaturesEnabled}">
+                                    <CheckBox Margin="0,0,16,4" IsChecked="{Binding Move, Mode=TwoWay}" Content="{x:Static resources:Strings.Menu_Integrations_WindowControl_Move_Title}" />
+                                    <CheckBox Margin="0,0,16,4" IsChecked="{Binding Title, Mode=TwoWay}" Content="{x:Static resources:Strings.Menu_Integrations_WindowControl_Title_Title}" />
+                                    <CheckBox Margin="0,0,16,4" IsChecked="{Binding Transparency, Mode=TwoWay}" Content="{x:Static resources:Strings.Menu_Integrations_WindowControl_Transparency_Title}" />
+                                    <CheckBox Margin="0,0,16,4" IsChecked="{Binding Color, Mode=TwoWay}" Content="{x:Static resources:Strings.Menu_Integrations_WindowControl_Color_Title}" />
+                                    <CheckBox Margin="0,0,16,4" IsChecked="{Binding Wallpaper, Mode=TwoWay}" Content="{x:Static resources:Strings.Menu_Integrations_WindowControl_Wallpaper_Title}" />
+                                    <CheckBox Margin="0,0,16,4" IsChecked="{Binding Desktop, Mode=TwoWay}" Content="{x:Static resources:Strings.Menu_Integrations_WindowControl_Desktop_Title}" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </ui:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
 
         <Border Style="{StaticResource SectionSeparator}" />

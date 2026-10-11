@@ -3236,4 +3236,22 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="Dialog.WindowPermission.AllGamesNotice" xml:space="preserve">
     <value>{0} uses window control, so it can move and change your Roblox window. Turn off "Allow every game without asking" to be asked first.</value>
   </data>
+  <data name="Menu.Integrations.WindowControl.Games.Title" xml:space="preserve">
+    <value>Games</value>
+  </data>
+  <data name="Menu.Integrations.WindowControl.Games.Description" xml:space="preserve">
+    <value>Every game that has used window control, even when every game is allowed. Choose what each one can do.</value>
+  </data>
+  <data name="Menu.Integrations.WindowControl.Games.Empty" xml:space="preserve">
+    <value>No games have used window control yet.</value>
+  </data>
+  <data name="Menu.Integrations.WindowControl.Games.Ask" xml:space="preserve">
+    <value>Ask</value>
+  </data>
+  <data name="Menu.Integrations.WindowControl.Games.Allowed" xml:space="preserve">
+    <value>Allowed</value>
+  </data>
+  <data name="Menu.Integrations.WindowControl.Games.Blocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
 </root>

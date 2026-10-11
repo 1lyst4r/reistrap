@@ -86,6 +86,12 @@ namespace Bloxstrap.Integrations
 
         private static readonly string[] AllowedWithoutPermission = { "SetWindowTitle" };
 
+        private static readonly string[] WindowCommands =
+        {
+            "RequestWindowPermission", "StartWindow", "StopWindow", "ResetWindow", "SetWindow", "SetWindowTitle", "SetWindowTransparency",
+            "SetWindowBorderless", "SetWindowColor", "CacheWallpaper", "SetWallpaper", "SetDesktopVisibility", "SendNotification"
+        };
+
         private readonly ActivityWatcher _activityWatcher;
 
         private readonly int _processId;
@@ -115,6 +121,8 @@ namespace Bloxstrap.Integrations
         private long _lastPrompted;
 
         private long _lastNotified;
+
+        private long _lastRecorded;
 
         private bool _changedWindow;
 
@@ -207,6 +215,8 @@ namespace Bloxstrap.Integrations
 
             try
             {
+                _permissions.Load(false);
+
                 string folder = GetPermissionsPath(_robloxDirectory);
                 Directory.CreateDirectory(folder);
 
@@ -224,12 +234,12 @@ namespace Bloxstrap.Integrations
                 var settings = App.Settings.Prop;
                 bool[] permissions =
                 {
-                    settings.WindowControlMove,
-                    settings.WindowControlTitle,
-                    settings.WindowControlTransparency,
-                    settings.WindowControlColor,
-                    settings.WindowControlWallpaper,
-                    settings.WindowControlDesktop
+                    Can("Move", settings.WindowControlMove),
+                    Can("Title", settings.WindowControlTitle),
+                    Can("Transparency", settings.WindowControlTransparency),
+                    Can("Color", settings.WindowControlColor),
+                    Can("Wallpaper", settings.WindowControlWallpaper),
+                    Can("Desktop", settings.WindowControlDesktop)
                 };
 
                 using var bitmap = new System.Drawing.Bitmap(permissions.Length, 1);
@@ -281,6 +291,34 @@ namespace Bloxstrap.Integrations
                 _permissions.Save();
                 UpdateExposedPermissions();
             });
+        }
+
+        private bool Can(string feature, bool enabled) =>
+            enabled && !(_permissions.Prop.Disabled.TryGetValue(_activityWatcher.Data.UniverseId, out var disabled) && disabled.Contains(feature));
+
+        private void RecordUse()
+        {
+            long universeId = _activityWatcher.Data.UniverseId;
+
+            if (universeId == 0 || _lastRecorded == universeId)
+                return;
+
+            _lastRecorded = universeId;
+
+            try
+            {
+                _permissions.Load(false);
+
+                if (_permissions.Prop.Used.Contains(universeId))
+                    return;
+
+                _permissions.Prop.Used.Add(universeId);
+                _permissions.Save();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("WindowControl::RecordUse", ex);
+            }
         }
 
         private void NotifyAllowedByDefault()
@@ -504,6 +542,9 @@ namespace Bloxstrap.Integrations
 
             var settings = App.Settings.Prop;
 
+            if (WindowCommands.Contains(message.Command))
+                RecordUse();
+
             if (message.Command == "RequestWindowPermission")
             {
                 if (IsAllowed(_activityWatcher.Data.UniverseId))
@@ -550,7 +591,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetWindow":
                     {
-                        if (!settings.WindowControlMove || Read<WindowMessage>(message) is not WindowMessage data)
+                        if (!Can("Move", settings.WindowControlMove) || Read<WindowMessage>(message) is not WindowMessage data)
                             break;
 
                         if (data.Reset == true)
@@ -590,7 +631,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetWindowTitle":
                     {
-                        if (!settings.WindowControlTitle)
+                        if (!Can("Title", settings.WindowControlTitle))
                             break;
 
                         string title = Read<string>(message) ?? "Roblox";
@@ -602,7 +643,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetWindowTransparency":
                     {
-                        if (!settings.WindowControlTransparency || Read<WindowTransparencyMessage>(message) is not WindowTransparencyMessage data)
+                        if (!Can("Transparency", settings.WindowControlTransparency) || Read<WindowTransparencyMessage>(message) is not WindowTransparencyMessage data)
                             break;
 
                         if (data.Transparency is float transparency)
@@ -643,7 +684,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetWindowBorderless":
                     {
-                        if (!settings.WindowControlMove)
+                        if (!Can("Move", settings.WindowControlMove))
                             break;
 
                         if (!_changedWindow)
@@ -656,7 +697,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetWindowColor":
                     {
-                        if (!settings.WindowControlColor || Read<WindowColorMessage>(message) is not WindowColorMessage data)
+                        if (!Can("Color", settings.WindowControlColor) || Read<WindowColorMessage>(message) is not WindowColorMessage data)
                             break;
 
                         if (data.Reset == true)
@@ -679,7 +720,7 @@ namespace Bloxstrap.Integrations
 
                     case "CacheWallpaper":
                     {
-                        if (!settings.WindowControlWallpaper || Read<ulong?>(message) is not ulong assetId || assetId == 0)
+                        if (!Can("Wallpaper", settings.WindowControlWallpaper) || Read<ulong?>(message) is not ulong assetId || assetId == 0)
                             break;
 
                         _ = RobloxAssets.GetImage(assetId).ContinueWith(task =>
@@ -693,7 +734,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetWallpaper":
                     {
-                        if (!settings.WindowControlWallpaper || Read<WallpaperMessage>(message) is not WallpaperMessage data)
+                        if (!Can("Wallpaper", settings.WindowControlWallpaper) || Read<WallpaperMessage>(message) is not WallpaperMessage data)
                             break;
 
                         if (data.Reset == true || data.AssetId is not ulong assetId || assetId == 0)
@@ -727,7 +768,7 @@ namespace Bloxstrap.Integrations
 
                     case "SetDesktopVisibility":
                     {
-                        if (!settings.WindowControlDesktop || Read<DesktopVisibilityMessage>(message) is not DesktopVisibilityMessage data)
+                        if (!Can("Desktop", settings.WindowControlDesktop) || Read<DesktopVisibilityMessage>(message) is not DesktopVisibilityMessage data)
                             break;
 
                         _changedDesktop = true;

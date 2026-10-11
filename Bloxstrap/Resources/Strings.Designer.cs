@@ -6118,5 +6118,59 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Dialog.WindowPermission.AllGamesNotice", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Games.
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Games_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Every game that has used window control, even when every game is allowed. Choose what each one can do..
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Games_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No games have used window control yet..
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Games_Empty {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ask.
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Games_Ask {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Ask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allowed.
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Games_Allowed {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Allowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blocked.
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Games_Blocked {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Games.Blocked", resourceCulture);
+            }
+        }
     }
 }

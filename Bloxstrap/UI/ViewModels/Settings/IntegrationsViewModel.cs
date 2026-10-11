@@ -314,10 +314,128 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ICommand ResetWindowPermissionsCommand => new RelayCommand(() =>
         {
-            _windowPermissions.Prop = new();
+            _windowPermissions.Load(false);
+            _windowPermissions.Prop.Allowed.Clear();
+            _windowPermissions.Prop.Blocked.Clear();
+            _windowPermissions.Prop.Disabled.Clear();
             _windowPermissions.Save();
             OnPropertyChanged(nameof(WindowPermissionsText));
+            LoadWindowGames();
         });
+
+        public string[] WindowGameStatuses { get; } =
+        {
+            Strings.Menu_Integrations_WindowControl_Games_Ask,
+            Strings.Menu_Integrations_WindowControl_Games_Allowed,
+            Strings.Menu_Integrations_WindowControl_Games_Blocked
+        };
+
+        private ObservableCollection<WindowGameItem>? _windowGames;
+
+        public ObservableCollection<WindowGameItem> WindowGames
+        {
+            get
+            {
+                if (_windowGames is null)
+                {
+                    _windowGames = new();
+                    LoadWindowGames();
+                }
+
+                return _windowGames;
+            }
+        }
+
+        public Visibility NoWindowGamesVisibility => WindowGames.Any() ? Visibility.Collapsed : Visibility.Visible;
+
+        public ICommand RemoveWindowGameCommand => new RelayCommand<WindowGameItem>(item =>
+        {
+            if (item is null)
+                return;
+
+            _windowPermissions.Load(false);
+            _windowPermissions.Prop.Allowed.Remove(item.UniverseId);
+            _windowPermissions.Prop.Blocked.Remove(item.UniverseId);
+            _windowPermissions.Prop.Used.Remove(item.UniverseId);
+            _windowPermissions.Prop.Disabled.Remove(item.UniverseId);
+            _windowPermissions.Save();
+
+            WindowGames.Remove(item);
+            OnPropertyChanged(nameof(NoWindowGamesVisibility));
+            OnPropertyChanged(nameof(WindowPermissionsText));
+        });
+
+        private void LoadWindowGames()
+        {
+            _windowPermissions.Load(false);
+            var prop = _windowPermissions.Prop;
+
+            var ids = Enumerable.Reverse(prop.Used).Concat(prop.Allowed).Concat(prop.Blocked).Where(x => x != 0).Distinct().ToList();
+
+            WindowGames.Clear();
+
+            foreach (long id in ids)
+            {
+                int status = prop.Blocked.Contains(id) ? 2 : prop.Allowed.Contains(id) ? 1 : 0;
+                var disabled = prop.Disabled.TryGetValue(id, out var list) ? list : new List<string>();
+
+                WindowGames.Add(new WindowGameItem(id, status, disabled, SaveWindowGame));
+            }
+
+            OnPropertyChanged(nameof(NoWindowGamesVisibility));
+
+            if (!ids.Any())
+                return;
+
+            Task.Run(async () =>
+            {
+                foreach (var chunk in ids.Chunk(50))
+                {
+                    try
+                    {
+                        await UniverseDetails.FetchBulk(String.Join(',', chunk));
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteException("IntegrationsViewModel::LoadWindowGames", ex);
+                    }
+                }
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var item in WindowGames)
+                    {
+                        if (UniverseDetails.LoadFromCache(item.UniverseId) is not UniverseDetails details)
+                            continue;
+
+                        item.Name = details.Data.Name;
+                        item.IconUrl = details.Thumbnail.ImageUrl;
+                    }
+                });
+            });
+        }
+
+        private void SaveWindowGame(WindowGameItem item)
+        {
+            _windowPermissions.Load(false);
+            var prop = _windowPermissions.Prop;
+
+            prop.Allowed.Remove(item.UniverseId);
+            prop.Blocked.Remove(item.UniverseId);
+
+            if (item.Status == 1)
+                prop.Allowed.Add(item.UniverseId);
+            else if (item.Status == 2)
+                prop.Blocked.Add(item.UniverseId);
+
+            if (item.Disabled.Any())
+                prop.Disabled[item.UniverseId] = item.Disabled.ToList();
+            else
+                prop.Disabled.Remove(item.UniverseId);
+
+            _windowPermissions.Save();
+            OnPropertyChanged(nameof(WindowPermissionsText));
+        }
 
         // Rejoin
 
