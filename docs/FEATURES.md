@@ -1,6 +1,6 @@
 # reistrap features
 
-Everything reistrap can do, as of v1.3.4.
+Everything reistrap can do, as of v1.3.5.
 
 ## Settings window
 
@@ -35,7 +35,7 @@ Everything reistrap can do, as of v1.3.4.
 - Games can set Discord status through BloxstrapRPC
 - Roblox Studio Rich Presence with game name, game icon, play testing status and a game page button
 - Show the script you're editing in Studio Rich Presence, with its name, line count and an icon for server, local or module scripts, through a small Studio plugin
-- Game window control for games made for Funkstrap, like Project: Afternight: move and resize, title, transparency, color, wallpaper, taskbar and desktop icons, with a permission prompt per game, an allow-all option, monitor choice, update rate and a permissions reset
+- Game window control for games made for Funkstrap, like Project: Afternight: move and resize, title, transparency, color, wallpaper, taskbar and desktop icons, with a permission prompt per game, an allow-all option with a notification when a game uses it, a list of every game that has used it with per-game status and features, a prompt to turn off fullscreen optimizations for transparency, monitor choice, update rate and a permissions reset
 - Custom integrations that launch with Roblox, close with Roblox, or run only in a specific game
 
 ## Bootstrapper
@@ -88,6 +88,7 @@ Everything reistrap can do, as of v1.3.4.
 ## Appearance
 
 - Theme (System, Light, Dark), language and accent color
+- Color picker on every color circle
 - Window effect (Mica, Acrylic, Aero, None)
 - App font
 - Background: default, solid color, gradient with as many colors as you want (angle or radial) or an image, with strength and fit
