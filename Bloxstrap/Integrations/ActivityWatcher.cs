@@ -186,11 +186,9 @@ namespace Bloxstrap.Integrations
                 
                 OnAppClose?.Invoke(this, EventArgs.Empty);
 
-                if (!InGame)
+                if (Data.PlaceId != 0 && !InGame)
                 {
-                    if (Data.PlaceId != 0)
-                        App.Logger.WriteLine(LOG_IDENT, "User appears to be leaving from a cancelled/errored join");
-
+                    App.Logger.WriteLine(LOG_IDENT, "User appears to be leaving from a cancelled/errored join");
                     Data = new();
                 }
 

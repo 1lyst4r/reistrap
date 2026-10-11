@@ -235,10 +235,20 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         {
             string? fontFamily = GetFullPath(dialog, xmlElement.Attribute("FontFamily")?.Value);
 
-            if (fontFamily is not null && (fontFamily.StartsWith(@"\\") || fontFamily.StartsWith("//") || (fontFamily.Contains("://") && !fontFamily.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))))
+            if (fontFamily is not null && fontFamily.Split(',').Any(IsRemotePath))
                 throw new CustomThemeException("CustomTheme.Errors.ElementAttributeBlacklistedUriScheme", xmlElement.Name, "FontFamily", "unc");
 
             return fontFamily;
+        }
+
+        private static bool IsRemotePath(string value)
+        {
+            string path = value.Split('#')[0].Trim();
+
+            if (path.StartsWith(@"\\") || path.StartsWith("//"))
+                return true;
+
+            return Uri.TryCreate(path, UriKind.Absolute, out var uri) && (uri.IsUnc || uri.Scheme != Uri.UriSchemeFile && uri.Scheme != "pack");
         }
 
         private static BitmapImage LoadBitmap(Uri uri)
