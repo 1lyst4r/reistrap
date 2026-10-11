@@ -33,6 +33,10 @@ namespace Bloxstrap.Integrations
         private const uint SWP_NOSIZE = 0x0001;
         private const uint SWP_NOMOVE = 0x0002;
         private const uint SWP_NOZORDER = 0x0004;
+        private const uint SWP_NOACTIVATE = 0x0010;
+        private const uint SWP_NOCOPYBITS = 0x0100;
+        private const uint SWP_NOOWNERZORDER = 0x0200;
+        private const uint SWP_DEFERERASE = 0x2000;
         private const uint SWP_FRAMECHANGED = 0x0020;
         private const uint SWP_NOSENDCHANGING = 0x0400;
         private const uint SWP_ASYNCWINDOWPOS = 0x4000;
@@ -123,6 +127,8 @@ namespace Bloxstrap.Integrations
 
         private ulong _wallpaperAsset;
 
+        private (int X, int Y, int Width, int Height)? _pendingMove;
+
         public bool Active { get; private set; }
 
         public bool TitleChanged { get; private set; }
@@ -142,6 +148,7 @@ namespace Bloxstrap.Integrations
             WriteEnabledMarker(robloxDirectory);
 
             _activityWatcher.OnRPCMessage += (_, message) => OnMessage(message);
+            _activityWatcher.OnLogIdle += (_, _) => FlushMove();
             _activityWatcher.OnGameJoin += (_, _) => UpdateExposedPermissions();
             _activityWatcher.OnGameLeave += (_, _) =>
             {
@@ -319,8 +326,19 @@ namespace Bloxstrap.Integrations
             _height = _startHeight = _setHeight = rect.Bottom - rect.Top;
         }
 
+        private void FlushMove()
+        {
+            if (_pendingMove is not { } move)
+                return;
+
+            _pendingMove = null;
+            MoveWindow(move.X, move.Y, move.Width, move.Height);
+        }
+
         private void MoveWindow(int x, int y, int width, int height)
         {
+            _pendingMove = null;
+
             bool moved = x != _setX || y != _setY;
             bool resized = width != _setWidth || height != _setHeight;
 
@@ -332,7 +350,7 @@ namespace Bloxstrap.Integrations
             _setWidth = width;
             _setHeight = height;
 
-            uint flags = SWP_NOZORDER | SWP_ASYNCWINDOWPOS | SWP_NOSENDCHANGING;
+            uint flags = SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_DEFERERASE | SWP_ASYNCWINDOWPOS | SWP_NOSENDCHANGING;
 
             if (!moved)
                 flags |= SWP_NOMOVE;
@@ -503,7 +521,7 @@ namespace Bloxstrap.Integrations
                             _y = (int)(y * scaleY + (_height - _height * _heightMultiplier) / 2);
 
                         _changedWindow = true;
-                        MoveWindow(_x + _monitorX, _y + _monitorY, (int)(_width * _widthMultiplier), (int)(_height * _heightMultiplier));
+                        _pendingMove = (_x + _monitorX, _y + _monitorY, (int)(_width * _widthMultiplier), (int)(_height * _heightMultiplier));
                         break;
                     }
 

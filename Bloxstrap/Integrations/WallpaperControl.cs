@@ -38,6 +38,8 @@ namespace Bloxstrap.Integrations
 
         private static readonly List<string> _closedApps = new();
 
+        private static readonly List<string> _stoppedEngines = new();
+
         public static void Set(string path, string? style)
         {
             const string LOG_IDENT = "WallpaperControl::Set";
@@ -147,21 +149,25 @@ namespace Bloxstrap.Integrations
             {
                 foreach (var process in Process.GetProcessesByName(name))
                 {
+                    string? exe = GetPath(process);
+
                     try
                     {
-                        string? exe = process.MainModule?.FileName;
+                        process.Kill();
+                        process.WaitForExit(2000);
 
                         if (!String.IsNullOrEmpty(exe) && !_closedApps.Contains(exe))
                             _closedApps.Add(exe);
-
-                        process.CloseMainWindow();
-
-                        if (!process.WaitForExit(3000))
-                            process.Kill();
                     }
                     catch (Exception ex)
                     {
                         App.Logger.WriteException("WallpaperControl::CloseWallpaperApps", ex);
+
+                        if (IsWallpaperEngine(name) && !String.IsNullOrEmpty(exe) && !_stoppedEngines.Contains(exe))
+                        {
+                            RunControl(exe, "stop");
+                            _stoppedEngines.Add(exe);
+                        }
                     }
                     finally
                     {
@@ -177,7 +183,7 @@ namespace Bloxstrap.Integrations
             {
                 try
                 {
-                    Process.Start(exe);
+                    Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(exe) });
                 }
                 catch (Exception ex)
                 {
@@ -185,8 +191,58 @@ namespace Bloxstrap.Integrations
                 }
             }
 
+            foreach (string exe in _stoppedEngines)
+                RunControl(exe, "play");
+
             _closedApps.Clear();
+            _stoppedEngines.Clear();
         }
+
+        private static bool IsWallpaperEngine(string name) => name.StartsWith("wallpaper", StringComparison.OrdinalIgnoreCase);
+
+        private static void RunControl(string exe, string command)
+        {
+            try
+            {
+                using var process = Process.Start(new ProcessStartInfo(exe, $"-control {command}") { UseShellExecute = false, CreateNoWindow = true });
+                process?.WaitForExit(3000);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("WallpaperControl::RunControl", ex);
+            }
+        }
+
+        private static string? GetPath(Process process)
+        {
+            IntPtr handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, process.Id);
+
+            if (handle == IntPtr.Zero)
+                return null;
+
+            try
+            {
+                var builder = new StringBuilder(1024);
+                int size = builder.Capacity;
+
+                return QueryFullProcessImageName(handle, 0, builder, ref size) ? builder.ToString() : null;
+            }
+            finally
+            {
+                CloseHandle(handle);
+            }
+        }
+
+        private const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(uint access, bool inherit, int processId);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern bool QueryFullProcessImageName(IntPtr process, int flags, StringBuilder name, ref int size);
+
+        [DllImport("kernel32.dll")]
+        private static extern bool CloseHandle(IntPtr handle);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);

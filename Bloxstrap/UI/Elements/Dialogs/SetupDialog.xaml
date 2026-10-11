@@ -29,8 +29,8 @@
         <FontFamily x:Key="DisplayFont">Segoe UI Variable Display, Segoe UI</FontFamily>
 
         <LinearGradientBrush x:Key="TileBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0" Color="#FFF04A" />
-            <GradientStop Offset="1" Color="#FFC21A" />
+            <GradientStop Offset="0" Color="#08ACFC" />
+            <GradientStop Offset="1" Color="#4AAEA3" />
         </LinearGradientBrush>
 
         <Style x:Key="PrimaryButton" TargetType="Button">

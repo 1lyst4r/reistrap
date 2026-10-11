@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Integrations
+namespace Bloxstrap.Integrations
 {
     public class ActivityWatcher : IDisposable
     {
@@ -50,6 +50,8 @@
         private DateTime LastRPCRequest;
 
         public int PollDelay = 1000;
+
+        public event EventHandler? OnLogIdle;
 
         public int LastDisconnectReason;
 
@@ -134,7 +136,10 @@
                 string? log = await streamReader.ReadLineAsync();
 
                 if (log is null)
+                {
+                    OnLogIdle?.Invoke(this, EventArgs.Empty);
                     await Task.Delay(PollDelay);
+                }
                 else
                     ReadLogEntry(log);
             }
