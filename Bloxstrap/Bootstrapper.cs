@@ -933,7 +933,7 @@ namespace Bloxstrap
             const string Flag = "DISABLEDXMAXIMIZEDWINDOWEDMODE";
 
             var settings = App.Settings.Prop;
-            bool disable = settings.DisableFullscreenOptimizations && settings.WindowControlEnabled && settings.WindowControlTransparency && settings.EnableActivityTracking;
+            bool disable = settings.WindowControlDisableFso && settings.WindowControlEnabled && settings.WindowControlTransparency && settings.EnableActivityTracking;
 
             if (!disable && !App.State.Prop.DisabledFullscreenOptimizations)
                 return;

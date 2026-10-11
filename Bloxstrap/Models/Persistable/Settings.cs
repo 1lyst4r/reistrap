@@ -66,7 +66,7 @@ namespace Bloxstrap.Models.Persistable
         public bool WindowControlMove { get; set; } = true;
         public bool WindowControlTitle { get; set; } = true;
         public bool WindowControlTransparency { get; set; } = true;
-        public bool DisableFullscreenOptimizations { get; set; } = false;
+        public bool WindowControlDisableFso { get; set; } = true;
         public bool WindowControlColor { get; set; } = true;
         public bool WindowControlWallpaper { get; set; } = false;
         public bool WindowControlDesktop { get; set; } = false;

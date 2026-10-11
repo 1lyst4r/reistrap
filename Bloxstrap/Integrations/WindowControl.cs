@@ -104,6 +104,12 @@ namespace Bloxstrap.Integrations
 
         private (uint Color, byte Alpha, uint Mode)? _appliedLayer;
 
+        private byte _transparency = 1;
+
+        private uint _transparencyColor;
+
+        private uint _transparencyMode = LWA_COLORKEY;
+
         private bool _gameAllowed;
 
         private long _lastPrompted;
@@ -421,6 +427,9 @@ namespace Bloxstrap.Integrations
 
             if (_changedWindow)
             {
+                _transparency = 1;
+                _transparencyColor = 0;
+                _transparencyMode = LWA_COLORKEY;
                 MoveWindow(_startX, _startY, _startWidth, _startHeight);
                 SetExStyle(_originalExStyle);
                 SetWindowLongPtr(_window, GWL_STYLE, new IntPtr(_originalStyle));
@@ -563,9 +572,18 @@ namespace Bloxstrap.Integrations
                         if (!settings.WindowControlTransparency || Read<WindowTransparencyMessage>(message) is not WindowTransparencyMessage data)
                             break;
 
-                        byte alpha = (byte)(Math.Clamp(data.Transparency ?? 1, 0, 1) * 255);
-                        uint color = data.Color is null ? 0 : Convert.ToUInt32(data.Color.TrimStart('#'), 16);
-                        uint mode = data.UseAlpha == true ? LWA_ALPHA : LWA_COLORKEY;
+                        if (data.Transparency is float transparency)
+                            _transparency = (byte)(Math.Clamp(transparency, 0, 1) * 255);
+
+                        if (data.Color is not null)
+                            _transparencyColor = Convert.ToUInt32(data.Color.TrimStart('#'), 16);
+
+                        if (data.UseAlpha is bool useAlpha)
+                            _transparencyMode = useAlpha ? LWA_ALPHA : LWA_COLORKEY;
+
+                        byte alpha = _transparency;
+                        uint color = _transparencyColor;
+                        uint mode = _transparencyMode;
 
                         if (!_changedWindow)
                             SaveWindow();

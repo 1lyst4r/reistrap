@@ -254,8 +254,8 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public bool DisableFullscreenOptimizations
         {
-            get => App.Settings.Prop.DisableFullscreenOptimizations;
-            set => App.Settings.Prop.DisableFullscreenOptimizations = value;
+            get => App.Settings.Prop.WindowControlDisableFso;
+            set => App.Settings.Prop.WindowControlDisableFso = value;
         }
 
         public bool WindowControlColor
