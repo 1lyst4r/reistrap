@@ -3263,4 +3263,7 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="LaunchMenu.Discord" xml:space="preserve">
     <value>Discord</value>
   </data>
+  <data name="LaunchMenu.DiscordUnavailable" xml:space="preserve">
+    <value>reistrap Discord not available yet!</value>
+  </data>
 </root>

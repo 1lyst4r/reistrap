@@ -18,6 +18,8 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
         public ICommand LaunchAboutCommand => new RelayCommand(LaunchAbout);
 
+        public ICommand OpenDiscordCommand => new RelayCommand(() => Frontend.ShowMessageBox(Strings.LaunchMenu_DiscordUnavailable, MessageBoxImage.Warning));
+
         public event EventHandler<NextAction>? CloseWindowRequest;
 
         public IReadOnlyList<GameStatsEntry> RecentGames { get; } = App.Settings.Prop.TrackGameStats ? GameStatsTracker.GetRecent(5).ToList() : new();

@@ -6199,5 +6199,14 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("LaunchMenu.Discord", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to reistrap Discord not available yet!.
+        /// </summary>
+        public static string LaunchMenu_DiscordUnavailable {
+            get {
+                return ResourceManager.GetString("LaunchMenu.DiscordUnavailable", resourceCulture);
+            }
+        }
     }
 }

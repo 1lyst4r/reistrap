@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Runtime.InteropServices;
+using System.Windows;
 using Microsoft.Win32;
 
 namespace Bloxstrap
@@ -372,6 +373,26 @@ namespace Bloxstrap
             App.SendStat("installAction", "uninstall");
         }
 
+        [DllImport("shell32.dll")]
+        private static extern void SHChangeNotify(int eventId, uint flags, IntPtr item1, IntPtr item2);
+
+        private static void RefreshShellIcons()
+        {
+            try
+            {
+                string tool = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "ie4uinit.exe");
+
+                if (File.Exists(tool))
+                    Process.Start(new ProcessStartInfo(tool, "-show") { CreateNoWindow = true, UseShellExecute = false })?.WaitForExit(5000);
+
+                SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("Installer::RefreshShellIcons", ex);
+            }
+        }
+
         public static void HandleUpgrade()
         {
             const string LOG_IDENT = "Installer::HandleUpgrade";
@@ -464,6 +485,8 @@ namespace Bloxstrap
                 uninstallKey.SetValueSafe("URLInfoAbout", App.ProjectSupportLink);
                 uninstallKey.SetValueSafe("URLUpdateInfo", App.ProjectDownloadLink);
             }
+
+            RefreshShellIcons();
 
             // update migrations
 

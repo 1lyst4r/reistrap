@@ -95,7 +95,7 @@
                         <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="{x:Static resources:Strings.LaunchMenu_Settings}" />
                     </StackPanel>
                 </ui:Button>
-                <ui:Button Grid.Column="2" Style="{StaticResource LaunchButton}" TabIndex="2" Command="models:GlobalViewModel.OpenWebpageCommand" CommandParameter="https://discord.gg/nKjV3mGq6R">
+                <ui:Button Grid.Column="2" Style="{StaticResource LaunchButton}" TabIndex="2" Command="{Binding OpenDiscordCommand, Mode=OneTime}">
                     <StackPanel Orientation="Horizontal">
                         <ui:SymbolIcon Symbol="Chat24" FontSize="24" VerticalAlignment="Center" />
                         <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="{x:Static resources:Strings.LaunchMenu_Discord}" />
