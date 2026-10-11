@@ -34,9 +34,7 @@ namespace Bloxstrap.Integrations
         private const uint SWP_NOMOVE = 0x0002;
         private const uint SWP_NOZORDER = 0x0004;
         private const uint SWP_NOACTIVATE = 0x0010;
-        private const uint SWP_NOCOPYBITS = 0x0100;
         private const uint SWP_NOOWNERZORDER = 0x0200;
-        private const uint SWP_DEFERERASE = 0x2000;
         private const uint SWP_FRAMECHANGED = 0x0020;
         private const uint SWP_NOSENDCHANGING = 0x0400;
         private const uint SWP_ASYNCWINDOWPOS = 0x4000;
@@ -101,6 +99,10 @@ namespace Bloxstrap.Integrations
         private long _originalExStyle;
 
         private long _originalStyle;
+
+        private long _appliedExStyle;
+
+        private (uint Color, byte Alpha, uint Mode)? _appliedLayer;
 
         private bool _gameAllowed;
 
@@ -284,7 +286,7 @@ namespace Bloxstrap.Integrations
             if (_window == IntPtr.Zero)
                 return false;
 
-            _originalExStyle = GetWindowLongPtr(_window, GWL_EXSTYLE).ToInt64();
+            _originalExStyle = _appliedExStyle = GetWindowLongPtr(_window, GWL_EXSTYLE).ToInt64();
             SaveWindow();
 
             return true;
@@ -357,7 +359,7 @@ namespace Bloxstrap.Integrations
             _setWidth = width;
             _setHeight = height;
 
-            uint flags = SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_DEFERERASE | SWP_ASYNCWINDOWPOS | SWP_NOSENDCHANGING;
+            uint flags = SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS | SWP_NOSENDCHANGING;
 
             if (!moved)
                 flags |= SWP_NOMOVE;
@@ -366,6 +368,16 @@ namespace Bloxstrap.Integrations
                 flags |= SWP_NOSIZE;
 
             SetWindowPos(_window, IntPtr.Zero, x, y, width, height, flags);
+        }
+
+        private void SetExStyle(long style)
+        {
+            if (style == _appliedExStyle)
+                return;
+
+            SetWindowLongPtr(_window, GWL_EXSTYLE, new IntPtr(style));
+            _appliedExStyle = style;
+            _appliedLayer = null;
         }
 
         private void SetBorderless(bool borderless)
@@ -410,7 +422,7 @@ namespace Bloxstrap.Integrations
             if (_changedWindow)
             {
                 MoveWindow(_startX, _startY, _startWidth, _startHeight);
-                SetWindowLongPtr(_window, GWL_EXSTYLE, new IntPtr(_originalExStyle));
+                SetExStyle(_originalExStyle);
                 SetWindowLongPtr(_window, GWL_STYLE, new IntPtr(_originalStyle));
                 SetWindowPos(_window, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_ASYNCWINDOWPOS | SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
                 _changedWindow = false;
@@ -562,12 +574,17 @@ namespace Bloxstrap.Integrations
 
                         if (alpha == 255)
                         {
-                            SetWindowLongPtr(_window, GWL_EXSTYLE, new IntPtr(_originalExStyle));
+                            SetExStyle(_originalExStyle);
                         }
                         else
                         {
-                            SetWindowLongPtr(_window, GWL_EXSTYLE, new IntPtr((_originalExStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT));
-                            SetLayeredWindowAttributes(_window, color, alpha, mode);
+                            SetExStyle((_originalExStyle | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT);
+
+                            if (_appliedLayer != (color, alpha, mode))
+                            {
+                                SetLayeredWindowAttributes(_window, color, alpha, mode);
+                                _appliedLayer = (color, alpha, mode);
+                            }
                         }
 
                         break;
