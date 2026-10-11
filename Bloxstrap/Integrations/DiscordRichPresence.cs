@@ -21,6 +21,10 @@ namespace Bloxstrap.Integrations
 
         private bool _visible = true;
 
+        private DateTime _lastSent = DateTime.MinValue;
+
+        private bool _sendQueued;
+
         public DiscordRichPresence(ActivityWatcher activityWatcher)
         {
             const string LOG_IDENT = "DiscordRichPresence";
@@ -222,6 +226,9 @@ namespace Bloxstrap.Integrations
             else if (presenceData.TimestampEnd is not null)
                 _currentPresence.Timestamps.EndUnixMilliseconds = presenceData.TimestampEnd * 1000;
 
+            if (_currentPresence.Timestamps.Start is DateTime start && _currentPresence.Timestamps.End is DateTime end && end <= start)
+                _currentPresence.Timestamps.End = null;
+
             // set these to start fetching
             ulong? smallImgFetch = null;
             ulong? largeImgFetch = null;
@@ -417,7 +424,7 @@ namespace Bloxstrap.Integrations
                 Assets = new Assets
                 {
                     LargeImageKey = icon,
-                    LargeImageText = universeDetails.Data.Name,
+                    LargeImageText = App.Settings.Prop.ShowUsingReistrapInRichPresence ? $"{universeDetails.Data.Name}, using {App.ProjectName}" : universeDetails.Data.Name,
                     SmallImageKey = smallImage,
                     SmallImageText = smallImageText
                 }
@@ -482,10 +489,31 @@ namespace Bloxstrap.Integrations
                 return;
             }
 
+            if (!_visible)
+                return;
+
+            var wait = TimeSpan.FromSeconds(1) - (DateTime.Now - _lastSent);
+
+            if (wait > TimeSpan.Zero)
+            {
+                if (_sendQueued)
+                    return;
+
+                _sendQueued = true;
+
+                Task.Delay(wait).ContinueWith(_ =>
+                {
+                    _sendQueued = false;
+                    UpdatePresence();
+                });
+
+                return;
+            }
+
             App.Logger.WriteLine(LOG_IDENT, $"Updating presence");
 
-            if (_visible)
-                _rpcClient.SetPresence(_currentPresence);
+            _lastSent = DateTime.Now;
+            _rpcClient.SetPresence(_currentPresence);
         }
 
         public void Dispose()

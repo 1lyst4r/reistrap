@@ -126,8 +126,12 @@ namespace Bloxstrap.UI.Elements.Base
                 }
             };
 
-            Background = group;
             WindowBackdropType = BackgroundType.None;
+
+            if (new WindowInteropHelper(this).Handle != IntPtr.Zero)
+                Wpf.Ui.Appearance.Background.Remove(this);
+
+            Background = group;
         }
 
         protected override void OnSourceInitialized(EventArgs e)

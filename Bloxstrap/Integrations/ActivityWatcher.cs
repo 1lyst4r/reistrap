@@ -399,7 +399,7 @@
                         return;
                     }
 
-                    bool rateLimited = message.Command is "SetRichPresence" or "SetLaunchData";
+                    bool rateLimited = message.Command is "SetLaunchData";
 
                     if (rateLimited)
                     {
