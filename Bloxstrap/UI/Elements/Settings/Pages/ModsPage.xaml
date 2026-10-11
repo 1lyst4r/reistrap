@@ -31,14 +31,21 @@
                 </StackPanel>
             </ui:CardAction>
 
-            <ui:CardAction Grid.Row="0" Grid.Column="1" Margin="4,0,0,0" Icon="BookQuestionMark24" Command="models:GlobalViewModel.OpenWebpageCommand" CommandParameter="https://bloxstraplabs.com/wiki/features/modding/">
+            <ui:CardAction Grid.Row="0" Grid.Column="1" Margin="4,0,4,0" Icon="ColorBackground24" Click="OpenModGenerator_Click">
+                <StackPanel>
+                    <TextBlock FontSize="14" Text="{x:Static resources:Strings.Menu_ModGenerator_Title}" TextWrapping="Wrap" />
+                    <TextBlock Margin="0,2,0,0" FontSize="12" Text="{x:Static resources:Strings.Menu_ModGenerator_Short}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap" />
+                </StackPanel>
+            </ui:CardAction>
+
+            <ui:CardAction Grid.Row="0" Grid.Column="2" Margin="4,0,0,0" Icon="BookQuestionMark24" Command="models:GlobalViewModel.OpenWebpageCommand" CommandParameter="https://bloxstraplabs.com/wiki/features/modding/">
                 <StackPanel>
                     <TextBlock FontSize="14" Text="{x:Static resources:Strings.Common_Help}" />
                     <TextBlock Margin="0,2,0,0" FontSize="12" Text="{x:Static resources:Strings.Menu_Mods_Help_Description}" Padding="0,0,16,0"  Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </ui:CardAction>
 
-            <ui:CardAction Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0" Icon="WindowWrench24" Command="{Binding OpenCompatSettingsCommand}">
+            <ui:CardAction Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,0" Icon="WindowWrench24" Command="{Binding OpenCompatSettingsCommand}">
                 <StackPanel>
                     <TextBlock FontSize="14" Text="{x:Static resources:Strings.Menu_Mods_Misc_CompatibilitySettings_Title}" TextWrapping="Wrap" />
                     <controls:MarkdownTextBlock Margin="0,2,0,0" FontSize="12" MarkdownText="{Binding Source={x:Static resources:Strings.Menu_Mods_Misc_CompatibilitySettings_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://devblogs.microsoft.com/directx/demystifying-full-screen-optimizations/'}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap" />
@@ -144,85 +151,6 @@
                 <ui:Button Margin="8,0,0,0" Icon="Save24" Content="{x:Static resources:Strings.Common_Save}" Command="{Binding SaveCursorSetCommand}" />
             </StackPanel>
         </controls:OptionControl>
-
-        <Border Style="{StaticResource SectionSeparator}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_ColorMods_Title}" Style="{StaticResource SectionTitle}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_ColorMods_Description}" Style="{StaticResource SectionDescription}" />
-
-        <ui:Card Margin="0,8,0,0" Padding="16">
-            <StackPanel>
-                <TextBlock FontSize="16" FontWeight="Medium" Text="{x:Static resources:Strings.Menu_Mods_ColorMods_Preview}" />
-                <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding IconPreview}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="56" Height="56" Margin="0,0,6,6" CornerRadius="6" Background="{DynamicResource ControlFillColorSecondaryBrush}">
-                                <Image Width="32" Height="32" Source="{Binding}" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ui:Card>
-
-        <ui:Card Margin="0,8,0,0" Padding="16">
-            <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="16" FontWeight="Medium" Text="{x:Static resources:Strings.Menu_Mods_ColorMods_Colors}" />
-                    <ui:Button Grid.Column="1" Icon="Add24" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_AddColor}" Command="{Binding AddGradientStopCommand}" />
-                </Grid>
-                <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding GradientStops}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,6,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="44" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border Grid.Column="0" Width="24" Height="24" CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" Background="{Binding Swatch}" />
-                                <Slider Grid.Column="1" Margin="12,0" VerticalAlignment="Center" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1" Value="{Binding Offset, Mode=TwoWay}" />
-                                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Offset, StringFormat={}{0:0.00}}" />
-                                <ui:TextBox Grid.Column="3" Width="110" Margin="8,0,0,0" Padding="10,5,10,5" Text="{Binding Hex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <ui:Button Grid.Column="4" Margin="8,0,0,0" Icon="Delete24" Command="{Binding DataContext.RemoveGradientStopCommand, RelativeSource={RelativeSource AncestorType=ItemsControl, AncestorLevel=2}}" CommandParameter="{Binding}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ui:Card>
-
-        <controls:OptionControl Header="{x:Static resources:Strings.Menu_Mods_ColorMods_Angle_Title}" Description="{x:Static resources:Strings.Menu_Mods_ColorMods_Angle_Description}">
-            <StackPanel Orientation="Horizontal">
-                <Slider Width="180" Minimum="0" Maximum="360" IsSnapToTickEnabled="True" TickFrequency="15" Value="{Binding GradientAngle, Mode=TwoWay}" />
-                <TextBlock Width="40" Margin="8,0,0,0" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding GradientAngle, Mode=OneWay, StringFormat={}{0:0}°}" />
-            </StackPanel>
-        </controls:OptionControl>
-
-        <controls:OptionControl Header="{x:Static resources:Strings.Menu_Mods_ColorMods_Apply_Title}">
-            <WrapPanel>
-                <CheckBox Margin="0,0,16,0" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_Apply_Icons}" IsChecked="{Binding ColorIcons}" />
-                <CheckBox Margin="0,0,16,0" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_Cursor}" IsChecked="{Binding ColorCursors}" />
-                <CheckBox Margin="0,0,16,0" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_ShiftLock}" IsChecked="{Binding ColorShiftLock}" />
-                <CheckBox Margin="0,0,16,0" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_EmoteWheel}" IsChecked="{Binding ColorEmoteWheel}" />
-            </WrapPanel>
-        </controls:OptionControl>
-
-        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-            <ui:Button Icon="ColorBackground24" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_Generate}" Command="{Binding GenerateColorModsCommand}" />
-            <ui:Button Margin="8,0,0,0" Icon="Delete24" Appearance="Danger" Content="{x:Static resources:Strings.Menu_Mods_ColorMods_Remove}" Command="{Binding RemoveColorModsCommand}" />
-        </StackPanel>
-
 
         <Border Style="{StaticResource SectionSeparator}" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Mods_Skybox_Title}" Style="{StaticResource SectionTitle}" />

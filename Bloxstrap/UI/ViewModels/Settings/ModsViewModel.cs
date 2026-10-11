@@ -26,8 +26,6 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
             GradientStops.Add(new GradientStopItem(0, "#FFFFFF", QueuePreview));
             GradientStops.Add(new GradientStopItem(1, "#9B6DFF", QueuePreview));
-
-            QueuePreview();
         }
 
         private void OpenModsFolder() => Process.Start("explorer.exe", Paths.Modifications);
@@ -289,7 +287,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ICommand RemoveColorModsCommand => new RelayCommand(RemoveColorMods);
 
-        private void QueuePreview()
+        public void QueuePreview()
         {
             _previewTimer.Stop();
             _previewTimer.Start();

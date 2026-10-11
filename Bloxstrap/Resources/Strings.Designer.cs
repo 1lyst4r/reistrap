@@ -6046,5 +6046,41 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Appearance.Background.Radial.Description", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod generator.
+        /// </summary>
+        public static string Menu_ModGenerator_Title {
+            get {
+                return ResourceManager.GetString("Menu.ModGenerator.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recolor Roblox icons, cursors and more..
+        /// </summary>
+        public static string Menu_ModGenerator_Short {
+            get {
+                return ResourceManager.GetString("Menu.ModGenerator.Short", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recolor Roblox UI icons, cursors, the Shift Lock icon and the emote wheel with your own gradient..
+        /// </summary>
+        public static string Menu_ModGenerator_Description {
+            get {
+                return ResourceManager.GetString("Menu.ModGenerator.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back to Mods.
+        /// </summary>
+        public static string Menu_ModGenerator_Back {
+            get {
+                return ResourceManager.GetString("Menu.ModGenerator.Back", resourceCulture);
+            }
+        }
     }
 }

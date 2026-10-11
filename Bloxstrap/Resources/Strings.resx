@@ -3210,4 +3210,16 @@ Switch channels?</value>
   <data name="Menu.Appearance.Background.Radial.Description" xml:space="preserve">
     <value>Spread the colors out from the center instead of in a line.</value>
   </data>
+  <data name="Menu.ModGenerator.Title" xml:space="preserve">
+    <value>Mod generator</value>
+  </data>
+  <data name="Menu.ModGenerator.Short" xml:space="preserve">
+    <value>Recolor Roblox icons, cursors and more.</value>
+  </data>
+  <data name="Menu.ModGenerator.Description" xml:space="preserve">
+    <value>Recolor Roblox UI icons, cursors, the Shift Lock icon and the emote wheel with your own gradient.</value>
+  </data>
+  <data name="Menu.ModGenerator.Back" xml:space="preserve">
+    <value>Back to Mods</value>
+  </data>
 </root>

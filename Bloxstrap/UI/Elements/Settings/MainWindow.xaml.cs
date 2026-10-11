@@ -42,7 +42,8 @@ namespace Bloxstrap.UI.Elements.Settings
             ["gameprofiles"] = Strings.Menu_GameProfiles_Description,
             ["shortcuts"] = Strings.Menu_Shortcuts_Description,
             ["reistrap"] = Strings.Menu_Bloxstrap_Description,
-            ["fastflageditor"] = Strings.Menu_FastFlagEditor_Description
+            ["fastflageditor"] = Strings.Menu_FastFlagEditor_Description,
+            ["modgenerator"] = Strings.Menu_ModGenerator_Description
         };
 
         public bool RestartRequested => _viewModel.RestartRequested;
