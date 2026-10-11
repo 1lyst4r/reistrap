@@ -94,7 +94,7 @@ namespace Bloxstrap.UI.Elements.Controls
             parent.Children.Insert(index, header);
 
             string key = $"{parent.FindAncestorPage()}/{title.Text}";
-            bool collapsed = App.Settings.Prop.CollapsedSections.Contains(key);
+            bool collapsed = App.State.Prop.CollapsedSections.Contains(key);
 
             Set(body, chevron, !collapsed, false);
 
@@ -103,9 +103,9 @@ namespace Bloxstrap.UI.Elements.Controls
                 collapsed = !collapsed;
 
                 if (collapsed)
-                    App.Settings.Prop.CollapsedSections.Add(key);
+                    App.State.Prop.CollapsedSections.Add(key);
                 else
-                    App.Settings.Prop.CollapsedSections.Remove(key);
+                    App.State.Prop.CollapsedSections.Remove(key);
 
                 Set(body, chevron, !collapsed, true);
             };
@@ -116,7 +116,7 @@ namespace Bloxstrap.UI.Elements.Controls
                     return;
 
                 collapsed = false;
-                App.Settings.Prop.CollapsedSections.Remove(key);
+                App.State.Prop.CollapsedSections.Remove(key);
                 Set(body, chevron, true, false);
             });
         }
@@ -152,9 +152,7 @@ namespace Bloxstrap.UI.Elements.Controls
             {
                 rotation.BeginAnimation(RotateTransform.AngleProperty, null);
                 rotation.Angle = angle;
-                body.BeginAnimation(FrameworkElement.HeightProperty, null);
-                body.BeginAnimation(UIElement.OpacityProperty, null);
-                body.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                Reveal.Apply(body, show);
                 return;
             }
 

@@ -469,6 +469,14 @@ namespace Bloxstrap
 
             if (existingVer is not null)
             {
+                if (Utilities.CompareVersions(existingVer, "1.3.0") == VersionComparison.LessThan && App.Settings.Prop.BackgroundMode == BackgroundMode.Default)
+                {
+                    if (!String.IsNullOrEmpty(App.Settings.Prop.BackgroundImage))
+                        App.Settings.Prop.BackgroundMode = BackgroundMode.Image;
+                    else if (!String.IsNullOrEmpty(App.Settings.Prop.BackgroundGradient))
+                        App.Settings.Prop.BackgroundMode = BackgroundMode.Gradient;
+                }
+
                 App.Settings.Save();
                 App.FastFlags.Save();
                 App.State.Save();

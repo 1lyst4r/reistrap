@@ -22,7 +22,8 @@ namespace Bloxstrap.UI.ViewModels.Settings
     {
         public ModsViewModel()
         {
-            _previewTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Background, (_, _) => RefreshPreview(), Dispatcher.CurrentDispatcher);
+            _previewTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(250) };
+            _previewTimer.Tick += (_, _) => RefreshPreview();
 
             GradientStops.Add(new GradientStopItem(0, "#FFFFFF", QueuePreview));
             GradientStops.Add(new GradientStopItem(1, "#9B6DFF", QueuePreview));

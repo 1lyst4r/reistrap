@@ -37,6 +37,8 @@ namespace Bloxstrap.Models.Entities
 
         public bool IsTeleport { get; set; } = false;
 
+        public bool StatsRecorded { get; set; } = false;
+
         public ServerType ServerType { get; set; } = ServerType.Public;
 
         public DateTime TimeJoined { get; set; }

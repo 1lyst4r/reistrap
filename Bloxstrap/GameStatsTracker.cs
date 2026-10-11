@@ -77,6 +77,11 @@ namespace Bloxstrap
 
             try
             {
+                if (activity.StatsRecorded)
+                    return;
+
+                activity.StatsRecorded = true;
+
                 var manager = new JsonManager<GameStats>();
                 manager.Load(false);
 

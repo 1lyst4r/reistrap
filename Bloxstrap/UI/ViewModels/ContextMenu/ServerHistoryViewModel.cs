@@ -22,10 +22,14 @@ namespace Bloxstrap.UI.ViewModels.ContextMenu
         {
             _activityWatcher = activityWatcher;
 
-            _activityWatcher.OnGameLeave += (_, _) => LoadData();
+            _activityWatcher.OnGameLeave += OnGameLeave;
 
             LoadData();
         }
+
+        private void OnGameLeave(object? sender, EventArgs e) => LoadData();
+
+        public void Detach() => _activityWatcher.OnGameLeave -= OnGameLeave;
 
         private async void LoadData()
         {

@@ -101,7 +101,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
 
         public ByfronDialog(bool modern = false)
         {
-            string version = Utilities.GetRobloxVersionStr(Bootstrapper?.IsStudioLaunch ?? false);
+            string version = Utilities.GetRobloxVersionStr(App.Bootstrapper?.IsStudioLaunch ?? false);
             _viewModel = new ByfronDialogViewModel(this, version);
             _viewModel.LogoVisibility = modern ? Visibility.Collapsed : Visibility.Visible;
             DataContext = _viewModel;

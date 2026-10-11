@@ -108,7 +108,7 @@ namespace Bloxstrap.UI.Elements.Controls
 
             markdownTextBlock.Inlines.Clear();
 
-            var lastBlock = document.Last();
+            var lastBlock = document.LastOrDefault();
 
             // matt was evidently very tired on the night he was first writing this
             // https://github.com/bloxstraplabs/bloxstrap/blob/289b9dec77cf35b2cc6504019bc9c7701626be1f/Bloxstrap/UI/Elements/Controls/MarkdownTextBlock.cs#L111

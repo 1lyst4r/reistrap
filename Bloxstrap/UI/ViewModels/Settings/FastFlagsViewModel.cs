@@ -37,6 +37,39 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public FastFlagsViewModel()
         {
             ReloadProfiles();
+
+            foreach (var flag in AllowlistedFlags)
+            {
+                flag.PropertyChanged += (_, _) =>
+                {
+                    if (!_refreshingAllowlist)
+                        OnPropertyChanged(String.Empty);
+                };
+            }
+        }
+
+        private bool _refreshingAllowlist;
+
+        private void SetPreset(string prefix, object? value)
+        {
+            App.FastFlags.SetPreset(prefix, value);
+            RefreshAllowlist();
+        }
+
+        private void SetPresetEnum(string prefix, string target, object? value)
+        {
+            App.FastFlags.SetPresetEnum(prefix, target, value);
+            RefreshAllowlist();
+        }
+
+        private void RefreshAllowlist()
+        {
+            _refreshingAllowlist = true;
+
+            foreach (var flag in AllowlistedFlags)
+                flag.Refresh();
+
+            _refreshingAllowlist = false;
         }
 
         private static string GetProfilePath(string name) => Path.Combine(Paths.FastFlagProfiles, $"{name}.json");
@@ -156,31 +189,31 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public MSAAMode SelectedMSAALevel
         {
             get => MSAALevels.FirstOrDefault(x => x.Value == App.FastFlags.GetPreset("Rendering.MSAA")).Key;
-            set => App.FastFlags.SetPreset("Rendering.MSAA", MSAALevels[value]);
+            set => SetPreset("Rendering.MSAA", MSAALevels[value]);
         }
 
         public bool FixDisplayScaling
         {
             get => App.FastFlags.GetPreset("Rendering.DisableScaling") == "True";
-            set => App.FastFlags.SetPreset("Rendering.DisableScaling", value ? "True" : null);
+            set => SetPreset("Rendering.DisableScaling", value ? "True" : null);
         }
 
         public bool PauseVoxelizer
         {
             get => App.FastFlags.GetPreset("Rendering.PauseVoxelizer") == "True";
-            set => App.FastFlags.SetPreset("Rendering.PauseVoxelizer", value ? "True" : null);
+            set => SetPreset("Rendering.PauseVoxelizer", value ? "True" : null);
         }
 
         public bool GraySky
         {
             get => App.FastFlags.GetPreset("Rendering.GraySky") == "True";
-            set => App.FastFlags.SetPreset("Rendering.GraySky", value ? "True" : null);
+            set => SetPreset("Rendering.GraySky", value ? "True" : null);
         }
 
         public bool DisableGrass
         {
             get => App.FastFlags.GetPreset("Geometry.Grass.MaxDistance") == "0";
-            set => App.FastFlags.SetPreset("Geometry.Grass", value ? "0" : null);
+            set => SetPreset("Geometry.Grass", value ? "0" : null);
         }
 
         public IReadOnlyList<RenderingMode> RenderingModes { get; } = Enum.GetValues<RenderingMode>();
@@ -200,9 +233,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set
             {
                 if (value == RenderingMode.Default)
-                    App.FastFlags.SetPreset("Rendering.Mode", null);
+                    SetPreset("Rendering.Mode", null);
                 else
-                    App.FastFlags.SetPresetEnum("Rendering.Mode", value.ToString(), "True");
+                    SetPresetEnum("Rendering.Mode", value.ToString(), "True");
             }
         }
 
@@ -211,7 +244,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public string SelectedQualityLevel
         {
             get => App.FastFlags.GetPreset("Rendering.FRMQuality") ?? Strings.Common_Default;
-            set => App.FastFlags.SetPreset("Rendering.FRMQuality", int.TryParse(value, out _) ? value : null);
+            set => SetPreset("Rendering.FRMQuality", int.TryParse(value, out _) ? value : null);
         }
 
         public int MeshDetail
@@ -219,7 +252,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
             get => int.TryParse(App.FastFlags.GetPreset("Geometry.MeshDetail.L0"), out int value) ? Array.IndexOf(MeshDetailDistances, value) is int i and >= 0 ? i : 5 : 5;
             set
             {
-                App.FastFlags.SetPreset("Geometry.MeshDetail", value >= 5 ? null : MeshDetailDistances[Math.Max(value, 0)].ToString());
+                SetPreset("Geometry.MeshDetail", value >= 5 ? null : MeshDetailDistances[Math.Max(value, 0)].ToString());
                 OnPropertyChanged(nameof(MeshDetail));
             }
         }
@@ -235,12 +268,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
             {
                 if (value == TextureQuality.Default)
                 {
-                    App.FastFlags.SetPreset("Rendering.TextureQuality", null);
+                    SetPreset("Rendering.TextureQuality", null);
                 }
                 else
                 {
-                    App.FastFlags.SetPreset("Rendering.TextureQuality.OverrideEnabled", "True");
-                    App.FastFlags.SetPreset("Rendering.TextureQuality.Level", TextureQualities[value]);
+                    SetPreset("Rendering.TextureQuality.OverrideEnabled", "True");
+                    SetPreset("Rendering.TextureQuality.Level", TextureQualities[value]);
                 }
             }
         }

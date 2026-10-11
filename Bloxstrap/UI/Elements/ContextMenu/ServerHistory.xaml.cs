@@ -10,6 +10,7 @@ namespace Bloxstrap.UI.Elements.ContextMenu
             var viewModel = new ServerHistoryViewModel(watcher);
 
             viewModel.RequestCloseEvent += (_, _) => Close();
+            Closed += (_, _) => viewModel.Detach();
 
             DataContext = viewModel;
             InitializeComponent();

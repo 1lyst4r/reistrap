@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 namespace Bloxstrap.UI.Elements.Bootstrapper
@@ -215,7 +216,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
 
             path = GetFullPath(dialog, path)!;
 
-            if (!Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out Uri? result))
+            if (!Uri.TryCreate(path, UriKind.Absolute, out Uri? result))
                 throw new CustomThemeException("CustomTheme.Errors.ElementAttributeParseError", xmlElement.Name, name, "Uri");
 
             if (result == null)
@@ -224,7 +225,31 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
             if (result.Scheme != "file")
                 throw new CustomThemeException("CustomTheme.Errors.ElementAttributeBlacklistedUriScheme", xmlElement.Name, name, result.Scheme);
 
+            if (result.IsUnc)
+                throw new CustomThemeException("CustomTheme.Errors.ElementAttributeBlacklistedUriScheme", xmlElement.Name, name, "unc");
+
             return new GetImageSourceDataResult { Uri = result };
+        }
+
+        private static string? GetFontFamily(CustomDialog dialog, XElement xmlElement)
+        {
+            string? fontFamily = GetFullPath(dialog, xmlElement.Attribute("FontFamily")?.Value);
+
+            if (fontFamily is not null && (fontFamily.StartsWith(@"\\") || fontFamily.StartsWith("//") || (fontFamily.Contains("://") && !fontFamily.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))))
+                throw new CustomThemeException("CustomTheme.Errors.ElementAttributeBlacklistedUriScheme", xmlElement.Name, "FontFamily", "unc");
+
+            return fontFamily;
+        }
+
+        private static BitmapImage LoadBitmap(Uri uri)
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.UriSource = uri;
+            bitmap.EndInit();
+
+            return bitmap;
         }
 
         private static object? GetContentFromXElement(CustomDialog dialog, XElement xmlElement)

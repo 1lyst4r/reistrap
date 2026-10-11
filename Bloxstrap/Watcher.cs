@@ -37,6 +37,8 @@ namespace Bloxstrap
 
         private System.Drawing.Icon? _gameIcon;
 
+        private System.Drawing.Icon? _appliedGameIcon;
+
         private System.Drawing.Icon? _customIcon;
 
         private IntPtr _appliedIcon;
@@ -252,7 +254,8 @@ namespace Bloxstrap
                     _gameTitleApplied = false;
                 }
 
-                var icon = (_gameIcon ?? _customIcon)?.Handle ?? IntPtr.Zero;
+                var gameIcon = _gameIcon;
+                var icon = (gameIcon ?? _customIcon)?.Handle ?? IntPtr.Zero;
 
                 if (icon != IntPtr.Zero && (icon != _appliedIcon || _robloxWindow.Handle != _appliedIconWindow))
                 {
@@ -262,11 +265,13 @@ namespace Bloxstrap
                     _robloxWindow.ApplyIcon(icon);
                     _appliedIcon = icon;
                     _appliedIconWindow = _robloxWindow.Handle;
+                    ReleaseGameIcon(gameIcon);
                 }
                 else if (icon == IntPtr.Zero && _appliedIcon != IntPtr.Zero && _robloxWindow.Handle == _appliedIconWindow)
                 {
                     _robloxWindow.RestoreIcons(_originalIcons);
                     _appliedIcon = IntPtr.Zero;
+                    ReleaseGameIcon(null);
                 }
 
                 if (settings.RobloxBorderless && WindowControl is not { Active: true })
@@ -327,6 +332,14 @@ namespace Bloxstrap
             {
                 App.Logger.WriteException(LOG_IDENT, ex);
             }
+        }
+
+        private void ReleaseGameIcon(System.Drawing.Icon? current)
+        {
+            if (_appliedGameIcon is not null && _appliedGameIcon != current)
+                _appliedGameIcon.Dispose();
+
+            _appliedGameIcon = current;
         }
 
         private void StartStudioIcon()

@@ -10,6 +10,8 @@
 
         public DateTime LastThemeCycle { get; set; } = DateTime.MinValue;
 
+        public List<string> CollapsedSections { get; set; } = new();
+
         public WindowState SettingsWindow { get; set; } = new();
     }
 }

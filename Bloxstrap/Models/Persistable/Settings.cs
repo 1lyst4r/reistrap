@@ -22,7 +22,6 @@ namespace Bloxstrap.Models.Persistable
         public double BackgroundOpacity { get; set; } = 0.3;
         public BackgroundStretch BackgroundStretch { get; set; } = BackgroundStretch.UniformToFill;
         public bool DisableAnimations { get; set; } = false;
-        public List<string> CollapsedSections { get; set; } = new();
         public bool CycleCustomThemes { get; set; } = false;
         public ThemeCycleInterval CycleCustomThemesInterval { get; set; } = ThemeCycleInterval.EveryLaunch;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

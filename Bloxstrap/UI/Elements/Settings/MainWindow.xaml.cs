@@ -258,6 +258,8 @@ namespace Bloxstrap.UI.Elements.Settings
             Collapsible.ExpandTo(target);
             target.UpdateLayout();
 
+            target = GetVisibleTarget(target);
+
             var scrollViewer = FindAncestor<ScrollViewer>(target);
 
             if (scrollViewer is null)
@@ -268,6 +270,28 @@ namespace Bloxstrap.UI.Elements.Settings
 
             var offset = target.TranslatePoint(new Point(0, 0), scrollViewer).Y;
             scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset - 8);
+        }
+
+        private static FrameworkElement GetVisibleTarget(FrameworkElement target)
+        {
+            FrameworkElement? hidden = null;
+
+            for (DependencyObject? current = target; current is not null and not Page; current = System.Windows.Media.VisualTreeHelper.GetParent(current))
+            {
+                if (current is FrameworkElement { Visibility: not Visibility.Visible } element)
+                    hidden = element;
+            }
+
+            if (hidden?.Parent is not Panel panel)
+                return target;
+
+            for (int i = panel.Children.IndexOf(hidden) - 1; i >= 0; i--)
+            {
+                if (panel.Children[i] is FrameworkElement { Visibility: Visibility.Visible } previous)
+                    return previous;
+            }
+
+            return panel;
         }
 
         private static FrameworkElement? FindHeaderElement(DependencyObject parent, string header)

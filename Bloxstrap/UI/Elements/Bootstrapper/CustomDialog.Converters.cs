@@ -20,7 +20,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
                 }
                 return default;
             }
-            catch (NotSupportedException)
+            catch (Exception)
             {
                 return default;
             }

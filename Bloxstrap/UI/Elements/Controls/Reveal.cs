@@ -74,13 +74,20 @@ namespace Bloxstrap.UI.Elements.Controls
 
             if (!animate || !element.IsLoaded || App.Settings.Prop.DisableAnimations)
             {
-                element.BeginAnimation(FrameworkElement.HeightProperty, null);
-                element.BeginAnimation(UIElement.OpacityProperty, null);
-                element.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                Apply(element, show);
                 return;
             }
 
             Animate(element, show);
+        }
+
+        public static void Apply(FrameworkElement element, bool show)
+        {
+            element.SetValue(TargetProperty, show);
+            element.BeginAnimation(FrameworkElement.HeightProperty, null);
+            element.BeginAnimation(UIElement.OpacityProperty, null);
+            element.ClipToBounds = false;
+            element.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public static void Animate(FrameworkElement element, bool show)

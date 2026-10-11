@@ -138,6 +138,10 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ICommand RefreshServersCommand => new AsyncRelayCommand(() => LoadServers(SelectedGame?.PlaceId ?? 0));
 
+        private int _placesRequest;
+
+        private int _serversRequest;
+
         public ICommand RejoinCommand => new RelayCommand(() => Join(_lastServer?.PlaceId ?? 0, _lastServer?.JobId));
 
         public QuickPlayViewModel()
@@ -277,9 +281,14 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
             Subplaces.Clear();
 
+            int request = ++_placesRequest;
+
             try
             {
                 var places = await Http.GetJson<PlacesResponse>($"https://develop.roblox.com/v1/universes/{game.UniverseId}/places?limit=50");
+
+                if (request != _placesRequest)
+                    return;
 
                 foreach (var place in places.Data)
                 {
@@ -309,9 +318,14 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
             Servers.Clear();
 
+            int request = ++_serversRequest;
+
             try
             {
                 var servers = await Http.GetJson<ServersResponse>($"https://games.roblox.com/v1/games/{placeId}/servers/Public?limit=25&sortOrder=Desc&excludeFullGames=true");
+
+                if (request != _serversRequest)
+                    return;
 
                 foreach (var server in servers.Data)
                 {

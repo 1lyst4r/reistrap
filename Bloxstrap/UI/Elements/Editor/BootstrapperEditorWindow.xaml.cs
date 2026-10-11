@@ -190,6 +190,9 @@ namespace Bloxstrap.UI.Elements.Editor
             else if (result == MessageBoxResult.Yes)
             {
                 _viewModel.SaveCommand.Execute(null);
+
+                if (_viewModel.CodeChanged)
+                    e.Cancel = true;
             }
         }
 
@@ -260,7 +263,7 @@ namespace Bloxstrap.UI.Elements.Editor
             int startIdx = xml.LastIndexOf('<', offset);
             if (startIdx < 0) return null;
 
-            if (startIdx < xml.Length && xml[startIdx + 1] == '/')
+            if (startIdx + 1 < xml.Length && xml[startIdx + 1] == '/')
             {
                 startIdx = startIdx + 1;
             }
@@ -352,7 +355,7 @@ namespace Bloxstrap.UI.Elements.Editor
         {
             CloseCompletionWindow();
 
-            if (UIXML.Text.Length > 2 && UIXML.Text[UIXML.CaretOffset - 2] == '<')
+            if (UIXML.CaretOffset >= 3 && UIXML.Text[UIXML.CaretOffset - 2] == '<')
             {
                 var elementName = GetElementAtCursor(UIXML.Text, UIXML.CaretOffset - 3);
                 if (elementName == null)

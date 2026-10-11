@@ -55,6 +55,14 @@ namespace Bloxstrap.UI.Elements.Dialogs
         {
             InitializeComponent();
 
+            Closed += (_, _) =>
+            {
+                GlowA.BeginAnimation(Canvas.LeftProperty, null);
+                GlowA.BeginAnimation(Canvas.TopProperty, null);
+                GlowB.BeginAnimation(Canvas.LeftProperty, null);
+                GlowB.BeginAnimation(Canvas.TopProperty, null);
+            };
+
             var settings = App.Settings.Prop;
 
             _features = new()

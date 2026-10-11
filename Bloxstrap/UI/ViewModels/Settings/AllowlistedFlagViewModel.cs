@@ -22,7 +22,11 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public bool BoolValue
         {
             get => String.Equals(App.FastFlags.GetValue(Name), "True", StringComparison.OrdinalIgnoreCase);
-            set => App.FastFlags.SetValue(Name, value ? "True" : null);
+            set
+            {
+                App.FastFlags.SetValue(Name, value ? "True" : null);
+                OnPropertyChanged(nameof(BoolValue));
+            }
         }
 
         public string NumberValue

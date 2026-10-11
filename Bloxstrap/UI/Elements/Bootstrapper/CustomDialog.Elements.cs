@@ -147,7 +147,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
                 BitmapImage bitmapImage;
                 try
                 {
-                    bitmapImage = new BitmapImage(sourceData.Uri!);
+                    bitmapImage = LoadBitmap(sourceData.Uri!);
                 }
                 catch (Exception ex)
                 {
@@ -356,7 +356,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
             uiElement.FontStyle = GetFontStyleFromXElement(xmlElement);
 
             // NOTE: font family can both be the name of the font or a uri
-            string? fontFamily = GetFullPath(dialog, xmlElement.Attribute("FontFamily")?.Value);
+            string? fontFamily = GetFontFamily(dialog, xmlElement);
             if (fontFamily != null)
                 uiElement.FontFamily = new System.Windows.Media.FontFamily(fontFamily);
         }
@@ -554,7 +554,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
             textBlock.BaselineOffset = ParseXmlAttribute<double>(xmlElement, "BaselineOffset", double.NaN);
 
             // NOTE: font family can both be the name of the font or a uri
-            string? fontFamily = GetFullPath(dialog, xmlElement.Attribute("FontFamily")?.Value);
+            string? fontFamily = GetFontFamily(dialog, xmlElement);
             if (fontFamily != null)
                 textBlock.FontFamily = new System.Windows.Media.FontFamily(fontFamily);
 
@@ -617,7 +617,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
                     BitmapImage bitmapImage;
                     try
                     {
-                        bitmapImage = new BitmapImage(sourceData.Uri!);
+                        bitmapImage = LoadBitmap(sourceData.Uri!);
                     }
                     catch (Exception ex)
                     {
@@ -731,7 +731,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
 
             stackPanel.Orientation = ParseXmlAttribute<Orientation>(xmlElement, "Orientation", Orientation.Vertical);
 
-            foreach (var element in xmlElement.Elements())
+            foreach (var element in xmlElement.Elements().Where(x => !x.Name.ToString().StartsWith("StackPanel.")))
             {
                 var uiElement = HandleXml<FrameworkElement>(dialog, element);
                 stackPanel.Children.Add(uiElement);
