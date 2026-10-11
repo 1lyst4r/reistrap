@@ -292,6 +292,9 @@ namespace Bloxstrap
                 if (_cancelTokenSource.IsCancellationRequested)
                     return;
 
+                if (!App.LaunchSettings.BackgroundUpdaterFlag.Active && AppData.DistributionState.VersionGuid != _latestVersionGuid)
+                    await UseInstalledVersion();
+
                 // we require deployment details for applying modifications for a worst case scenario,
                 // where we'd need to restore files from a package that isn't present on disk and needs to be redownloaded
                 allModificationsApplied = await ApplyModifications();
@@ -1494,6 +1497,29 @@ namespace Bloxstrap
             _isInstalling = false;
         }
 
+        private async Task UseInstalledVersion()
+        {
+            const string LOG_IDENT = "Bootstrapper::UseInstalledVersion";
+
+            string versionGuid = AppData.DistributionState.VersionGuid;
+
+            App.Logger.WriteLine(LOG_IDENT, $"Update pending in the background, applying modifications to {versionGuid}");
+
+            try
+            {
+                string pkgManifestData = await App.HttpClient.GetStringAsync(Deployment.GetLocation($"/{versionGuid}-rbxPkgManifest.txt"));
+                _versionPackageManifest = new(pkgManifestData);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                _versionPackageManifest = new("v0");
+            }
+
+            _latestVersionGuid = versionGuid;
+            _latestVersionDirectory = AppData.Directory;
+        }
+
         private void StartBackgroundUpdater()
         {
             const string LOG_IDENT = "Bootstrapper::StartBackgroundUpdater";
@@ -1537,13 +1563,13 @@ namespace Bloxstrap
 
             string modFontFamiliesFolder = Path.Combine(Paths.Modifications, "content\\fonts\\families");
 
+            const string customFontAsset = "rbxasset://fonts/CustomFont.ttf";
+
             if (File.Exists(Paths.CustomFont) && applyMods)
             {
                 App.Logger.WriteLine(LOG_IDENT, "Begin font check");
 
                 Directory.CreateDirectory(modFontFamiliesFolder);
-
-                const string path = "rbxasset://fonts/CustomFont.ttf";
 
                 // lets make sure the content/fonts/families path exists in the version directory
                 string contentFolder = Path.Combine(_latestVersionDirectory, "content");
@@ -1574,9 +1600,9 @@ namespace Bloxstrap
 
                     foreach (var fontFace in fontFamilyData.Faces)
                     {
-                        if (fontFace.AssetId != path)
+                        if (fontFace.AssetId != customFontAsset)
                         {
-                            fontFace.AssetId = path;
+                            fontFace.AssetId = customFontAsset;
                             shouldWrite = true;
                         }
                     }
@@ -1589,7 +1615,20 @@ namespace Bloxstrap
             }
             else if (!File.Exists(Paths.CustomFont) && Directory.Exists(modFontFamiliesFolder))
             {
-                Directory.Delete(modFontFamiliesFolder, true);
+                foreach (string jsonFilePath in Directory.GetFiles(modFontFamiliesFolder, "*.json"))
+                {
+                    try
+                    {
+                        var fontFamilyData = JsonSerializer.Deserialize<FontFamily>(File.ReadAllText(jsonFilePath));
+
+                        if (fontFamilyData is not null && fontFamilyData.Faces.Any() && fontFamilyData.Faces.All(x => x.AssetId == customFontAsset))
+                            File.Delete(jsonFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteException(LOG_IDENT, ex);
+                    }
+                }
             }
 
             foreach (string file in Directory.GetFiles(Paths.Modifications, "*.*", SearchOption.AllDirectories))

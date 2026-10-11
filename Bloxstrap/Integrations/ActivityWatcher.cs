@@ -186,6 +186,9 @@ namespace Bloxstrap.Integrations
                 
                 OnAppClose?.Invoke(this, EventArgs.Empty);
 
+                _teleportMarker = false;
+                _reservedTeleportMarker = false;
+
                 if (Data.PlaceId != 0 && !InGame)
                 {
                     App.Logger.WriteLine(LOG_IDENT, "User appears to be leaving from a cancelled/errored join");
@@ -366,11 +369,10 @@ namespace Bloxstrap.Integrations
                         var joinType = (ServerSessionJoinType)joinTypeId;
                         App.Logger.WriteLine(LOG_IDENT, $"Teleport JoinTypeId: {joinTypeId}");
 
-                        if (joinType is ServerSessionJoinType.NewGamePrivateGame or ServerSessionJoinType.SpecificPrivateGame)
-                        {
-                            _reservedTeleportMarker = true;
+                        _reservedTeleportMarker = joinType is ServerSessionJoinType.NewGamePrivateGame or ServerSessionJoinType.SpecificPrivateGame;
+
+                        if (_reservedTeleportMarker)
                             App.Logger.WriteLine(LOG_IDENT, "Detected reserved server teleport");
-                        }
                     }
                 }
                 else if (logMessage.StartsWith(GameJoiningReservedServerEntry, StringComparison.Ordinal))

@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -76,21 +77,80 @@ namespace Bloxstrap
 
         public static string? GetOriginal(string relativePath)
         {
-            string cached = Path.Combine(OriginalsFolder, relativePath);
+            const string LOG_IDENT = "ModGenerator::GetOriginal";
+
+            string legacy = Path.Combine(OriginalsFolder, relativePath);
+            string? fallback = File.Exists(legacy) ? legacy : null;
+
+            var playerData = new RobloxPlayerData();
+            string versionGuid = playerData.DistributionState.VersionGuid;
+
+            if (String.IsNullOrEmpty(versionGuid))
+                return fallback;
+
+            string cached = Path.Combine(OriginalsFolder, versionGuid, relativePath);
 
             if (File.Exists(cached))
                 return cached;
 
-            var playerData = new RobloxPlayerData();
-            string installed = Path.Combine(playerData.Directory, relativePath);
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(cached)!);
 
-            if (!File.Exists(installed) || playerData.DistributionState.ModManifest.Contains(relativePath))
-                return null;
+                string installed = Path.Combine(playerData.Directory, relativePath);
 
-            Directory.CreateDirectory(Path.GetDirectoryName(cached)!);
-            File.Copy(installed, cached, true);
+                if (File.Exists(installed) && !playerData.DistributionState.ModManifest.Contains(relativePath))
+                    File.Copy(installed, cached, true);
+                else if (!ExtractOriginal(playerData, relativePath, cached))
+                    return fallback;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                return fallback;
+            }
+
+            foreach (string dir in Directory.GetDirectories(OriginalsFolder, "version-*").Where(x => Path.GetFileName(x) != versionGuid))
+            {
+                try
+                {
+                    Directory.Delete(dir, true);
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                }
+            }
 
             return cached;
+        }
+
+        private static bool ExtractOriginal(RobloxPlayerData playerData, string relativePath, string target)
+        {
+            var package = playerData.PackageDirectoryMap
+                .Where(x => !String.IsNullOrEmpty(x.Value) && relativePath.StartsWith(x.Value, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(x => x.Value.Length)
+                .FirstOrDefault();
+
+            if (package.Key is null || !playerData.DistributionState.PackageHashes.TryGetValue(package.Key, out string? signature))
+                return false;
+
+            string zipPath = Path.Combine(Paths.Downloads, signature);
+
+            if (!File.Exists(zipPath))
+                return false;
+
+            string entryName = relativePath[package.Value.Length..];
+
+            using var archive = ZipFile.OpenRead(zipPath);
+
+            var entry = archive.Entries.FirstOrDefault(x => String.Equals(x.FullName.Replace('/', '\\'), entryName, StringComparison.OrdinalIgnoreCase));
+
+            if (entry is null)
+                return false;
+
+            entry.ExtractToFile(target, true);
+            return true;
         }
 
         public static int Recolor(IEnumerable<string> relativePaths, Color color, Color? endColor = null, double angle = 0)
