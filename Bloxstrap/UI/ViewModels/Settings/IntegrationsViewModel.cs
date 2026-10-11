@@ -252,6 +252,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.WindowControlTransparency = value;
         }
 
+        public bool DisableFullscreenOptimizations
+        {
+            get => App.Settings.Prop.DisableFullscreenOptimizations;
+            set => App.Settings.Prop.DisableFullscreenOptimizations = value;
+        }
+
         public bool WindowControlColor
         {
             get => App.Settings.Prop.WindowControlColor;

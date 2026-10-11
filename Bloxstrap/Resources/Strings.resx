@@ -3228,4 +3228,10 @@ Switch channels?</value>
   <data name="Enums.BootstrapperStyle.ModernDialog" xml:space="preserve">
     <value>Modern</value>
   </data>
+  <data name="Menu.Integrations.WindowControl.Fso.Title" xml:space="preserve">
+    <value>Disable fullscreen optimizations</value>
+  </data>
+  <data name="Menu.Integrations.WindowControl.Fso.Description" xml:space="preserve">
+    <value>Needed for window transparency to show. Applied the next time Roblox launches.</value>
+  </data>
 </root>

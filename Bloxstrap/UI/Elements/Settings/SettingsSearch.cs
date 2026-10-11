@@ -38,6 +38,7 @@ namespace Bloxstrap.UI.Elements.Settings
             ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Move_Title)),
             ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Title_Title)),
             ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Transparency_Title)),
+            ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Fso_Title)),
             ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Color_Title)),
             ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Wallpaper_Title)),
             ("integrations", nameof(Strings.Menu_Integrations_WindowControl_Desktop_Title)),

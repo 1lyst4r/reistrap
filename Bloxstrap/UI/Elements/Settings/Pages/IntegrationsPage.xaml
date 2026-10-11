@@ -245,8 +245,16 @@
 
             <controls:OptionControl
                 Header="{x:Static resources:Strings.Menu_Integrations_WindowControl_Transparency_Title}"
-                Description="{x:Static resources:Strings.Menu_Integrations_WindowControl_Transparency_Description}">
+                Description="{x:Static resources:Strings.Menu_Integrations_WindowControl_Transparency_Description}"
+                x:Name="WindowControlTransparencyOption">
                 <ui:ToggleSwitch IsChecked="{Binding WindowControlTransparency, Mode=TwoWay}" />
+            </controls:OptionControl>
+
+            <controls:OptionControl
+                Header="{x:Static resources:Strings.Menu_Integrations_WindowControl_Fso_Title}"
+                Description="{x:Static resources:Strings.Menu_Integrations_WindowControl_Fso_Description}"
+                controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=WindowControlTransparencyOption, Mode=OneWay}">
+                <ui:ToggleSwitch IsChecked="{Binding DisableFullscreenOptimizations, Mode=TwoWay}" />
             </controls:OptionControl>
 
             <controls:OptionControl

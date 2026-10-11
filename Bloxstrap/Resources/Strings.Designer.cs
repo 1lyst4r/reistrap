@@ -6100,5 +6100,23 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Enums.BootstrapperStyle.ModernDialog", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable fullscreen optimizations.
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Fso_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Fso.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Needed for window transparency to show. Applied the next time Roblox launches..
+        /// </summary>
+        public static string Menu_Integrations_WindowControl_Fso_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Fso.Description", resourceCulture);
+            }
+        }
     }
 }

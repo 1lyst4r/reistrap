@@ -709,6 +709,8 @@ namespace Bloxstrap
                 else
                     RemoveWindowControlMarker();
 
+                ApplyFullscreenOptimizations();
+
                 if (App.Settings.Prop.ForceRobloxLanguage)
                 {
                     var match = Regex.Match(_launchCommandLine, "gameLocale:([a-z_]+)", RegexOptions.CultureInvariant);
@@ -923,6 +925,43 @@ namespace Bloxstrap
 
             if (ipl.IsAcquired)
                 Process.Start(Paths.Process, args);
+        }
+
+        private void ApplyFullscreenOptimizations()
+        {
+            const string LOG_IDENT = "Bootstrapper::ApplyFullscreenOptimizations";
+            const string Flag = "DISABLEDXMAXIMIZEDWINDOWEDMODE";
+
+            var settings = App.Settings.Prop;
+            bool disable = settings.DisableFullscreenOptimizations && settings.WindowControlEnabled && settings.WindowControlTransparency && settings.EnableActivityTracking;
+
+            if (!disable && !App.State.Prop.DisabledFullscreenOptimizations)
+                return;
+
+            try
+            {
+                using var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers");
+
+                var flags = ((key.GetValue(AppData.ExecutablePath) as string) ?? "")
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => x != "~" && !x.Equals(Flag, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (disable)
+                    flags.Add(Flag);
+
+                if (flags.Count == 0)
+                    key.DeleteValueSafe(AppData.ExecutablePath);
+                else
+                    key.SetValueSafe(AppData.ExecutablePath, "~ " + String.Join(' ', flags));
+
+                App.State.Prop.DisabledFullscreenOptimizations = disable;
+                App.State.Save();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+            }
         }
 
         private bool ShouldRunAsAdmin()
