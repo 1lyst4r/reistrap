@@ -6102,20 +6102,11 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable fullscreen optimizations.
+        ///   Looks up a localized string similar to Window transparency only shows when fullscreen optimizations are turned off for Roblox..
         /// </summary>
-        public static string Menu_Integrations_WindowControl_Fso_Title {
+        public static string Menu_Integrations_WindowControl_Fso_Confirm {
             get {
-                return ResourceManager.GetString("Menu.Integrations.WindowControl.Fso.Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Needed for window transparency to show. Applied the next time Roblox launches..
-        /// </summary>
-        public static string Menu_Integrations_WindowControl_Fso_Description {
-            get {
-                return ResourceManager.GetString("Menu.Integrations.WindowControl.Fso.Description", resourceCulture);
+                return ResourceManager.GetString("Menu.Integrations.WindowControl.Fso.Confirm", resourceCulture);
             }
         }
     }

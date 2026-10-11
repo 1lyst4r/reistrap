@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 using Microsoft.Win32;
@@ -249,13 +250,13 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public bool WindowControlTransparency
         {
             get => App.Settings.Prop.WindowControlTransparency;
-            set => App.Settings.Prop.WindowControlTransparency = value;
-        }
+            set
+            {
+                if (value && !App.Settings.Prop.WindowControlTransparency)
+                    App.Settings.Prop.WindowControlDisableFso = Frontend.ShowMessageBox(Strings.Menu_Integrations_WindowControl_Fso_Confirm, MessageBoxImage.Warning, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
 
-        public bool DisableFullscreenOptimizations
-        {
-            get => App.Settings.Prop.WindowControlDisableFso;
-            set => App.Settings.Prop.WindowControlDisableFso = value;
+                App.Settings.Prop.WindowControlTransparency = value;
+            }
         }
 
         public bool WindowControlColor
