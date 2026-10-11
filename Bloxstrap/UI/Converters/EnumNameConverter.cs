@@ -15,7 +15,9 @@ namespace Bloxstrap.UI.Converters
         {
             // https://stackoverflow.com/a/28672015/11852173
     
-            var enumVal = (Enum)value;
+            if (value is not Enum enumVal)
+                return value?.ToString() ?? "";
+
             var stringVal = enumVal.ToString();
 
             var type = enumVal.GetType();

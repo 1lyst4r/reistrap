@@ -1,6 +1,6 @@
 # reistrap features
 
-Everything reistrap can do, as of v1.3.0.
+Everything reistrap can do, as of v1.3.1.
 
 ## Settings window
 
