@@ -79,6 +79,12 @@
         </controls:OptionControl>
 
         <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_ExplainCrashes_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_ExplainCrashes_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding ExplainCrashes, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Behaviour_MemoryTrimmer_Title}"
             Description="{x:Static resources:Strings.Menu_Behaviour_MemoryTrimmer_Description}"
             x:Name="MemoryTrimmerOption">

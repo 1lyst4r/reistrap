@@ -10,6 +10,8 @@
 
         public bool IsStudio { get; set; }
 
+        public bool SafeMode { get; set; }
+
         public Dictionary<string, string>? RestoreRobloxSettings { get; set; }
     }
 }

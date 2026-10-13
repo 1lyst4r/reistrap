@@ -6244,5 +6244,137 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Bootstrapper.SafeLaunch.Message", resourceCulture);
             }
         }
+        
+        public static string Menu_Behaviour_ExplainCrashes_Title {
+            get {
+                return ResourceManager.GetString("Menu.Behaviour.ExplainCrashes.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Behaviour_ExplainCrashes_Description {
+            get {
+                return ResourceManager.GetString("Menu.Behaviour.ExplainCrashes.Description", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Title {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Title", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Gpu_Title {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Gpu.Title", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Gpu_Message {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Gpu.Message", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_GraphicsFlags_Title {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.GraphicsFlags.Title", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_GraphicsFlags_Message {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.GraphicsFlags.Message", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Memory_Title {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Memory.Title", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Memory_Message {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Memory.Message", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Memory_TrimmerHint {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Memory.TrimmerHint", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Startup_Title {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Startup.Title", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Startup_Mods {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Startup.Mods", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Startup_Files {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Startup.Files", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_InGame_Title {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.InGame.Title", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_InGame_Message {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.InGame.Message", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_InGame_Safe {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.InGame.Safe", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Fix_SafeLaunch {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Fix.SafeLaunch", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Fix_RemoveFlags {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Fix.RemoveFlags", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Fix_MemoryTrimmer {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Fix.MemoryTrimmer", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_Fix_Reinstall {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.Fix.Reinstall", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_OpenLogs {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.OpenLogs", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Crash_FixApplied {
+            get {
+                return ResourceManager.GetString("Dialog.Crash.FixApplied", resourceCulture);
+            }
+        }
     }
 }

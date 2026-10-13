@@ -236,6 +236,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.CloseCrashHandler = value;
         }
 
+        public bool ExplainCrashes
+        {
+            get => App.Settings.Prop.ExplainCrashes;
+            set => App.Settings.Prop.ExplainCrashes = value;
+        }
+
         public bool ForceRobloxLanguage
         {
             get => App.Settings.Prop.ForceRobloxLanguage;

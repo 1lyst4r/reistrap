@@ -3,6 +3,7 @@ using System.Windows.Threading;
 
 using Bloxstrap.Integrations;
 using Bloxstrap.Models;
+using Bloxstrap.UI.Elements.Dialogs;
 using Bloxstrap.UI.Elements.Overlay;
 
 namespace Bloxstrap
@@ -48,6 +49,10 @@ namespace Bloxstrap
         private (IntPtr Small, IntPtr Big) _originalIcons;
 
         private bool _gameTitleApplied;
+
+        private readonly DateTime _sessionStart = DateTime.Now;
+
+        private bool _closedByReistrap;
 
         private readonly List<(CustomIntegration Integration, int ProcessId)> _gameIntegrations = new();
 
@@ -563,6 +568,9 @@ namespace Bloxstrap
 
                 App.Logger.WriteLine(LOG_IDENT, $"Killing process '{process.ProcessName}' (pid={pid}, force={force})");
 
+                if (pid == _watcherData?.ProcessId)
+                    _closedByReistrap = true;
+
                 if (process.HasExited)
                 {
                     App.Logger.WriteLine(LOG_IDENT, $"PID {pid} has already exited");
@@ -667,8 +675,32 @@ namespace Bloxstrap
                     CloseProcess(pid);
             }
 
+            if (!_watcherData.IsStudio && App.Settings.Prop.ExplainCrashes && !_closedByReistrap)
+                await CheckForCrash();
+
             if (App.LaunchSettings.TestModeFlag.Active)
                 Process.Start(Paths.Process, "-settings -testmode");
+        }
+
+        private async Task CheckForCrash()
+        {
+            const string LOG_IDENT = "Watcher::CheckForCrash";
+
+            await Task.Delay(3000);
+
+            if (!CrashDiagnostics.DidCrash(_sessionStart))
+                return;
+
+            bool? joinedGame = ActivityWatcher is null ? null : ActivityWatcher.InGame || ActivityWatcher.History.Any();
+
+            var lastGame = ActivityWatcher is { InGame: true } ? ActivityWatcher.Data : null;
+            long placeId = (lastGame?.RootActivity ?? lastGame)?.PlaceId ?? 0;
+
+            var cause = CrashDiagnostics.Diagnose(_watcherData!.LogFile, joinedGame, DateTime.Now - _sessionStart, _watcherData.SafeMode);
+
+            App.Logger.WriteLine(LOG_IDENT, $"Roblox crashed (joinedGame={joinedGame}, fix={cause.Fix})");
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() => new CrashDialog(cause, placeId).ShowDialog());
         }
 
         public void Dispose()

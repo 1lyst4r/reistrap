@@ -3284,4 +3284,70 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="Bootstrapper.SafeLaunch.Message" xml:space="preserve">
     <value>Roblox is starting without your mods and Fast Flags. They come back the next time you launch normally.</value>
   </data>
+  <data name="Menu.Behaviour.ExplainCrashes.Title" xml:space="preserve">
+    <value>Explain crashes</value>
+  </data>
+  <data name="Menu.Behaviour.ExplainCrashes.Description" xml:space="preserve">
+    <value>When Roblox crashes, show the likely cause and a fix. Doesn't work while "Close Roblox's crash handler" is on, because that stops Roblox from recording crashes.</value>
+  </data>
+  <data name="Dialog.Crash.Title" xml:space="preserve">
+    <value>Roblox crashed</value>
+  </data>
+  <data name="Dialog.Crash.Gpu.Title" xml:space="preserve">
+    <value>Your graphics driver stopped responding</value>
+  </data>
+  <data name="Dialog.Crash.Gpu.Message" xml:space="preserve">
+    <value>Roblox lost contact with your graphics card. This usually means the driver crashed or the card got too hot. Updating your graphics driver fixes it most of the time.</value>
+  </data>
+  <data name="Dialog.Crash.GraphicsFlags.Title" xml:space="preserve">
+    <value>A Fast Flag is forcing a graphics mode</value>
+  </data>
+  <data name="Dialog.Crash.GraphicsFlags.Message" xml:space="preserve">
+    <value>You've set a Fast Flag that makes Roblox use {0}. Not every graphics card handles that well, and it's a common cause of crashes. Removing it lets Roblox pick the right mode itself.</value>
+  </data>
+  <data name="Dialog.Crash.Memory.Title" xml:space="preserve">
+    <value>Your PC ran out of memory</value>
+  </data>
+  <data name="Dialog.Crash.Memory.Message" xml:space="preserve">
+    <value>Your PC was almost out of memory when Roblox crashed. Closing other apps before playing, especially browsers, usually helps.</value>
+  </data>
+  <data name="Dialog.Crash.Memory.TrimmerHint" xml:space="preserve">
+    <value>The memory trimmer can also keep Roblox's memory use down.</value>
+  </data>
+  <data name="Dialog.Crash.Startup.Title" xml:space="preserve">
+    <value>Roblox crashed while starting</value>
+  </data>
+  <data name="Dialog.Crash.Startup.Mods" xml:space="preserve">
+    <value>This often happens when a mod is broken or out of date after a Roblox update. Try a safe launch: if Roblox starts fine without your mods and Fast Flags, one of them is the cause.</value>
+  </data>
+  <data name="Dialog.Crash.Startup.Files" xml:space="preserve">
+    <value>Roblox's own files may be damaged. Reinstalling downloads a fresh copy of Roblox. Your settings and mods are kept.</value>
+  </data>
+  <data name="Dialog.Crash.InGame.Title" xml:space="preserve">
+    <value>Roblox crashed during a game</value>
+  </data>
+  <data name="Dialog.Crash.InGame.Message" xml:space="preserve">
+    <value>Nothing in your setup stands out, so this was most likely the game or Roblox itself. If it keeps happening, try a safe launch to rule out your mods and Fast Flags.</value>
+  </data>
+  <data name="Dialog.Crash.InGame.Safe" xml:space="preserve">
+    <value>This happened during a safe launch, so your mods and Fast Flags weren't the cause. It was most likely the game or Roblox itself.</value>
+  </data>
+  <data name="Dialog.Crash.Fix.SafeLaunch" xml:space="preserve">
+    <value>Safe launch</value>
+  </data>
+  <data name="Dialog.Crash.Fix.RemoveFlags" xml:space="preserve">
+    <value>Remove the flag</value>
+  </data>
+  <data name="Dialog.Crash.Fix.MemoryTrimmer" xml:space="preserve">
+    <value>Turn on memory trimmer</value>
+  </data>
+  <data name="Dialog.Crash.Fix.Reinstall" xml:space="preserve">
+    <value>Reinstall Roblox</value>
+  </data>
+  <data name="Dialog.Crash.OpenLogs" xml:space="preserve">
+    <value>Open logs</value>
+  </data>
+  <data name="Dialog.Crash.FixApplied" xml:space="preserve">
+    <value>Done. Launch Roblox again to try it.</value>
+  </data>
 </root>

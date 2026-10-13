@@ -54,6 +54,7 @@ namespace Bloxstrap.UI.Elements.Settings
             ("bootstrapper", nameof(Strings.Menu_Behaviour_Throttle_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_Affinity_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_CloseCrashHandler_Title)),
+            ("bootstrapper", nameof(Strings.Menu_Behaviour_ExplainCrashes_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_MemoryTrimmer_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_MemoryThreshold_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_MemoryInterval_Title)),
