@@ -13,29 +13,35 @@
       Title="QuickPlayPage"
       Scrollable="True">
     <ui:UiPage.Resources>
-        <DataTemplate x:Key="GameTemplate">
-            <ui:CardControl Margin="0,8,0,0" Padding="12">
-                <ui:CardControl.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="44" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="6" ClipToBounds="True">
-                            <Image Source="{Binding IconUrl, TargetNullValue={x:Null}}" RenderOptions.BitmapScalingMode="HighQuality" />
-                        </Border>
-                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock FontSize="15" FontWeight="Medium" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock FontSize="12" Text="{Binding Details}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                    </Grid>
-                </ui:CardControl.Header>
-                <StackPanel Orientation="Horizontal">
-                    <ui:Button Icon="Server24" Content="{x:Static resources:Strings.Menu_QuickPlay_Details}" Command="{Binding DataContext.ShowGameCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding}" />
-                    <ui:Button Margin="8,0,0,0" Icon="Play24" Appearance="Primary" Content="{x:Static resources:Strings.Menu_QuickPlay_Join}" Command="{Binding DataContext.JoinGameCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding}" />
-                </StackPanel>
-            </ui:CardControl>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/UI/Style/SettingsPage.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="GameTemplate">
+                <ui:CardControl Margin="0,8,0,0" Padding="12">
+                    <ui:CardControl.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Width="44" Height="44" CornerRadius="6" ClipToBounds="True">
+                                <Image Source="{Binding IconUrl, TargetNullValue={x:Null}}" RenderOptions.BitmapScalingMode="HighQuality" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock FontSize="15" FontWeight="Medium" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock FontSize="12" Text="{Binding Details}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Grid>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Button Icon="Server24" Content="{x:Static resources:Strings.Menu_QuickPlay_Details}" Command="{Binding DataContext.ShowGameCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding}" />
+                        <ui:Button Margin="8,0,0,0" Icon="Play24" Appearance="Primary" Content="{x:Static resources:Strings.Menu_QuickPlay_Join}" Command="{Binding DataContext.JoinGameCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding}" />
+                    </StackPanel>
+                </ui:CardControl>
+            </DataTemplate>
+        </ResourceDictionary>
     </ui:UiPage.Resources>
 
     <StackPanel Margin="0,0,14,14">

@@ -14,6 +14,10 @@
       Title="BehaviourPage"
       Scrollable="True">
 
+    <ui:UiPage.Resources>
+        <ResourceDictionary Source="pack://application:,,,/UI/Style/SettingsPage.xaml" />
+    </ui:UiPage.Resources>
+
     <StackPanel Margin="0,0,14,14">
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Behaviour_AutoUpdate_Title}"
@@ -56,7 +60,7 @@
             </StackPanel>
         </controls:OptionControl>
 
-        <ui:CardExpander Margin="0,8,0,0" IsExpanded="True">
+        <ui:CardExpander IsExpanded="True">
             <ui:CardExpander.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -66,8 +70,8 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                        <TextBlock FontSize="14" Text="{x:Static resources:Strings.Menu_Bloxstrap_Import_Title}" />
-                        <TextBlock FontSize="12" Text="{x:Static resources:Strings.Menu_Bloxstrap_Import_Description}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap" />
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Text="{x:Static resources:Strings.Menu_Bloxstrap_Import_Title}" />
+                        <TextBlock Margin="0,3,0,0" FontSize="13" Text="{x:Static resources:Strings.Menu_Bloxstrap_Import_Description}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                     <ComboBox Grid.Column="1" Width="160" Margin="0,0,8,0" Padding="10,5,10,5" ItemsSource="{Binding ImportSources.Keys, Mode=OneTime}" SelectedItem="{Binding SelectedImportSource, Mode=TwoWay}" Visibility="{Binding ImportVisibility, Mode=OneTime}" />
                     <ui:Button Grid.Column="2" MinWidth="100" Margin="0,0,8,0" Icon="ArrowImport24" Content="{x:Static resources:Strings.Common_Import}" Command="{Binding ImportCommand}" Visibility="{Binding ImportVisibility, Mode=OneTime}" />
@@ -89,7 +93,7 @@
             </StackPanel>
         </ui:CardExpander>
 
-        <ui:CardExpander Margin="0,8,0,0" IsExpanded="True">
+        <ui:CardExpander IsExpanded="True">
             <ui:CardExpander.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -97,8 +101,8 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <TextBlock FontSize="14" Text="{x:Static resources:Strings.Menu_Bloxstrap_ExportData_Title}" />
-                        <TextBlock FontSize="12" Text="{x:Static resources:Strings.Menu_Bloxstrap_ExportData_Description}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap" />
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Text="{x:Static resources:Strings.Menu_Bloxstrap_ExportData_Title}" />
+                        <TextBlock Margin="0,3,0,0" FontSize="13" Text="{x:Static resources:Strings.Menu_Bloxstrap_ExportData_Description}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                     <ui:Button Grid.Column="1" MinWidth="100" Margin="0,0,16,0" Icon="CopySelect20" Content="{x:Static resources:Strings.Common_Export}" Command="{Binding ExportDataCommand}">
                         <ui:Button.Style>

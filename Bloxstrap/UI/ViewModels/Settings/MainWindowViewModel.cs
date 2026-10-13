@@ -25,6 +25,30 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public string VersionText => $"v{App.Version}";
 
+        private string _savedSettings = JsonSerializer.Serialize(App.Settings.Prop);
+
+        private bool _hasUnsavedChanges;
+
+        public bool HasUnsavedChanges
+        {
+            get => _hasUnsavedChanges;
+            private set
+            {
+                if (_hasUnsavedChanges == value)
+                    return;
+
+                _hasUnsavedChanges = value;
+                OnPropertyChanged(nameof(HasUnsavedChanges));
+            }
+        }
+
+        public void CheckForUnsavedChanges()
+        {
+            HasUnsavedChanges = App.FastFlags.Changed
+                || App.PendingSettingTasks.Any(x => x.Value.Changed)
+                || JsonSerializer.Serialize(App.Settings.Prop) != _savedSettings;
+        }
+
         public EventHandler? RequestSaveNoticeEvent;
         
         public EventHandler? RequestCloseWindowEvent;
@@ -92,6 +116,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
             }
 
             App.PendingSettingTasks.Clear();
+
+            _savedSettings = JsonSerializer.Serialize(App.Settings.Prop);
+            HasUnsavedChanges = false;
 
             if (notify)
                 RequestSaveNoticeEvent?.Invoke(this, EventArgs.Empty);

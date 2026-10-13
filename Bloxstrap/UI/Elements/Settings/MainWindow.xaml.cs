@@ -28,6 +28,8 @@ namespace Bloxstrap.UI.Elements.Settings
 
         private string? _pendingSearchHeader;
 
+        private readonly DispatcherTimer _unsavedChangesTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
+
         private static readonly Dictionary<string, string> _pageDescriptions = new()
         {
             ["integrations"] = Strings.Menu_Integrations_Description,
@@ -112,6 +114,9 @@ namespace Bloxstrap.UI.Elements.Settings
 
             if (App.Settings.Prop.DisableAnimations)
                 RootNavigation.TransitionDuration = 0;
+
+            _unsavedChangesTimer.Tick += (_, _) => _viewModel.CheckForUnsavedChanges();
+            _unsavedChangesTimer.Start();
         }
 
         public void LoadState()
@@ -153,7 +158,6 @@ namespace Bloxstrap.UI.Elements.Settings
             if (sender.Current is not NavigationItem item)
                 return;
 
-            PageIcon.Symbol = item.Icon;
             PageTitle.Text = item.Content?.ToString() ?? "";
             PageDescription.Text = _pageDescriptions.TryGetValue(item.PageTag, out var description) ? description : "";
             PageDescription.Visibility = String.IsNullOrEmpty(PageDescription.Text) ? Visibility.Collapsed : Visibility.Visible;
@@ -180,27 +184,17 @@ namespace Bloxstrap.UI.Elements.Settings
             SearchBox.ItemsSource = _searchEntries.Keys.ToList();
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private void FindCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            SearchBox.Text = "";
-            SearchBox.Visibility = Visibility.Visible;
-            SearchButton.Visibility = Visibility.Hidden;
             SearchBox.Focus();
+            Keyboard.Focus(SearchBox);
         }
 
         private void CloseSearch()
         {
-            SearchBox.Visibility = Visibility.Collapsed;
-            SearchButton.Visibility = RootNavigation.IsExpanded ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void SearchBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            if (e.NewFocus is DependencyObject focus && SearchBox.IsAncestorOf(focus))
-                return;
-
-            if (!SearchBox.IsSuggestionListOpen)
-                CloseSearch();
+            SearchBox.Text = "";
+            SearchBox.IsSuggestionListOpen = false;
+            Keyboard.ClearFocus();
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -366,7 +360,9 @@ namespace Bloxstrap.UI.Elements.Settings
 
         private void WpfUiWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (App.FastFlags.Changed || App.PendingSettingTasks.Any())
+            _viewModel.CheckForUnsavedChanges();
+
+            if (_viewModel.HasUnsavedChanges || App.PendingSettingTasks.Any())
             {
                 var result = Frontend.ShowMessageBox(Strings.Menu_UnsavedChanges, MessageBoxImage.Warning, MessageBoxButton.YesNo);
 
@@ -394,6 +390,8 @@ namespace Bloxstrap.UI.Elements.Settings
 
         private void WpfUiWindow_Closed(object sender, EventArgs e)
         {
+            _unsavedChangesTimer.Stop();
+
             if (_viewModel.LaunchAfterClose != LaunchMode.None)
                 LaunchHandler.LaunchRoblox(_viewModel.LaunchAfterClose);
             else if (App.LaunchSettings.TestModeFlag.Active && !_viewModel.RestartRequested)

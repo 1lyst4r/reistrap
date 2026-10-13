@@ -13,6 +13,10 @@
       Title="GameProfilesPage"
       Scrollable="True">
 
+    <ui:UiPage.Resources>
+        <ResourceDictionary Source="pack://application:,,,/UI/Style/SettingsPage.xaml" />
+    </ui:UiPage.Resources>
+
     <StackPanel Margin="0,0,14,14">
         <controls:OptionControl Header="{x:Static resources:Strings.Menu_GameProfiles_Add}">
             <StackPanel Orientation="Horizontal">
@@ -26,7 +30,7 @@
         <ItemsControl ItemsSource="{Binding Profiles}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <ui:CardExpander Margin="0,8,0,0">
+                    <ui:CardExpander>
                         <ui:CardExpander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
