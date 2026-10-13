@@ -3389,4 +3389,42 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="Menu.Playtime.Screenshots.GameFolder" xml:space="preserve">
     <value>Open this game's screenshots</value>
   </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Title" xml:space="preserve">
+    <value>Share your setup</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Description" xml:space="preserve">
+    <value>Turn your settings and Fast Flags into a short code a friend can enter here. Mods, file paths and personal settings aren't included.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Placeholder" xml:space="preserve">
+    <value>Enter a code</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Use" xml:space="preserve">
+    <value>Use code</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Create" xml:space="preserve">
+    <value>Create code</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Created" xml:space="preserve">
+    <value>Your code is {0}. It's been copied to your clipboard.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Confirm" xml:space="preserve">
+    <value>Use the setup from code {0}? It replaces your Fast Flags and most of your settings. Your mods and file paths are kept.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Done" xml:space="preserve">
+    <value>Setup applied. Click Save to keep it, then reopen this window to see it.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Invalid" xml:space="preserve">
+    <value>Codes are 8 letters and numbers, like ABCD-2345.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.NotFound" xml:space="preserve">
+    <value>There's no setup with that code. Check it and try again.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.TooMany" xml:space="preserve">
+    <value>You've made a lot of codes recently. Try again in an hour.</value>
+  </data>
+  <data name="Menu.Bloxstrap.ShareSetup.Failed" xml:space="preserve">
+    <value>Couldn't reach the reistrap server. Try again in a bit.
+
+{0}</value>
+  </data>
 </root>

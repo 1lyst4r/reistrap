@@ -97,18 +97,23 @@ namespace Bloxstrap
 
         public static int ImportSettings(string folder)
         {
-            const string LOG_IDENT = "SettingsImporter::ImportSettings";
-
             using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(folder, "Settings.json")));
+
+            return ImportSettings(document.RootElement, null);
+        }
+
+        public static int ImportSettings(JsonElement root, IReadOnlySet<string>? excluded)
+        {
+            const string LOG_IDENT = "SettingsImporter::ImportSettings";
 
             int imported = 0;
 
             foreach (var property in typeof(Models.Persistable.Settings).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (property.Name == nameof(Models.Persistable.Settings.SelectedCustomTheme))
+                if (property.Name == nameof(Models.Persistable.Settings.SelectedCustomTheme) || excluded?.Contains(property.Name) == true)
                     continue;
 
-                if (!property.CanWrite || !document.RootElement.TryGetProperty(property.Name, out var element))
+                if (!property.CanWrite || !root.TryGetProperty(property.Name, out var element))
                     continue;
 
                 try

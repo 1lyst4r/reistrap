@@ -56,6 +56,16 @@
             </StackPanel>
         </controls:OptionControl>
 
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Title}"
+            Description="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Description}">
+            <StackPanel Orientation="Horizontal">
+                <ui:TextBox Width="140" Padding="10,5,10,5" PlaceholderText="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Placeholder}" Text="{Binding SetupCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ui:Button Margin="8,0,0,0" Icon="ArrowDownload24" Content="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Use}" Command="{Binding UseSetupCodeCommand}" />
+                <ui:Button Margin="8,0,0,0" Icon="Share24" Content="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Create}" Command="{Binding CreateSetupCodeCommand}" />
+            </StackPanel>
+        </controls:OptionControl>
+
         <ui:CardExpander Margin="0,8,0,0" IsExpanded="True">
             <ui:CardExpander.Header>
                 <Grid>

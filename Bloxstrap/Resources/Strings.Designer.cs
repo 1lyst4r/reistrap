@@ -6454,5 +6454,77 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Playtime.Screenshots.GameFolder", resourceCulture);
             }
         }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Title {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Description {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Description", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Placeholder {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Placeholder", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Use {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Use", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Create {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Create", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Created {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Created", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Confirm {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Confirm", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Done {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Done", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Invalid {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Invalid", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_NotFound {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.NotFound", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_TooMany {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.TooMany", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_ShareSetup_Failed {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Failed", resourceCulture);
+            }
+        }
     }
 }

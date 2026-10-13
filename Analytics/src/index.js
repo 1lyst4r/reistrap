@@ -10,6 +10,12 @@ const VALUE_PATTERN = /^[a-z0-9_\-]{1,32}$/i;
 const MAX_LOG_LENGTH = 200_000;
 const EXCEPTION_RETENTION_DAYS = 90;
 
+const SETUP_MAX_BYTES = 64_000;
+const SETUP_CODE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+const SETUP_CODE_LENGTH = 8;
+const SETUP_HOURLY_LIMIT = 10;
+const SETUP_RETENTION_DAYS = 180;
+
 // Helpers
 
 function getVersion(request) {
@@ -41,6 +47,25 @@ function isAuthorized(url, env) {
 
 function html(body, status = 200) {
     return new Response(body, { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+}
+
+function json(data, status = 200) {
+    return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+}
+
+function isObject(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+async function hashRequester(request) {
+    const input = today() + ":" + (request.headers.get("CF-Connecting-IP") || "");
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
+    return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function newSetupCode() {
+    const bytes = crypto.getRandomValues(new Uint8Array(SETUP_CODE_LENGTH));
+    return [...bytes].map(b => SETUP_CODE_ALPHABET[b % SETUP_CODE_ALPHABET.length]).join("");
 }
 
 // Collection
@@ -78,6 +103,61 @@ async function postException(request, env) {
     return new Response("OK");
 }
 
+// Setup codes
+
+async function postSetup(request, env) {
+    const text = await request.text();
+
+    if (text.length > SETUP_MAX_BYTES)
+        return json({ error: "too large" }, 413);
+
+    let data;
+
+    try {
+        data = JSON.parse(text);
+    } catch {
+        return json({ error: "bad request" }, 400);
+    }
+
+    if (!isObject(data) || !isObject(data.settings) || !isObject(data.flags))
+        return json({ error: "bad request" }, 400);
+
+    const now = new Date();
+    const hourAgo = new Date(now.getTime() - 3_600_000).toISOString();
+
+    await env.DB.prepare("UPDATE setups SET ip_hash = '' WHERE created < ?1 AND ip_hash != ''").bind(hourAgo).run();
+
+    const requester = await hashRequester(request);
+    const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM setups WHERE ip_hash = ?1 AND created >= ?2").bind(requester, hourAgo).first();
+
+    if (recent.n >= SETUP_HOURLY_LIMIT)
+        return json({ error: "rate limited" }, 429);
+
+    const stored = JSON.stringify({ version: getVersion(request), settings: data.settings, flags: data.flags });
+
+    for (let attempt = 0; attempt < 5; attempt++) {
+        const code = newSetupCode();
+
+        const result = await env.DB.prepare("INSERT OR IGNORE INTO setups (code, created, ip_hash, data) VALUES (?1, ?2, ?3, ?4)")
+            .bind(code, now.toISOString(), requester, stored)
+            .run();
+
+        if (result.meta.changes === 1)
+            return json({ code });
+    }
+
+    return json({ error: "try again" }, 503);
+}
+
+async function getSetup(code, env) {
+    const row = await env.DB.prepare("SELECT data FROM setups WHERE code = ?1").bind(code).first();
+
+    if (!row)
+        return json({ error: "not found" }, 404);
+
+    return new Response(row.data, { headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+}
+
 // Dashboard
 
 async function dashboard(url, env) {
@@ -98,6 +178,10 @@ async function dashboard(url, env) {
     const exceptions = await env.DB.prepare(
         "SELECT id, time, version, length(log) AS size FROM exceptions ORDER BY id DESC LIMIT 50"
     ).all();
+
+    const setups = await env.DB.prepare(
+        "SELECT COUNT(*) AS total, SUM(created >= datetime('now', '-7 day')) AS week FROM setups"
+    ).first();
 
     const table = (headers, rows) =>
         `<table><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>${rows.join("") || `<tr><td colspan="${headers.length}" class="empty">Nothing yet</td></tr>`}</table>`;
@@ -134,6 +218,7 @@ a { color: inherit; }
 <section><h2>All time</h2>${table(["Event", "Value", "Count"], totals.results.map(r => `<tr><td>${escapeHtml(r.key)}</td><td>${escapeHtml(r.value)}</td><td class="num">${r.total}</td></tr>`))}</section>
 <section><h2>Installs and updates by version</h2>${table(["Version", "Count"], versions.results.map(r => `<tr><td>${escapeHtml(r.version)}</td><td class="num">${r.total}</td></tr>`))}</section>
 <section><h2>Last 30 days</h2>${table(["Day", "Event", "Value", "Count"], recent.results.map(r => `<tr><td>${escapeHtml(r.day)}</td><td>${escapeHtml(r.key)}</td><td>${escapeHtml(r.value)}</td><td class="num">${r.total}</td></tr>`))}</section>
+<section><h2>Setup codes</h2>${table(["Total", "Last 7 days"], [`<tr><td class="num">${setups.total || 0}</td><td class="num">${setups.week || 0}</td></tr>`])}</section>
 <section><h2>Latest crash reports</h2>${table(["Time (UTC)", "Version", "Size", ""], exceptions.results.map(r => `<tr><td>${escapeHtml(r.time.replace("T", " ").slice(0, 19))}</td><td>${escapeHtml(r.version)}</td><td class="num">${Math.ceil(r.size / 1024)} KB</td><td><a href="/exception/${r.id}?token=${token}">View</a></td></tr>`))}</section>
 </main>
 </body>
@@ -163,6 +248,14 @@ export default {
         if (request.method === "POST" && url.pathname === "/metrics/post-exception")
             return postException(request, env);
 
+        if (request.method === "POST" && url.pathname === "/setup")
+            return postSetup(request, env);
+
+        const setupMatch = url.pathname.match(/^\/setup\/([0-9a-z]{8})$/i);
+
+        if (request.method === "GET" && setupMatch)
+            return getSetup(setupMatch[1].toUpperCase(), env);
+
         if (request.method === "GET" && (url.pathname === "/" || url.pathname.startsWith("/exception/"))) {
             if (!isAuthorized(url, env))
                 return new Response("Not found", { status: 404 });
@@ -179,5 +272,11 @@ export default {
         await env.DB.prepare("DELETE FROM exceptions WHERE time < ?1")
             .bind(new Date(Date.now() - EXCEPTION_RETENTION_DAYS * 86_400_000).toISOString())
             .run();
+
+        await env.DB.prepare("DELETE FROM setups WHERE created < ?1")
+            .bind(new Date(Date.now() - SETUP_RETENTION_DAYS * 86_400_000).toISOString())
+            .run();
+
+        await env.DB.prepare("UPDATE setups SET ip_hash = '' WHERE ip_hash != ''").run();
     }
 };

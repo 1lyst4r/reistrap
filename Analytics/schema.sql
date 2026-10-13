@@ -15,3 +15,13 @@ CREATE TABLE IF NOT EXISTS exceptions (
 );
 
 CREATE INDEX IF NOT EXISTS exceptions_time ON exceptions (time);
+
+CREATE TABLE IF NOT EXISTS setups (
+    code TEXT PRIMARY KEY,
+    created TEXT NOT NULL,
+    ip_hash TEXT NOT NULL,
+    data TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS setups_created ON setups (created);
+CREATE INDEX IF NOT EXISTS setups_ip_hash ON setups (ip_hash, created);

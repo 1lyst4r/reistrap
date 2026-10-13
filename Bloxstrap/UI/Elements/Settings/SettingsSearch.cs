@@ -209,6 +209,7 @@ namespace Bloxstrap.UI.Elements.Settings
             ("reistrap", nameof(Strings.Menu_Bloxstrap_Reset_Title)),
             ("reistrap", nameof(Strings.Menu_Bloxstrap_Analytics_Title)),
             ("reistrap", nameof(Strings.Menu_Bloxstrap_Backup_Title)),
+            ("reistrap", nameof(Strings.Menu_Bloxstrap_ShareSetup_Title)),
         };
     }
 }

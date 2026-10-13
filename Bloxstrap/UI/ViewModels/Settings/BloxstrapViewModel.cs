@@ -115,6 +115,54 @@ namespace Bloxstrap.UI.ViewModels.Settings
             Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_Import_Done, name), MessageBoxImage.Information);
         }
 
+        public string SetupCode { get; set; } = "";
+
+        public ICommand CreateSetupCodeCommand => new AsyncRelayCommand(CreateSetupCode);
+
+        public ICommand UseSetupCodeCommand => new AsyncRelayCommand(UseSetupCode);
+
+        private static void ShowSetupCodeError(Exception ex)
+        {
+            App.Logger.WriteException("BloxstrapViewModel::SetupCode", ex);
+
+            string message = ex is SetupCodeException ? ex.Message : String.Format(Strings.Menu_Bloxstrap_ShareSetup_Failed, ex.Message);
+            Frontend.ShowMessageBox(message, MessageBoxImage.Error);
+        }
+
+        private async Task CreateSetupCode()
+        {
+            try
+            {
+                string code = await SetupCodes.Create();
+                Clipboard.SetDataObject(code);
+                Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_ShareSetup_Created, code), MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                ShowSetupCodeError(ex);
+            }
+        }
+
+        private async Task UseSetupCode()
+        {
+            try
+            {
+                using var setup = await SetupCodes.Fetch(SetupCode);
+
+                string code = SetupCodes.Format(SetupCodes.Normalize(SetupCode));
+
+                if (Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_ShareSetup_Confirm, code), MessageBoxImage.Question, MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+
+                SetupCodes.Apply(setup.RootElement);
+                Frontend.ShowMessageBox(Strings.Menu_Bloxstrap_ShareSetup_Done, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                ShowSetupCodeError(ex);
+            }
+        }
+
         public ICommand CreateBackupCommand => new RelayCommand(CreateBackup);
 
         public ICommand RestoreBackupCommand => new RelayCommand(RestoreBackup);
