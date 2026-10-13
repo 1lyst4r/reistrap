@@ -8,12 +8,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-using Wpf.Ui.Common;
-
 using Bloxstrap.UI.ViewModels.Settings;
 
 using Button = System.Windows.Controls.Button;
-using Path = System.Windows.Shapes.Path;
 
 namespace Bloxstrap.UI.Elements.Dialogs
 {
@@ -21,15 +18,12 @@ namespace Bloxstrap.UI.Elements.Dialogs
     {
         private class Feature
         {
-            public SymbolRegular Icon;
             public string Title = "";
             public string Description = "";
             public Func<bool> Get = null!;
             public Action<bool> Set = null!;
-            public ToggleButton? Tile;
+            public ToggleButton? Row;
         }
-
-        private static readonly Color DefaultAccent = Color.FromRgb(0xF5, 0xB8, 0x00);
 
         private readonly Dictionary<string, string> _importSources = SettingsImporter.FindInstalls();
 
@@ -55,36 +49,28 @@ namespace Bloxstrap.UI.Elements.Dialogs
         {
             InitializeComponent();
 
-            Closed += (_, _) =>
-            {
-                GlowA.BeginAnimation(Canvas.LeftProperty, null);
-                GlowA.BeginAnimation(Canvas.TopProperty, null);
-                GlowB.BeginAnimation(Canvas.LeftProperty, null);
-                GlowB.BeginAnimation(Canvas.TopProperty, null);
-            };
-
             var settings = App.Settings.Prop;
 
             _features = new()
             {
-                new() { Icon = SymbolRegular.Chat24, Title = Strings.Setup_Feature_Discord_Title, Description = Strings.Setup_Feature_Discord_Description, Get = () => settings.UseDiscordRichPresence, Set = x => settings.UseDiscordRichPresence = x },
-                new() { Icon = SymbolRegular.Globe24, Title = Strings.Setup_Feature_Location_Title, Description = Strings.Setup_Feature_Location_Description, Get = () => settings.ShowServerDetails, Set = x => settings.ShowServerDetails = x },
-                new() { Icon = SymbolRegular.Window24, Title = Strings.Setup_Feature_MultiInstance_Title, Description = Strings.Setup_Feature_MultiInstance_Description, Get = () => settings.MultiInstanceLaunching, Set = x => settings.MultiInstanceLaunching = x },
-                new() { Icon = SymbolRegular.Timer24, Title = Strings.Setup_Feature_Playtime_Title, Description = Strings.Setup_Feature_Playtime_Description, Get = () => settings.TrackGameStats, Set = x => settings.TrackGameStats = x },
-                new() { Icon = SymbolRegular.ArrowRepeatAll24, Title = Strings.Setup_Feature_Rejoin_Title, Description = Strings.Setup_Feature_Rejoin_Description, Get = () => settings.AutoRejoin, Set = x => settings.AutoRejoin = x },
-                new() { Icon = SymbolRegular.Keyboard24, Title = Strings.Setup_Feature_Socd_Title, Description = Strings.Setup_Feature_Socd_Description, Get = () => settings.SocdEnabled, Set = x => settings.SocdEnabled = x }
+                new() { Title = Strings.Setup_Feature_Discord_Title, Description = Strings.Setup_Feature_Discord_Description, Get = () => settings.UseDiscordRichPresence, Set = x => settings.UseDiscordRichPresence = x },
+                new() { Title = Strings.Setup_Feature_Location_Title, Description = Strings.Setup_Feature_Location_Description, Get = () => settings.ShowServerDetails, Set = x => settings.ShowServerDetails = x },
+                new() { Title = Strings.Setup_Feature_Playtime_Title, Description = Strings.Setup_Feature_Playtime_Description, Get = () => settings.TrackGameStats, Set = x => settings.TrackGameStats = x },
+                new() { Title = Strings.Setup_Feature_Rejoin_Title, Description = Strings.Setup_Feature_Rejoin_Description, Get = () => settings.AutoRejoin, Set = x => settings.AutoRejoin = x },
+                new() { Title = Strings.Setup_Feature_MultiInstance_Title, Description = Strings.Setup_Feature_MultiInstance_Description, Get = () => settings.MultiInstanceLaunching, Set = x => settings.MultiInstanceLaunching = x },
+                new() { Title = Strings.Setup_Feature_Socd_Title, Description = Strings.Setup_Feature_Socd_Description, Get = () => settings.SocdEnabled, Set = x => settings.SocdEnabled = x }
             };
 
             if (_importSources.Any())
                 _steps.Add((Strings.Setup_Rail_Import, ImportStep));
+            else
+                ImportStep.Visibility = Visibility.Collapsed;
 
             _steps.Add((Strings.Setup_Rail_Look, LookStep));
             _steps.Add((Strings.Setup_Rail_Features, FeaturesStep));
             _steps.Add((Strings.Setup_Rail_Performance, PerformanceStep));
-            _steps.Add((Strings.Setup_Rail_Done, DoneStep));
 
-            if (!_importSources.Any())
-                ImportStep.Visibility = Visibility.Collapsed;
+            WelcomeBody.Text = String.Format(Strings.Setup_Welcome_Subheading, _steps.Count);
 
             BuildImportChoices();
             BuildThemeChoices();
@@ -98,42 +84,45 @@ namespace Bloxstrap.UI.Elements.Dialogs
 
         private static TextBlock Text(string text, string style, FrameworkElement owner) => new() { Text = text, Style = (Style)owner.FindResource(style) };
 
+        private StackPanel RowContent(string title, string description)
+        {
+            var content = new StackPanel();
+            content.Children.Add(Text(title, "RowTitle", this));
+            content.Children.Add(Text(description, "RowText", this));
+            return content;
+        }
+
+        private RadioButton OptionRow(string group, string title, string description, Panel parent)
+        {
+            var button = new RadioButton { GroupName = group, Style = (Style)FindResource("OptionRow"), Content = RowContent(title, description) };
+            parent.Children.Add(button);
+            return button;
+        }
+
         private void BuildImportChoices()
         {
-            bool first = true;
-
             foreach (var source in _importSources.Keys)
             {
-                var content = new StackPanel();
-                content.Children.Add(Text(String.Format(Strings.Setup_Import_From, source), "CardTitle", this));
-                content.Children.Add(Text(Strings.Setup_Import_From_Description, "CardText", this));
-
-                var button = new RadioButton { GroupName = "Import", Style = (Style)FindResource("ChoiceCard"), Content = content, Tag = source, IsChecked = first };
+                var button = OptionRow("Import", String.Format(Strings.Setup_Import_From, source), Strings.Setup_Import_From_Description, ImportChoices);
+                button.Tag = source;
+                button.IsChecked = _importChoices.Count == 0;
                 _importChoices.Add(button);
-                ImportChoices.Children.Add(button);
-                first = false;
             }
 
-            var fresh = new StackPanel();
-            fresh.Children.Add(Text(Strings.Setup_Import_Fresh_Title, "CardTitle", this));
-            fresh.Children.Add(Text(Strings.Setup_Import_Fresh_Description, "CardText", this));
-
-            var freshButton = new RadioButton { GroupName = "Import", Style = (Style)FindResource("ChoiceCard"), Content = fresh };
-            _importChoices.Add(freshButton);
-            ImportChoices.Children.Add(freshButton);
+            _importChoices.Add(OptionRow("Import", Strings.Setup_Import_Fresh_Title, Strings.Setup_Import_Fresh_Description, ImportChoices));
         }
 
         private static Border WindowPreview(Brush background, Brush bar, Brush line)
         {
             var stack = new StackPanel();
-            stack.Children.Add(new Border { Height = 10, Background = bar, CornerRadius = new CornerRadius(6, 6, 0, 0) });
+            stack.Children.Add(new Border { Height = 10, Background = bar });
 
             var body = new StackPanel { Margin = new Thickness(10, 9, 10, 0) };
             body.Children.Add(new Border { Height = 6, Width = 54, HorizontalAlignment = HorizontalAlignment.Left, CornerRadius = new CornerRadius(3), Background = line });
             body.Children.Add(new Border { Height = 6, Width = 38, Margin = new Thickness(0, 6, 0, 0), HorizontalAlignment = HorizontalAlignment.Left, CornerRadius = new CornerRadius(3), Background = line });
             stack.Children.Add(body);
 
-            return new Border { Height = 62, CornerRadius = new CornerRadius(6), Background = background, Child = stack, ClipToBounds = true };
+            return new Border { Height = 64, CornerRadius = new CornerRadius(5), Background = background, Child = stack, ClipToBounds = true };
         }
 
         private void BuildThemeChoices()
@@ -162,11 +151,7 @@ namespace Bloxstrap.UI.Elements.Dialogs
 
             foreach (var option in options)
             {
-                var content = new StackPanel();
-                content.Children.Add(option.Preview);
-                content.Children.Add(new TextBlock { Text = option.Label, Margin = new Thickness(0, 10, 0, 0), FontSize = 14, FontWeight = FontWeights.SemiBold });
-
-                var button = new RadioButton { GroupName = "Theme", Style = (Style)FindResource("ChoiceCard"), Content = content, Margin = new Thickness(0, 0, 10, 0) };
+                var button = new RadioButton { GroupName = "Theme", Style = (Style)FindResource("ThemeOption"), Content = option.Preview, Tag = option.Label };
                 _themeChoices.Add((option.Theme, button));
                 ThemeChoices.Children.Add(button);
             }
@@ -176,9 +161,9 @@ namespace Bloxstrap.UI.Elements.Dialogs
         {
             foreach (var preset in AppearanceViewModel.AccentPresets)
             {
-                Color color = String.IsNullOrEmpty(preset.Value) ? DefaultAccent : (Color)ColorConverter.ConvertFromString(preset.Value);
+                Color color = String.IsNullOrEmpty(preset.Value) ? Wpf.Ui.Appearance.Accent.GetColorizationColor() : (Color)ColorConverter.ConvertFromString(preset.Value);
 
-                var button = new RadioButton { GroupName = "Accent", Style = (Style)FindResource("Swatch"), Background = new SolidColorBrush(color), ToolTip = String.IsNullOrEmpty(preset.Value) ? "reistrap" : preset.Key };
+                var button = new RadioButton { GroupName = "Accent", Style = (Style)FindResource("Swatch"), Background = new SolidColorBrush(color), ToolTip = preset.Key };
                 button.Checked += (_, _) => SetAccent(color);
 
                 _accentChoices.Add((preset.Value, button));
@@ -190,47 +175,17 @@ namespace Bloxstrap.UI.Elements.Dialogs
         {
             foreach (var feature in _features)
             {
-                var content = new StackPanel();
-                content.Children.Add(new Wpf.Ui.Controls.SymbolIcon { Symbol = feature.Icon, FontSize = 22, HorizontalAlignment = HorizontalAlignment.Left, Foreground = (Brush)FindResource("AccentBrush") });
-                content.Children.Add(new TextBlock { Text = feature.Title, Margin = new Thickness(0, 10, 0, 0), Style = (Style)FindResource("CardTitle") });
-                content.Children.Add(Text(feature.Description, "CardText", this));
-
-                var tile = new ToggleButton { Style = (Style)FindResource("FeatureTile"), Content = content };
-
-                feature.Tile = tile;
-                FeatureChoices.Children.Add(tile);
+                var row = new ToggleButton { Style = (Style)FindResource("SwitchRow"), Content = RowContent(feature.Title, feature.Description) };
+                feature.Row = row;
+                FeatureChoices.Children.Add(row);
             }
-        }
-
-        private RadioButton PerformanceCard(SymbolRegular icon, string title, string description)
-        {
-            var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-
-            var iconHolder = new Border { Width = 44, Height = 44, CornerRadius = new CornerRadius(12), Background = (Brush)FindResource("SurfaceHoverBrush"), Margin = new Thickness(0, 0, 16, 0), VerticalAlignment = VerticalAlignment.Center };
-            var symbol = new Wpf.Ui.Controls.SymbolIcon { Symbol = icon, FontSize = 22, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-            symbol.SetResourceReference(Control.ForegroundProperty, "AccentBrush");
-            iconHolder.Child = symbol;
-            grid.Children.Add(iconHolder);
-
-            var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
-            text.Children.Add(Text(title, "CardTitle", this));
-            text.Children.Add(Text(description, "CardText", this));
-            Grid.SetColumn(text, 1);
-            grid.Children.Add(text);
-
-            var button = new RadioButton { GroupName = "Performance", Style = (Style)FindResource("ChoiceCard"), Content = grid };
-            PerformanceChoices.Children.Add(button);
-
-            return button;
         }
 
         private void BuildPerformanceChoices()
         {
-            _balanced = PerformanceCard(SymbolRegular.Sparkle24, Strings.Setup_Performance_Default_Title, Strings.Setup_Performance_Default_Description);
-            _performance = PerformanceCard(SymbolRegular.Flash24, Strings.Setup_Performance_Fps_Title, Strings.Setup_Performance_Fps_Description);
-            _quality = PerformanceCard(SymbolRegular.Diamond24, Strings.Setup_Performance_Quality_Title, Strings.Setup_Performance_Quality_Description);
+            _balanced = OptionRow("Performance", Strings.Setup_Performance_Default_Title, Strings.Setup_Performance_Default_Description, PerformanceChoices);
+            _performance = OptionRow("Performance", Strings.Setup_Performance_Fps_Title, Strings.Setup_Performance_Fps_Description, PerformanceChoices);
+            _quality = OptionRow("Performance", Strings.Setup_Performance_Quality_Title, Strings.Setup_Performance_Quality_Description, PerformanceChoices);
             _balanced.IsChecked = true;
         }
 
@@ -245,21 +200,17 @@ namespace Bloxstrap.UI.Elements.Dialogs
             (accent.Button ?? _accentChoices[0].Button).IsChecked = true;
 
             foreach (var feature in _features)
-                feature.Tile!.IsChecked = feature.Get();
+                feature.Row!.IsChecked = feature.Get();
         }
 
         // Accent
 
         private void SetAccent(Color color)
         {
-            Resources["AccentBrush"] = new SolidColorBrush(color);
-            Resources["AccentSoftBrush"] = new SolidColorBrush(Color.FromArgb(0x26, color.R, color.G, color.B));
+            double luminance = (0.2126 * color.R + 0.7152 * color.G + 0.0722 * color.B) / 255;
 
-            foreach (var feature in _features)
-            {
-                if (feature.Tile?.Content is StackPanel panel && panel.Children[0] is Wpf.Ui.Controls.SymbolIcon icon)
-                    icon.Foreground = (Brush)Resources["AccentBrush"];
-            }
+            Resources["AccentBrush"] = new SolidColorBrush(color);
+            Resources["OnAccentBrush"] = new SolidColorBrush(luminance > 0.45 ? Color.FromRgb(0x0B, 0x0C, 0x0E) : Colors.White);
         }
 
         // Steps
@@ -270,52 +221,16 @@ namespace Bloxstrap.UI.Elements.Dialogs
 
             for (int i = 0; i < _steps.Count; i++)
             {
-                bool done = i < _step;
                 bool current = i == _step;
 
-                var circle = new Grid { Width = 26, Height = 26 };
-                var ellipse = new Ellipse { StrokeThickness = 1.5 };
-
-                if (done)
-                {
-                    ellipse.SetResourceReference(Shape.FillProperty, "AccentBrush");
-                    circle.Children.Add(ellipse);
-                    circle.Children.Add(new Path { Data = Geometry.Parse("M 8,13.5 L 11.5,17 L 18.5,9.5"), Stroke = new SolidColorBrush(Color.FromRgb(0x14, 0x14, 0x14)), StrokeThickness = 2.2, StrokeStartLineCap = PenLineCap.Round, StrokeEndLineCap = PenLineCap.Round, StrokeLineJoin = PenLineJoin.Round });
-                }
-                else
-                {
-                    if (current)
-                        ellipse.SetResourceReference(Shape.StrokeProperty, "AccentBrush");
-                    else
-                        ellipse.Stroke = (Brush)FindResource("DimBrush");
-
-                    circle.Children.Add(ellipse);
-
-                    var number = new TextBlock { Text = (i + 1).ToString(), FontSize = 12, FontWeight = FontWeights.SemiBold, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-
-                    if (current)
-                        number.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush");
-                    else
-                        number.Foreground = (Brush)FindResource("DimBrush");
-
-                    circle.Children.Add(number);
-                }
-
-                var label = new TextBlock
+                StepList.Children.Add(new TextBlock
                 {
                     Text = _steps[i].Label,
-                    Margin = new Thickness(12, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, 0, 16),
                     FontSize = 14,
                     FontWeight = current ? FontWeights.SemiBold : FontWeights.Normal,
-                    Foreground = current ? new SolidColorBrush(Color.FromRgb(0xF2, 0xF1, 0xEC)) : (Brush)FindResource(done ? "MutedBrush" : "DimBrush")
-                };
-
-                var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 22) };
-                row.Children.Add(circle);
-                row.Children.Add(label);
-
-                StepList.Children.Add(row);
+                    Foreground = current ? new SolidColorBrush(Color.FromRgb(0xED, 0xEE, 0xF0)) : (Brush)FindResource(i < _step ? "MutedBrush" : "DimBrush")
+                });
             }
         }
 
@@ -328,114 +243,64 @@ namespace Bloxstrap.UI.Elements.Dialogs
 
             BackButton.Visibility = _step == 0 ? Visibility.Hidden : Visibility.Visible;
             NextButton.Content = last ? Strings.Setup_Finish : Strings.Setup_Next;
+            StepCounter.Text = String.Format(Strings.Setup_Step, _step + 1, _steps.Count);
 
             BuildRail();
 
-            if (_animate)
-            {
-                var translate = (TranslateTransform)StepHost.RenderTransform;
-                var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+            if (!_animate)
+                return;
 
-                translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(36 * direction, 0, TimeSpan.FromMilliseconds(320)) { EasingFunction = ease });
-                StepHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(260)) { EasingFunction = ease });
-            }
+            var translate = (TranslateTransform)StepHost.RenderTransform;
+            var ease = new QuinticEase { EasingMode = EasingMode.EaseOut };
 
-            if (last)
-                PlayDoneAnimation();
+            translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(16 * direction, 0, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease });
+            StepHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200)) { EasingFunction = ease });
         }
 
         // Animation
 
-        private void Animate(UIElement element, DependencyProperty property, double from, double to, int delayMs, int durationMs, IEasingFunction? ease = null)
+        private static void Animate(IAnimatable target, DependencyProperty property, double from, double to, int delayMs, int durationMs)
         {
-            var animation = new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(durationMs))
+            target.BeginAnimation(property, new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(durationMs))
             {
                 BeginTime = TimeSpan.FromMilliseconds(delayMs),
-                EasingFunction = ease ?? new CubicEase { EasingMode = EasingMode.EaseOut },
+                EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseOut },
                 FillBehavior = FillBehavior.HoldEnd
-            };
-
-            element.BeginAnimation(property, animation);
-        }
-
-        private void Animate(Animatable target, DependencyProperty property, double from, double to, int delayMs, int durationMs, IEasingFunction? ease = null)
-        {
-            var animation = new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(durationMs))
-            {
-                BeginTime = TimeSpan.FromMilliseconds(delayMs),
-                EasingFunction = ease ?? new CubicEase { EasingMode = EasingMode.EaseOut },
-                FillBehavior = FillBehavior.HoldEnd
-            };
-
-            target.BeginAnimation(property, animation);
+            });
         }
 
         private void PlayIntro()
         {
             var tiles = new (Rectangle Tile, double X, double Y)[]
             {
-                (TileTL, -70, -70),
-                (TileTR, 70, -70),
-                (TileBL, -70, 70),
-                (TileBR, 70, 70)
+                (TileTL, -24, -24),
+                (TileTR, 24, -24),
+                (TileBL, -24, 24),
+                (TileBR, 24, 24)
             };
-
-            var chipScale = (ScaleTransform)Chip.RenderTransform;
-            var textTranslate = (TranslateTransform)WelcomeText.RenderTransform;
 
             if (!_animate)
             {
                 foreach (var tile in tiles)
                     tile.Tile.Opacity = 1;
 
-                chipScale.ScaleX = chipScale.ScaleY = 1;
+                Chip.Opacity = 1;
                 WelcomeText.Opacity = 1;
-                textTranslate.Y = 0;
                 return;
             }
-
-            var back = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.5 };
 
             for (int i = 0; i < tiles.Length; i++)
             {
                 var translate = (TranslateTransform)tiles[i].Tile.RenderTransform;
-                int delay = 150 + i * 90;
+                int delay = 100 + i * 60;
 
-                Animate(tiles[i].Tile, OpacityProperty, 0, 1, delay, 260);
-                Animate(translate, TranslateTransform.XProperty, tiles[i].X, 0, delay, 520, back);
-                Animate(translate, TranslateTransform.YProperty, tiles[i].Y, 0, delay, 520, back);
+                Animate(tiles[i].Tile, OpacityProperty, 0, 1, delay, 300);
+                Animate(translate, TranslateTransform.XProperty, tiles[i].X, 0, delay, 600);
+                Animate(translate, TranslateTransform.YProperty, tiles[i].Y, 0, delay, 600);
             }
 
-            var pop = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.8 };
-            Animate(chipScale, ScaleTransform.ScaleXProperty, 0, 1, 680, 380, pop);
-            Animate(chipScale, ScaleTransform.ScaleYProperty, 0, 1, 680, 380, pop);
-
-            Animate(WelcomeText, OpacityProperty, 0, 1, 880, 500);
-            Animate(textTranslate, TranslateTransform.YProperty, 18, 0, 880, 600);
-
-            var drift = new SineEase { EasingMode = EasingMode.EaseInOut };
-
-            GlowA.BeginAnimation(Canvas.LeftProperty, new DoubleAnimation(-180, -40, TimeSpan.FromSeconds(9)) { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever, EasingFunction = drift });
-            GlowA.BeginAnimation(Canvas.TopProperty, new DoubleAnimation(-240, -150, TimeSpan.FromSeconds(11)) { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever, EasingFunction = drift });
-            GlowB.BeginAnimation(Canvas.LeftProperty, new DoubleAnimation(580, 460, TimeSpan.FromSeconds(10)) { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever, EasingFunction = drift });
-            GlowB.BeginAnimation(Canvas.TopProperty, new DoubleAnimation(320, 240, TimeSpan.FromSeconds(12)) { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever, EasingFunction = drift });
-        }
-
-        private void PlayDoneAnimation()
-        {
-            var scale = (ScaleTransform)DoneCircle.RenderTransform;
-
-            if (!_animate)
-            {
-                scale.ScaleX = scale.ScaleY = 1;
-                DoneCheck.StrokeDashOffset = 0;
-                return;
-            }
-
-            var pop = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.6 };
-            Animate(scale, ScaleTransform.ScaleXProperty, 0, 1, 120, 420, pop);
-            Animate(scale, ScaleTransform.ScaleYProperty, 0, 1, 120, 420, pop);
-            Animate(DoneCheck, Shape.StrokeDashOffsetProperty, 10, 0, 420, 420);
+            Animate(Chip, OpacityProperty, 0, 1, 420, 300);
+            Animate(WelcomeText, OpacityProperty, 0, 1, 520, 400);
         }
 
         // Saving
@@ -478,7 +343,7 @@ namespace Bloxstrap.UI.Elements.Dialogs
                 settings.AccentColor = accent.Color;
 
             foreach (var feature in _features)
-                feature.Set(feature.Tile!.IsChecked == true);
+                feature.Set(feature.Row!.IsChecked == true);
 
             if (_performance.IsChecked == true)
             {
@@ -550,11 +415,11 @@ namespace Bloxstrap.UI.Elements.Dialogs
                 return;
             }
 
-            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(220));
+            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(160));
             fadeOut.Completed += (_, _) => WelcomeView.Visibility = Visibility.Collapsed;
             WelcomeView.BeginAnimation(OpacityProperty, fadeOut);
 
-            Animate(StepsView, OpacityProperty, 0, 1, 120, 320);
+            Animate(StepsView, OpacityProperty, 0, 1, 80, 240);
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)

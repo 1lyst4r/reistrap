@@ -2821,10 +2821,10 @@ Switch channels?</value>
     <value>Skip setup</value>
   </data>
   <data name="Setup.Welcome.Heading" xml:space="preserve">
-    <value>Welcome to reistrap</value>
+    <value>reistrap is installed</value>
   </data>
   <data name="Setup.Welcome.Subheading" xml:space="preserve">
-    <value>Let's get a few things set up. This takes about a minute, and you can change everything later.</value>
+    <value>Pick a few settings before you start playing. It takes {0} short steps, and you can change any of them later in Settings.</value>
   </data>
   <data name="Setup.Welcome.Body" xml:space="preserve">
     <value>reistrap launches Roblox for you and adds extra features on top. Click Next to pick how it looks and what it does.</value>
@@ -2836,16 +2836,16 @@ Switch channels?</value>
     <value>Copy your settings, Fast Flags and mods from another bootstrapper you have installed.</value>
   </data>
   <data name="Setup.Look.Heading" xml:space="preserve">
-    <value>Pick a look</value>
+    <value>Theme and accent color</value>
   </data>
   <data name="Setup.Look.Subheading" xml:space="preserve">
-    <value>Choose the theme and accent color for reistrap's windows.</value>
+    <value>These only change reistrap's own windows. Roblox itself looks the same.</value>
   </data>
   <data name="Setup.Features.Heading" xml:space="preserve">
-    <value>Choose your features</value>
+    <value>Features</value>
   </data>
   <data name="Setup.Features.Subheading" xml:space="preserve">
-    <value>These are the most popular ones. There are many more in settings.</value>
+    <value>Turn on the ones you want now. Settings has many more.</value>
   </data>
   <data name="Setup.Features.Discord" xml:space="preserve">
     <value>Show the game you're playing on your Discord profile.</value>
@@ -2854,7 +2854,7 @@ Switch channels?</value>
     <value>See which city your server is in when you join a game.</value>
   </data>
   <data name="Setup.Performance.Heading" xml:space="preserve">
-    <value>How should Roblox run?</value>
+    <value>Graphics</value>
   </data>
   <data name="Setup.Performance.Subheading" xml:space="preserve">
     <value>This sets a few Fast Flags. You can fine-tune them later in Engine Settings.</value>
@@ -3031,28 +3031,28 @@ Switch channels?</value>
     <value>The font used in some bootstrapper styles.</value>
   </data>
   <data name="Setup.Start" xml:space="preserve">
-    <value>Get started</value>
+    <value>Choose settings</value>
   </data>
   <data name="Setup.Rail.Import" xml:space="preserve">
-    <value>Your old settings</value>
+    <value>Import</value>
   </data>
   <data name="Setup.Rail.Look" xml:space="preserve">
-    <value>Look</value>
+    <value>Theme</value>
   </data>
   <data name="Setup.Rail.Features" xml:space="preserve">
     <value>Features</value>
   </data>
   <data name="Setup.Rail.Performance" xml:space="preserve">
-    <value>Performance</value>
+    <value>Graphics</value>
   </data>
   <data name="Setup.Rail.Done" xml:space="preserve">
     <value>Finish</value>
   </data>
   <data name="Setup.Import.Heading" xml:space="preserve">
-    <value>Bring your setup with you</value>
+    <value>Import your old settings</value>
   </data>
   <data name="Setup.Import.Subheading" xml:space="preserve">
-    <value>We found another bootstrapper on this PC. reistrap can copy everything over so you don't start from zero.</value>
+    <value>reistrap found another bootstrapper on this PC. It can copy that bootstrapper's settings, Fast Flags and mods.</value>
   </data>
   <data name="Setup.Import.From" xml:space="preserve">
     <value>Import from {0}</value>
