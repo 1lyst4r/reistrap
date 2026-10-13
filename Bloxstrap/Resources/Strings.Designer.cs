@@ -6394,5 +6394,29 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.FastFlags.Ignored.Message", resourceCulture);
             }
         }
+        
+        public static string Common_GameUpdated {
+            get {
+                return ResourceManager.GetString("Common.GameUpdated", resourceCulture);
+            }
+        }
+        
+        public static string Common_TimeAgo_Minutes {
+            get {
+                return ResourceManager.GetString("Common.TimeAgo.Minutes", resourceCulture);
+            }
+        }
+        
+        public static string Common_TimeAgo_Hours {
+            get {
+                return ResourceManager.GetString("Common.TimeAgo.Hours", resourceCulture);
+            }
+        }
+        
+        public static string Common_TimeAgo_Days {
+            get {
+                return ResourceManager.GetString("Common.TimeAgo.Days", resourceCulture);
+            }
+        }
     }
 }

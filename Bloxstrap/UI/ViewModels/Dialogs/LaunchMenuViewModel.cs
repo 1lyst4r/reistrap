@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
@@ -6,6 +7,19 @@ using Bloxstrap.UI.Elements.About;
 
 namespace Bloxstrap.UI.ViewModels.Installer
 {
+    public class RecentGameItem
+    {
+        public long PlaceId { get; init; }
+
+        public string Name { get; init; } = "";
+
+        public string? IconUrl { get; init; }
+
+        public string UpdatedText { get; init; } = "";
+
+        public Visibility UpdatedVisibility => String.IsNullOrEmpty(UpdatedText) ? Visibility.Collapsed : Visibility.Visible;
+    }
+
     public class LaunchMenuViewModel
     {
         public string Version => string.Format(Strings.Menu_About_Version, App.Version);
@@ -24,7 +38,30 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
         public event EventHandler<NextAction>? CloseWindowRequest;
 
-        public IReadOnlyList<GameStatsEntry> RecentGames { get; } = App.Settings.Prop.TrackGameStats ? GameStatsTracker.GetRecent(5).ToList() : new();
+        private readonly List<GameStatsEntry> _recentEntries = App.Settings.Prop.TrackGameStats ? GameStatsTracker.GetRecent(5).ToList() : new();
+
+        public ObservableCollection<RecentGameItem> RecentGames { get; } = new();
+
+        public LaunchMenuViewModel()
+        {
+            foreach (var entry in _recentEntries)
+                RecentGames.Add(new RecentGameItem { PlaceId = entry.PlaceId, Name = entry.Name, IconUrl = entry.IconUrl });
+
+            _ = ShowGameUpdates();
+        }
+
+        private async Task ShowGameUpdates()
+        {
+            var times = await GameUpdates.GetUpdateTimes(_recentEntries.Select(x => x.UniverseId));
+
+            for (int i = 0; i < RecentGames.Count && i < _recentEntries.Count; i++)
+            {
+                var entry = _recentEntries[i];
+
+                if (times.TryGetValue(entry.UniverseId, out var updated) && GameUpdates.Describe(updated, entry.LastPlayed) is string text)
+                    RecentGames[i] = new RecentGameItem { PlaceId = entry.PlaceId, Name = entry.Name, IconUrl = entry.IconUrl, UpdatedText = text };
+            }
+        }
 
         public Visibility RecentGamesVisibility => RecentGames.Any() ? Visibility.Visible : Visibility.Collapsed;
 

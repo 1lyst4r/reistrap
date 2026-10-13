@@ -17,6 +17,10 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public string? IconUrl { get; set; }
 
         public string Details { get; set; } = "";
+
+        public string UpdatedText { get; set; } = "";
+
+        public Visibility UpdatedVisibility => String.IsNullOrEmpty(UpdatedText) ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public class QuickPlayServer
@@ -149,7 +153,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
             if (!App.Settings.Prop.TrackGameStats)
                 return;
 
-            foreach (var entry in GameStatsTracker.GetRecent(6))
+            var recent = GameStatsTracker.GetRecent(6).ToList();
+
+            foreach (var entry in recent)
             {
                 RecentGames.Add(new QuickPlayGame
                 {
@@ -159,6 +165,31 @@ namespace Bloxstrap.UI.ViewModels.Settings
                     IconUrl = entry.IconUrl,
                     Details = String.Format(Strings.Menu_QuickPlay_LastPlayed, entry.LastPlayed.ToString("g"))
                 });
+            }
+
+            _ = ShowGameUpdates(recent);
+        }
+
+        private async Task ShowGameUpdates(List<GameStatsEntry> recent)
+        {
+            var times = await GameUpdates.GetUpdateTimes(recent.Select(x => x.UniverseId));
+
+            for (int i = 0; i < RecentGames.Count && i < recent.Count; i++)
+            {
+                if (!times.TryGetValue(recent[i].UniverseId, out var updated) || GameUpdates.Describe(updated, recent[i].LastPlayed) is not string text)
+                    continue;
+
+                var game = RecentGames[i];
+
+                RecentGames[i] = new QuickPlayGame
+                {
+                    UniverseId = game.UniverseId,
+                    PlaceId = game.PlaceId,
+                    Name = game.Name,
+                    IconUrl = game.IconUrl,
+                    Details = game.Details,
+                    UpdatedText = text
+                };
             }
         }
 

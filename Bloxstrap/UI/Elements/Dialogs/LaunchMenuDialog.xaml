@@ -133,7 +133,19 @@
                                     <Border Grid.Column="0" Width="40" Height="40" CornerRadius="6" ClipToBounds="True">
                                         <Image Source="{Binding IconUrl, TargetNullValue={x:Null}}" RenderOptions.BitmapScalingMode="HighQuality" />
                                     </Border>
-                                    <TextBlock Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" FontSize="14" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock FontSize="14" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                        <Border Margin="0,3,0,0" HorizontalAlignment="Left" Padding="6,1" CornerRadius="4" Visibility="{Binding UpdatedVisibility}">
+                                        <Border.Background>
+                                            <SolidColorBrush Opacity="0.18" Color="{DynamicResource SystemAccentColor}" />
+                                        </Border.Background>
+                                        <TextBlock FontSize="11" FontWeight="SemiBold" Text="{Binding UpdatedText}">
+                                            <TextBlock.Foreground>
+                                                <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
+                                            </TextBlock.Foreground>
+                                        </TextBlock>
+                            </Border>
+                                    </StackPanel>
                                 </Grid>
                             </ui:CardAction>
                         </DataTemplate>
