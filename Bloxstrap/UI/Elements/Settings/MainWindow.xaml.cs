@@ -116,12 +116,6 @@ namespace Bloxstrap.UI.Elements.Settings
 
         public void LoadState()
         {
-            if (_state.Left > SystemParameters.VirtualScreenWidth)
-                _state.Left = 0;
-
-            if (_state.Top > SystemParameters.VirtualScreenHeight)
-                _state.Top = 0;
-
             if (_state.SizeVersion == SizeVersion && _state.Width >= MinWidth)
                 this.Width = _state.Width;
 
@@ -131,7 +125,16 @@ namespace Bloxstrap.UI.Elements.Settings
             this.Width = Math.Min(this.Width, SystemParameters.WorkArea.Width);
             this.Height = Math.Min(this.Height, SystemParameters.WorkArea.Height);
 
-            if (_state.Left > 0 && _state.Top > 0)
+            bool singleScreen = SystemParameters.VirtualScreenWidth == SystemParameters.PrimaryScreenWidth
+                && SystemParameters.VirtualScreenHeight == SystemParameters.PrimaryScreenHeight;
+
+            var area = singleScreen
+                ? SystemParameters.WorkArea
+                : new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+
+            var saved = new Rect(_state.Left, _state.Top, this.Width, this.Height);
+
+            if ((_state.Left != 0 || _state.Top != 0) && area.Contains(saved))
             {
                 this.WindowStartupLocation = WindowStartupLocation.Manual;
                 this.Left = _state.Left;
@@ -374,12 +377,17 @@ namespace Bloxstrap.UI.Elements.Settings
                 }
             }
 
-            _state.SizeVersion = SizeVersion;
-            _state.Width = this.Width;
-            _state.Height = this.Height;
+            var bounds = this.WindowState == System.Windows.WindowState.Normal ? new Rect(Left, Top, Width, Height) : RestoreBounds;
 
-            _state.Top = this.Top;
-            _state.Left = this.Left;
+            if (!bounds.IsEmpty)
+            {
+                _state.SizeVersion = SizeVersion;
+                _state.Width = bounds.Width;
+                _state.Height = bounds.Height;
+
+                _state.Top = bounds.Top;
+                _state.Left = bounds.Left;
+            }
 
             App.State.Save();
         }
