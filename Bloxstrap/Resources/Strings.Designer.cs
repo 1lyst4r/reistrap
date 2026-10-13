@@ -3080,6 +3080,24 @@ namespace Bloxstrap.Resources {
             }
         }
         
+        public static string Menu_Bloxstrap_Import_NotFound {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.Import.NotFound", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_Import_BrowseFilter {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.Import.BrowseFilter", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Bloxstrap_Import_NotBootstrapper {
+            get {
+                return ResourceManager.GetString("Menu.Bloxstrap.Import.NotBootstrapper", resourceCulture);
+            }
+        }
+        
         public static string Menu_Shortcuts_Game_Title {
             get {
                 return ResourceManager.GetString("Menu.Shortcuts.Game.Title", resourceCulture);

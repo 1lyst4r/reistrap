@@ -42,6 +42,8 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public Visibility ImportVisibility => ImportSources.Any() ? Visibility.Visible : Visibility.Collapsed;
 
+        public Visibility NoImportSourcesVisibility => ImportSources.Any() ? Visibility.Collapsed : Visibility.Visible;
+
         public bool ShouldImportSettings { get; set; } = true;
 
         public bool ShouldImportFastFlags { get; set; } = true;
@@ -50,14 +52,44 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ICommand ImportCommand => new RelayCommand(Import);
 
+        public ICommand BrowseImportCommand => new RelayCommand(BrowseImport);
+
         private void Import()
         {
-            const string LOG_IDENT = "BloxstrapViewModel::Import";
-
             if (SelectedImportSource is null || !ImportSources.TryGetValue(SelectedImportSource, out string? folder))
                 return;
 
-            var result = Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_Import_Confirm, SelectedImportSource), MessageBoxImage.Question, MessageBoxButton.YesNo);
+            ImportFrom(SelectedImportSource, folder);
+        }
+
+        private void BrowseImport()
+        {
+            var dialog = new OpenFileDialog
+            {
+                InitialDirectory = Paths.LocalAppData,
+                FileName = "Settings.json",
+                Filter = $"{Strings.Menu_Bloxstrap_Import_BrowseFilter} (Settings.json)|Settings.json"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            string folder = Path.GetDirectoryName(dialog.FileName)!;
+
+            if (!SettingsImporter.IsBootstrapperFolder(folder))
+            {
+                Frontend.ShowMessageBox(Strings.Menu_Bloxstrap_Import_NotBootstrapper, MessageBoxImage.Error);
+                return;
+            }
+
+            ImportFrom(Path.GetFileName(folder), folder);
+        }
+
+        private void ImportFrom(string name, string folder)
+        {
+            const string LOG_IDENT = "BloxstrapViewModel::ImportFrom";
+
+            var result = Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_Import_Confirm, name), MessageBoxImage.Question, MessageBoxButton.YesNo);
 
             if (result != MessageBoxResult.Yes)
                 return;
@@ -80,7 +112,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 return;
             }
 
-            Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_Import_Done, SelectedImportSource), MessageBoxImage.Information);
+            Frontend.ShowMessageBox(String.Format(Strings.Menu_Bloxstrap_Import_Done, name), MessageBoxImage.Information);
         }
 
         public ICommand CreateBackupCommand => new RelayCommand(CreateBackup);

@@ -1722,7 +1722,7 @@ Build: {2}</value>
     <value>Import from another bootstrapper</value>
   </data>
   <data name="Menu.Bloxstrap.Import.Description" xml:space="preserve">
-    <value>Copy your settings, Fast Flags and mods from another bootstrapper installed on this PC.</value>
+    <value>Copy your settings, Fast Flags and mods from another Bloxstrap-based bootstrapper. If yours isn't listed, click Browse and pick its Settings.json file.</value>
   </data>
   <data name="Menu.Bloxstrap.Import.Settings" xml:space="preserve">
     <value>Settings</value>
@@ -1738,6 +1738,15 @@ Build: {2}</value>
   </data>
   <data name="Menu.Bloxstrap.Import.Done" xml:space="preserve">
     <value>Imported from {0}. Click Save to keep the imported settings, then reopen this window to see them.</value>
+  </data>
+  <data name="Menu.Bloxstrap.Import.NotFound" xml:space="preserve">
+    <value>No other bootstrappers were found on this PC. If you have one installed somewhere else, click Browse and pick its Settings.json file.</value>
+  </data>
+  <data name="Menu.Bloxstrap.Import.BrowseFilter" xml:space="preserve">
+    <value>Bootstrapper settings</value>
+  </data>
+  <data name="Menu.Bloxstrap.Import.NotBootstrapper" xml:space="preserve">
+    <value>That Settings.json isn't from a Bloxstrap-based bootstrapper, so reistrap can't import it.</value>
   </data>
   <data name="Menu.Shortcuts.Game.Title" xml:space="preserve">
     <value>Game shortcuts</value>

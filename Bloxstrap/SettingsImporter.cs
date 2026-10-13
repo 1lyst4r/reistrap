@@ -1,27 +1,98 @@
 using System.Reflection;
 
+using Microsoft.Win32;
+
 namespace Bloxstrap
 {
     public static class SettingsImporter
     {
-        private static readonly string[] KnownBootstrappers = { "Bloxstrap", "Fishstrap", "Froststrap", "Voidstrap" };
+        private const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
 
         public static Dictionary<string, string> FindInstalls()
         {
-            var installs = new Dictionary<string, string>();
+            const string LOG_IDENT = "SettingsImporter::FindInstalls";
 
-            foreach (string name in KnownBootstrappers)
+            var candidates = new List<(string Name, string Folder)>();
+
+            try
             {
-                string folder = Path.Combine(Paths.LocalAppData, name);
+                using var uninstall = Registry.CurrentUser.OpenSubKey(UninstallKey);
 
-                if (String.Equals(Path.GetFullPath(folder).TrimEnd('\\'), Path.GetFullPath(Paths.Base).TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
-                    continue;
+                foreach (string keyName in uninstall?.GetSubKeyNames() ?? Array.Empty<string>())
+                {
+                    using var key = uninstall!.OpenSubKey(keyName);
 
-                if (File.Exists(Path.Combine(folder, "Settings.json")))
-                    installs[name] = folder;
+                    if (key?.GetValue("InstallLocation") is not string location || String.IsNullOrWhiteSpace(location))
+                        continue;
+
+                    string name = key.GetValue("DisplayName") as string ?? keyName;
+                    candidates.Add((name, location.Trim().Trim('"')));
+                }
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
             }
 
-            return installs;
+            try
+            {
+                foreach (string folder in Directory.GetDirectories(Paths.LocalAppData))
+                    candidates.Add((Path.GetFileName(folder), folder));
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+            }
+
+            var installs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { NormalizePath(Paths.Base) };
+
+            foreach (var (name, folder) in candidates)
+            {
+                string normalized = NormalizePath(folder);
+
+                if (String.IsNullOrEmpty(normalized) || !seen.Add(normalized) || !IsBootstrapperFolder(folder))
+                    continue;
+
+                string label = name;
+
+                for (int i = 2; installs.ContainsKey(label); i++)
+                    label = $"{name} ({i})";
+
+                installs[label] = folder;
+            }
+
+            return installs.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase).ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
+        public static bool IsBootstrapperFolder(string folder)
+        {
+            string path = Path.Combine(folder, "Settings.json");
+
+            if (!File.Exists(path))
+                return false;
+
+            try
+            {
+                using var document = JsonDocument.Parse(File.ReadAllText(path));
+                return document.RootElement.ValueKind == JsonValueKind.Object && document.RootElement.TryGetProperty("BootstrapperStyle", out _);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static string NormalizePath(string path)
+        {
+            try
+            {
+                return Path.GetFullPath(path).TrimEnd('\\');
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public static int ImportSettings(string folder)
@@ -65,6 +136,9 @@ namespace Bloxstrap
         public static int ImportFastFlags(string folder)
         {
             string path = Path.Combine(folder, "Modifications", "ClientSettings", "ClientAppSettings.json");
+
+            if (!File.Exists(path))
+                path = Path.Combine(folder, "ClientSettings", "ClientAppSettings.json");
 
             if (!File.Exists(path))
                 return 0;
