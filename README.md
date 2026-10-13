@@ -2,7 +2,10 @@
 > **reistrap** is an independent, unofficial fork of the open-source project [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap). It is not affiliated with, maintained by, or endorsed by the original Bloxstrap developers.
 
 <p align="center">
-    <img src="Images/reistrap-full-dark.png" width="380">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="Images/reistrap-full-dark.png">
+        <img src="Images/reistrap-full-light.png" width="380" alt="reistrap">
+    </picture>
 </p>
 
 <p align="center">
@@ -117,5 +120,8 @@ Once installed, **reistrap** is added to your Start Menu, where you can access t
 **reistrap** uses the [WPF UI](https://github.com/lepoco/wpfui) library for the user interface design.
 
 <p align="center">
-    <img src="Images/reistrap-full-dark.png" width="380">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="Images/reistrap-full-dark.png">
+        <img src="Images/reistrap-full-light.png" width="380" alt="reistrap">
+    </picture>
 </p>
