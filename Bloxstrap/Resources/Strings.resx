@@ -3371,4 +3371,22 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="Common.TimeAgo.Days" xml:space="preserve">
     <value>{0}d ago</value>
   </data>
+  <data name="Menu.Integrations.SortScreenshots.Title" xml:space="preserve">
+    <value>Sort screenshots by game</value>
+  </data>
+  <data name="Menu.Integrations.SortScreenshots.Description" xml:space="preserve">
+    <value>Move each new Roblox screenshot into a folder named after the game you took it in.</value>
+  </data>
+  <data name="Menu.Playtime.Screenshots.Title" xml:space="preserve">
+    <value>Screenshots</value>
+  </data>
+  <data name="Menu.Playtime.Screenshots.Description" xml:space="preserve">
+    <value>Your latest Roblox screenshots. Click one to open it.</value>
+  </data>
+  <data name="Menu.Playtime.Screenshots.OpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="Menu.Playtime.Screenshots.GameFolder" xml:space="preserve">
+    <value>Open this game's screenshots</value>
+  </data>
 </root>

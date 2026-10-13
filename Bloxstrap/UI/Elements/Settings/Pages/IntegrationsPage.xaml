@@ -130,6 +130,12 @@
         </controls:OptionControl>
 
         <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Integrations_SortScreenshots_Title}"
+            Description="{x:Static resources:Strings.Menu_Integrations_SortScreenshots_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding SortScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_DisableRecordings_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_DisableRecordings_Description}">
             <ui:ToggleSwitch IsChecked="{Binding DisableRobloxRecordings, Mode=TwoWay}" />

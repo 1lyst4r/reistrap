@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using CommunityToolkit.Mvvm.Input;
 
@@ -20,6 +22,103 @@ namespace Bloxstrap.UI.ViewModels.Settings
             public string Details => String.Format(Strings.Menu_Playtime_Details, Entry.Sessions, Entry.LastPlayed.ToString("d", CultureInfo.CurrentCulture));
 
             public double Share { get; init; }
+
+            public string ScreenshotFolder => ScreenshotSorter.GetGameFolder(Entry.Name);
+
+            public int ScreenshotCount { get; init; }
+
+            public Visibility ScreenshotsVisibility => ScreenshotCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public class ScreenshotItem
+        {
+            public string Path { get; init; } = "";
+
+            public string Caption { get; init; } = "";
+
+            public ImageSource Thumbnail { get; init; } = null!;
+        }
+
+        public List<ScreenshotItem> Screenshots { get; } = LoadScreenshots();
+
+        public Visibility ScreenshotsVisibility => Screenshots.Any() ? Visibility.Visible : Visibility.Collapsed;
+
+        public ICommand OpenScreenshotCommand => new RelayCommand<string>(path =>
+        {
+            if (!String.IsNullOrEmpty(path))
+                Utilities.ShellExecute(path);
+        });
+
+        public ICommand OpenScreenshotsFolderCommand => new RelayCommand(() => Utilities.ShellExecute(RobloxCaptureBlocker.ScreenshotsFolder));
+
+        private static List<ScreenshotItem> LoadScreenshots()
+        {
+            string folder = RobloxCaptureBlocker.ScreenshotsFolder;
+
+            if (!Directory.Exists(folder))
+                return new();
+
+            try
+            {
+                var items = new List<ScreenshotItem>();
+
+                foreach (var file in new DirectoryInfo(folder).EnumerateFiles("*.png", SearchOption.AllDirectories).OrderByDescending(x => x.LastWriteTime).Take(8))
+                {
+                    if (LoadThumbnail(file.FullName) is not ImageSource thumbnail)
+                        continue;
+
+                    string when = file.LastWriteTime.ToString("g", CultureInfo.CurrentCulture);
+                    bool inGameFolder = !String.Equals(file.DirectoryName, folder, StringComparison.OrdinalIgnoreCase);
+
+                    items.Add(new ScreenshotItem
+                    {
+                        Path = file.FullName,
+                        Caption = inGameFolder ? $"{file.Directory!.Name}, {when}" : when,
+                        Thumbnail = thumbnail
+                    });
+                }
+
+                return items;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("PlaytimeViewModel::LoadScreenshots", ex);
+                return new();
+            }
+        }
+
+        private static ImageSource? LoadThumbnail(string path)
+        {
+            try
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(path);
+                bitmap.DecodePixelWidth = 320;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("PlaytimeViewModel::LoadThumbnail", ex);
+                return null;
+            }
+        }
+
+        private static int CountScreenshots(string gameName)
+        {
+            try
+            {
+                string folder = ScreenshotSorter.GetGameFolder(gameName);
+                return Directory.Exists(folder) ? Directory.EnumerateFiles(folder, "*.png").Count() : 0;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         public class SessionRow
@@ -125,7 +224,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
             var entries = GameStatsTracker.Load().Games.Values.OrderByDescending(x => x.TotalSeconds).ToList();
             double max = entries.FirstOrDefault()?.TotalSeconds ?? 0;
 
-            Games = entries.Select(x => new GameRow { Entry = x, Share = max > 0 ? x.TotalSeconds / max : 0 }).ToList();
+            Games = entries.Select(x => new GameRow { Entry = x, Share = max > 0 ? x.TotalSeconds / max : 0, ScreenshotCount = CountScreenshots(x.Name) }).ToList();
             TotalPlaytime = FormatDuration(entries.Sum(x => x.TotalSeconds));
 
             OnPropertyChanged(nameof(Games));

@@ -64,11 +64,50 @@
                                 </StackPanel>
                             </Grid>
                         </ui:CardControl.Header>
-                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="{Binding Playtime}" />
+                        <StackPanel Orientation="Horizontal">
+                            <ui:Button Margin="0,0,12,0" Padding="8,4" Icon="Image24" Content="{Binding ScreenshotCount}" ToolTip="{x:Static resources:Strings.Menu_Playtime_Screenshots_GameFolder}" Visibility="{Binding ScreenshotsVisibility}" Command="{Binding DataContext.OpenScreenshotCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding ScreenshotFolder}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold" Text="{Binding Playtime}" />
+                        </StackPanel>
                     </ui:CardControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <StackPanel Visibility="{Binding ScreenshotsVisibility, Mode=OneTime}">
+            <Border Style="{StaticResource SectionSeparator}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{x:Static resources:Strings.Menu_Playtime_Screenshots_Title}" Style="{StaticResource SectionTitle}" />
+                    <TextBlock Text="{x:Static resources:Strings.Menu_Playtime_Screenshots_Description}" Style="{StaticResource SectionDescription}" />
+                </StackPanel>
+                <ui:Button Grid.Column="1" VerticalAlignment="Center" Icon="FolderOpen24" Content="{x:Static resources:Strings.Menu_Playtime_Screenshots_OpenFolder}" Command="{Binding OpenScreenshotsFolderCommand}" />
+            </Grid>
+
+            <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding Screenshots, Mode=OneTime}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Margin="0,0,8,8" Cursor="Hand" ToolTip="{Binding Caption}" Command="{Binding DataContext.OpenScreenshotCommand, RelativeSource={RelativeSource AncestorType=ui:UiPage}}" CommandParameter="{Binding Path}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Width="200" Height="112" CornerRadius="6" ClipToBounds="True" Background="{DynamicResource ControlFillColorDefaultBrush}">
+                                        <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
 
         <StackPanel Visibility="{Binding SessionsVisibility, Mode=OneTime}">
             <Border Style="{StaticResource SectionSeparator}" />

@@ -56,6 +56,7 @@ namespace Bloxstrap.Models.Persistable
         public int MemoryTrimIntervalSeconds { get; set; } = 60;
         public bool CloseCrashHandler { get; set; } = false;
         public bool ExplainCrashes { get; set; } = true;
+        public bool SortScreenshots { get; set; } = false;
         public string RobloxCpuAffinity { get; set; } = "";
         public RobloxAppTheme RobloxAppTheme { get; set; } = RobloxAppTheme.Default;
         public bool RobloxBackgroundApp { get; set; } = false;

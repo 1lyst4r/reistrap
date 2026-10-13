@@ -859,7 +859,7 @@ namespace Bloxstrap
 
             bool usesWindowFeatures = App.Settings.Prop.CrosshairEnabled || App.Settings.Prop.RobloxBorderless || App.Settings.Prop.ThrottleInBackground || App.Settings.Prop.SocdEnabled || App.Settings.Prop.CloseCrashHandler || !String.IsNullOrWhiteSpace(App.Settings.Prop.RobloxCpuAffinity) || App.Settings.Prop.RobloxWindowIcon != RobloxWindowIcon.Default || App.Settings.Prop.MemoryTrimmer || App.Settings.Prop.BreakReminderMinutes > 0 || !String.IsNullOrEmpty(App.Settings.Prop.RobloxWindowTitle) || App.Settings.Prop.GameProfiles.Any(x => x.Crosshair == ProfileToggle.On);
 
-            if (App.Settings.Prop.EnableActivityTracking || App.Settings.Prop.ExplainCrashes || App.LaunchSettings.TestModeFlag.Active || autoclosePids.Any() || usesWindowFeatures || _restoreRobloxSettings is not null)
+            if (App.Settings.Prop.EnableActivityTracking || App.Settings.Prop.ExplainCrashes || App.Settings.Prop.SortScreenshots || App.LaunchSettings.TestModeFlag.Active || autoclosePids.Any() || usesWindowFeatures || _restoreRobloxSettings is not null)
             {
                 StartWatcher(new WatcherData
                 {

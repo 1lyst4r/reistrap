@@ -6418,5 +6418,41 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Common.TimeAgo.Days", resourceCulture);
             }
         }
+        
+        public static string Menu_Integrations_SortScreenshots_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.SortScreenshots.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Integrations_SortScreenshots_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.SortScreenshots.Description", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Playtime_Screenshots_Title {
+            get {
+                return ResourceManager.GetString("Menu.Playtime.Screenshots.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Playtime_Screenshots_Description {
+            get {
+                return ResourceManager.GetString("Menu.Playtime.Screenshots.Description", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Playtime_Screenshots_OpenFolder {
+            get {
+                return ResourceManager.GetString("Menu.Playtime.Screenshots.OpenFolder", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Playtime_Screenshots_GameFolder {
+            get {
+                return ResourceManager.GetString("Menu.Playtime.Screenshots.GameFolder", resourceCulture);
+            }
+        }
     }
 }

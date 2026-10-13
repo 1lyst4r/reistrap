@@ -28,6 +28,8 @@ namespace Bloxstrap
 
         private readonly PerformanceMonitor? _performance;
 
+        private readonly ScreenshotSorter? _screenshotSorter;
+
         private RobloxWindow? _robloxWindow;
 
         private CrosshairWindow? _crosshair;
@@ -151,6 +153,18 @@ namespace Bloxstrap
             }
 
             var settings = App.Settings.Prop;
+
+            if (settings.SortScreenshots && !RobloxCaptureBlocker.IsBlocked(RobloxCaptureBlocker.ScreenshotsFolder))
+            {
+                try
+                {
+                    _screenshotSorter = new ScreenshotSorter(ActivityWatcher);
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                }
+            }
 
             if (settings.SocdEnabled)
                 Socd = new SocdResolver(_watcherData.ProcessId, settings.SocdLayout, settings.SocdMode);
@@ -713,6 +727,7 @@ namespace Bloxstrap
             Socd?.Dispose();
             WindowControl?.Dispose();
             _performance?.Dispose();
+            _screenshotSorter?.Dispose();
             RobloxSingleton.Release();
 
             _windowTimer?.Dispatcher.Invoke(() =>

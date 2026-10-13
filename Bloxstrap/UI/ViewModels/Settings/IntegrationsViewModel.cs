@@ -107,6 +107,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.PlaytimeCounter = value;
         }
 
+        public bool SortScreenshots
+        {
+            get => App.Settings.Prop.SortScreenshots;
+            set => App.Settings.Prop.SortScreenshots = value;
+        }
+
         public bool DisableRobloxScreenshots
         {
             get => RobloxCaptureBlocker.IsBlocked(RobloxCaptureBlocker.ScreenshotsFolder);
