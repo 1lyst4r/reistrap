@@ -2086,24 +2086,6 @@ Build: {2}</value>
   <data name="Menu.Bloxstrap.Backup.Invalid" xml:space="preserve">
     <value>This file is not a reistrap backup.</value>
   </data>
-  <data name="Menu.Group.Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="Menu.Group.Customize" xml:space="preserve">
-    <value>Customize</value>
-  </data>
-  <data name="Menu.Group.Advanced" xml:space="preserve">
-    <value>Advanced</value>
-  </data>
-  <data name="Menu.Group.App" xml:space="preserve">
-    <value>App</value>
-  </data>
-  <data name="Menu.SaveAndPlay" xml:space="preserve">
-    <value>Save and play</value>
-  </data>
-  <data name="Menu.UnsavedIndicator" xml:space="preserve">
-    <value>Unsaved changes</value>
-  </data>
   <data name="Menu.SaveAndLaunchPlayer" xml:space="preserve">
     <value>Save and Launch Player</value>
   </data>

@@ -5,7 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:pages="clr-namespace:Bloxstrap.UI.Elements.Settings.Pages"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             xmlns:navigation="clr-namespace:Wpf.Ui.Controls.Navigation;assembly=Wpf.Ui"
              xmlns:base="clr-namespace:Bloxstrap.UI.Elements.Base"
              xmlns:resources="clr-namespace:Bloxstrap.Resources"
              xmlns:dmodels="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
@@ -16,130 +15,22 @@
              MinWidth="960"
              MinHeight="560"
              Width="1088"
-             Height="720"
+             Height="640"
              Background="{ui:ThemeResource ApplicationBackgroundBrush}"
              ExtendsContentIntoTitleBar="True"
              WindowBackdropType="Mica"
              WindowStartupLocation="CenterScreen"
              Closing="WpfUiWindow_Closing"
              Closed="WpfUiWindow_Closed">
-    <base:WpfUiWindow.InputBindings>
-        <KeyBinding Key="F" Modifiers="Control" Command="{x:Static ApplicationCommands.Find}" />
-        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveSettingsCommand, Mode=OneTime}" />
-    </base:WpfUiWindow.InputBindings>
-
-    <base:WpfUiWindow.CommandBindings>
-        <CommandBinding Command="{x:Static ApplicationCommands.Find}" Executed="FindCommand_Executed" />
-    </base:WpfUiWindow.CommandBindings>
-
     <base:WpfUiWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="SplitLeftButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
-            <Setter Property="Border.CornerRadius" Value="6,0,0,6" />
+            <Setter Property="Border.CornerRadius" Value="4,0,0,4" />
         </Style>
 
         <Style x:Key="SplitRightButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
-            <Setter Property="Border.CornerRadius" Value="0,6,6,0" />
-        </Style>
-
-        <Style x:Key="FooterButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
-            <Setter Property="Appearance" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="8,5" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-        </Style>
-
-        <Style x:Key="SidebarHeader" TargetType="navigation:NavigationHeader">
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Margin" Value="12,12,0,4" />
-            <Setter Property="Focusable" Value="False" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="navigation:NavigationHeader">
-                        <TextBlock Margin="{TemplateBinding Margin}" FontSize="{TemplateBinding FontSize}" FontWeight="SemiBold" Text="{TemplateBinding Text}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="SidebarItem" TargetType="ui:NavigationItem">
-            <Setter Property="Height" Value="32" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-            <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
-            <Setter Property="KeyboardNavigation.IsTabStop" Value="True" />
-            <Setter Property="Focusable" Value="True" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ui:NavigationItem">
-                        <Border x:Name="MainBorder" Background="Transparent" CornerRadius="6" Padding="10,0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <ui:SymbolIcon x:Name="ElementIcon" Grid.Column="0" FontSize="16" VerticalAlignment="Center" Symbol="{TemplateBinding Icon}" Foreground="{TemplateBinding Foreground}" />
-                                <ContentPresenter x:Name="ElementContent" Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" Content="{TemplateBinding Content}" TextElement.FontSize="14" TextElement.Foreground="{TemplateBinding Foreground}" />
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="MainBorder" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
-                                <Setter TargetName="ElementContent" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                <Setter TargetName="ElementIcon" Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsActive" Value="True">
-                                <Setter TargetName="MainBorder" Property="Background">
-                                    <Setter.Value>
-                                        <SolidColorBrush Opacity="0.16" Color="{DynamicResource SystemAccentColor}" />
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter TargetName="ElementContent" Property="TextElement.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                <Setter TargetName="ElementContent" Property="TextElement.FontWeight" Value="SemiBold" />
-                                <Setter TargetName="ElementIcon" Property="Filled" Value="True" />
-                                <Setter TargetName="ElementIcon" Property="Foreground">
-                                    <Setter.Value>
-                                        <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="Sidebar" TargetType="ui:NavigationCompact">
-            <Setter Property="Focusable" Value="False" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ui:NavigationCompact">
-                        <ui:DynamicScrollViewer Padding="0" HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl Margin="0,0,0,8" Focusable="False" ItemsSource="{TemplateBinding Items}" KeyboardNavigation.DirectionalNavigation="Contained">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel IsItemsHost="True" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                        </ui:DynamicScrollViewer>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Resources>
-                <Style TargetType="ui:NavigationItem" BasedOn="{StaticResource SidebarItem}" />
-                <Style TargetType="navigation:NavigationHeader" BasedOn="{StaticResource SidebarHeader}" />
-            </Style.Resources>
+            <Setter Property="Border.CornerRadius" Value="0,4,4,0" />
         </Style>
     </base:WpfUiWindow.Resources>
 
@@ -147,6 +38,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <ui:Snackbar
@@ -161,113 +53,102 @@
             Message="{x:Static resources:Strings.Menu_SettingsSaved_Message}"
             Appearance="Success" Icon="CheckmarkCircle32" Timeout="3000" Margin="200,0,200,20" Grid.RowSpan="10" Panel.ZIndex="9" />
 
-        <ui:TitleBar Padding="8" x:Name="RootTitleBar" Grid.Row="0" ForceShutdown="False" MinimizeToTray="False" UseSnapLayout="True" />
+        <ui:TitleBar Padding="8" x:Name="RootTitleBar" Grid.Row="0" ForceShutdown="False" MinimizeToTray="False" UseSnapLayout="True" Title="{x:Static resources:Strings.Menu_Title}" Icon="pack://application:,,,/reistrap.ico" />
 
-        <StackPanel Grid.Row="0" Margin="18,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-            <Image Source="pack://application:,,,/reistrap.ico" Width="18" Height="18" IsHitTestVisible="False" RenderOptions.BitmapScalingMode="HighQuality" />
-            <TextBlock Margin="10,0,0,0" Text="reistrap" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" IsHitTestVisible="False" />
-            <TextBlock Margin="6,0,14,0" Text="{Binding VersionText, Mode=OneTime}" FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-            <ui:Button Style="{StaticResource FooterButton}" Content="{x:Static resources:Strings.Menu_Credits_Title}" Command="{Binding OpenCreditsCommand, Mode=OneTime}" />
-            <ui:Button Style="{StaticResource FooterButton}" Content="{x:Static resources:Strings.Menu_About_Title}" Command="{Binding OpenAboutCommand, Mode=OneTime}" />
-            <ui:Button x:Name="UpdateButton" Style="{StaticResource FooterButton}" Margin="6,0,0,0" Icon="ArrowDownload20" FontWeight="SemiBold" Visibility="Collapsed" Click="UpdateButton_Click">
-                <ui:Button.Foreground>
-                    <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
-                </ui:Button.Foreground>
-            </ui:Button>
-        </StackPanel>
-
-        <Grid Grid.Row="1">
+        <Grid x:Name="RootGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="244" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Margin="10,4,10,12">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <ui:AutoSuggestBox x:Name="SearchBox" Grid.Row="0" Margin="0,0,0,6" Icon="Search24" PlaceholderText="{x:Static resources:Strings.Menu_Search}" ToolTip="Ctrl+F" SuggestionChosen="SearchBox_SuggestionChosen" KeyDown="SearchBox_KeyDown" />
-
-                <ui:NavigationCompact x:Name="RootNavigation" Grid.Row="1" Style="{StaticResource Sidebar}" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0" Navigated="RootNavigation_Navigated">
+            <Grid Grid.Column="0" Margin="4,0,4,0">
+                <ui:NavigationCompact x:Name="RootNavigation" IsExpanded="True" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0" Navigated="RootNavigation_Navigated">
                     <ui:NavigationCompact.Items>
-                        <navigation:NavigationHeader Text="{x:Static resources:Strings.Menu_Group_Play}" />
-                        <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Integrations_Title}" PageType="{x:Type pages:IntegrationsPage}" Icon="PuzzlePiece24" PageTag="integrations" />
+                        <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Integrations_Title}" PageType="{x:Type pages:IntegrationsPage}" Icon="Add24" PageTag="integrations" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Behaviour_Title}" PageType="{x:Type pages:BehaviourPage}" Icon="Play24" PageTag="bootstrapper" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Playtime_Title}" PageType="{x:Type pages:PlaytimePage}" Icon="Timer24" PageTag="playtime" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_QuickPlay_Title}" PageType="{x:Type pages:QuickPlayPage}" Icon="Rocket24" PageTag="quickplay" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_RegionSelector_Title}" PageType="{x:Type pages:RegionSelectorPage}" Icon="Globe24" PageTag="regionselector" />
-                        <navigation:NavigationHeader Text="{x:Static resources:Strings.Menu_Group_Customize}" />
+                        <ui:NavigationSeparator />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Mods_Title}" PageType="{x:Type pages:ModsPage}" Icon="WrenchScrewdriver24" PageTag="mods" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Appearance_Title}" PageType="{x:Type pages:AppearancePage}" Icon="Color24" PageTag="appearance" />
-                        <navigation:NavigationHeader Text="{x:Static resources:Strings.Menu_Group_Advanced}" />
+                        <ui:NavigationSeparator />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_FastFlags_Title}" PageType="{x:Type pages:FastFlagsPage}" Icon="Flag24" PageTag="fastflags" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Roblox_Title}" PageType="{x:Type pages:RobloxPage}" Icon="Games24" PageTag="roblox" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_GameProfiles_Title}" PageType="{x:Type pages:GameProfilesPage}" Icon="Album24" PageTag="gameprofiles" />
-                        <navigation:NavigationHeader Text="{x:Static resources:Strings.Menu_Group_App}" />
+                        <ui:NavigationSeparator />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Common_Shortcuts}" PageType="{x:Type pages:ShortcutsPage}" Icon="Link24" PageTag="shortcuts" />
                         <ui:NavigationItem Content="reistrap" PageType="{x:Type pages:BloxstrapPage}" Icon="Settings24" PageTag="reistrap" />
 
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_FastFlagEditor_Title}" PageType="{x:Type pages:FastFlagEditorPage}" Icon="Flag24" PageTag="fastflageditor" Visibility="Collapsed" />
                         <ui:NavigationItem Content="{x:Static resources:Strings.Menu_ModGenerator_Title}" PageType="{x:Type pages:ModGeneratorPage}" Icon="ColorBackground24" PageTag="modgenerator" Visibility="Collapsed" />
                     </ui:NavigationCompact.Items>
+                    <ui:NavigationCompact.Footer>
+                        <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Credits_Title}" Icon="Heart24" Command="{Binding OpenCreditsCommand, Mode=OneTime}" />
+                        <ui:NavigationItem Content="{x:Static resources:Strings.Menu_About_Title}" Icon="Info24" Margin="0,0,0,8" Command="{Binding OpenAboutCommand, Mode=OneTime}" />
+                    </ui:NavigationCompact.Footer>
                 </ui:NavigationCompact>
 
-                <Grid Grid.Row="2" Margin="0,8,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <ui:Button Grid.Column="0" HorizontalAlignment="Stretch" Icon="Play24" IconFilled="True" Content="{x:Static resources:Strings.Menu_SaveAndPlay}" Appearance="Primary" Height="40" FontSize="14" FontWeight="SemiBold" Style="{StaticResource SplitLeftButton}" Command="{Binding SaveAndLaunchCommand, Mode=OneTime}" CommandParameter="{x:Static enums:LaunchMode.Player}" />
-                    <ui:Button x:Name="LaunchMenuButton" Grid.Column="1" Icon="ChevronUp20" Appearance="Primary" Height="40" Width="36" Padding="0" Margin="1,0,0,0" Style="{StaticResource SplitRightButton}" Click="LaunchMenuButton_Click">
-                        <ui:Button.ContextMenu>
-                            <ContextMenu Placement="Top">
-                                <MenuItem Header="{x:Static resources:Strings.Menu_SaveAndLaunchStudio}" Command="{Binding SaveAndLaunchCommand, Mode=OneTime}" CommandParameter="{x:Static enums:LaunchMode.Studio}" />
-                                <MenuItem Header="{x:Static resources:Strings.Menu_Restart}" Command="{Binding RestartCommand, Mode=OneTime}" />
-                                <Separator />
-                                <MenuItem x:Name="TestModeMenuItem" Header="{x:Static resources:Strings.Menu_TestMode}" IsCheckable="True" Click="TestModeMenuItem_Click" />
-                            </ContextMenu>
-                        </ui:Button.ContextMenu>
-                    </ui:Button>
-                </Grid>
+                <ui:Button x:Name="SearchButton" Icon="Search24" Appearance="Transparent" BorderThickness="0" Width="40" Height="38" Padding="0" Margin="0,4,4,0" HorizontalAlignment="Right" VerticalAlignment="Top" ToolTip="{x:Static resources:Strings.Menu_Search}" Click="SearchButton_Click" Visibility="{Binding IsExpanded, ElementName=RootNavigation, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <ui:AutoSuggestBox x:Name="SearchBox" Margin="48,4,4,0" Height="38" VerticalAlignment="Top" Icon="Search24" PlaceholderText="{x:Static resources:Strings.Menu_Search}" Visibility="Collapsed" SuggestionChosen="SearchBox_SuggestionChosen" LostKeyboardFocus="SearchBox_LostKeyboardFocus" KeyDown="SearchBox_KeyDown" />
             </Grid>
 
-            <Border Grid.Column="1" Margin="0,0,12,12" Background="{DynamicResource LayerFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10">
+            <Border Grid.Column="1" Background="{DynamicResource LayerFillColorDefaultBrush}" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="1,1,0,0" CornerRadius="8,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="32,26,24,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock x:Name="PageTitle" FontSize="26" FontWeight="SemiBold" />
-                            <TextBlock x:Name="PageDescription" FontSize="14" Margin="0,4,24,0" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <Ellipse Width="7" Height="7" VerticalAlignment="Center">
-                                    <Ellipse.Fill>
-                                        <SolidColorBrush Color="{DynamicResource SystemAccentColorSecondary}" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <TextBlock Margin="8,0,0,0" FontSize="13" VerticalAlignment="Center" Text="{x:Static resources:Strings.Menu_UnsavedIndicator}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    <Border Grid.Row="0" Padding="24,20,24,18" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon x:Name="PageIcon" FontSize="30" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                <TextBlock x:Name="PageTitle" FontSize="28" FontWeight="SemiBold" VerticalAlignment="Center" />
                             </StackPanel>
-                            <ui:Button Content="{x:Static resources:Strings.Menu_Save}" Icon="Save24" Height="34" Padding="14,0" ToolTip="Ctrl+S" Command="{Binding SaveSettingsCommand, Mode=OneTime}" />
+                            <TextBlock x:Name="PageDescription" FontSize="16" Margin="2,8,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
-                    </Grid>
+                    </Border>
 
-                    <Frame x:Name="RootFrame" Grid.Row="1" Margin="32,12,6,0" Navigated="RootFrame_Navigated" />
+                    <Frame x:Name="RootFrame" Grid.Row="1" Margin="18,16,4,0" Navigated="RootFrame_Navigated" />
                 </Grid>
             </Border>
         </Grid>
+
+        <Border Grid.Row="2" Padding="16,12" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="pack://application:,,,/reistrap.ico" Width="32" Height="32" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="reistrap" FontSize="14" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding VersionText, Mode=OneTime}" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <ui:Button x:Name="UpdateButton" Margin="0,4,0,0" Padding="10,4" FontSize="12" Appearance="Primary" Visibility="Collapsed" Click="UpdateButton_Click" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <ui:Button Content="{x:Static resources:Strings.Menu_SaveAndLaunchPlayer}" Appearance="Primary" Height="40" Padding="20,0" FontSize="15" Style="{StaticResource SplitLeftButton}" Command="{Binding SaveAndLaunchCommand, Mode=OneTime}" CommandParameter="{x:Static enums:LaunchMode.Player}" />
+                    <ui:Button x:Name="LaunchMenuButton" Icon="ChevronDown20" Appearance="Primary" Height="40" Width="36" Padding="0" Margin="1,0,0,0" Style="{StaticResource SplitRightButton}" Click="LaunchMenuButton_Click">
+                        <ui:Button.ContextMenu>
+                            <ContextMenu Placement="Top">
+                                <MenuItem Header="{x:Static resources:Strings.Menu_SaveAndLaunchStudio}" Command="{Binding SaveAndLaunchCommand, Mode=OneTime}" CommandParameter="{x:Static enums:LaunchMode.Studio}" />
+                                <Separator />
+                                <MenuItem x:Name="TestModeMenuItem" Header="{x:Static resources:Strings.Menu_TestMode}" IsCheckable="True" Click="TestModeMenuItem_Click" />
+                            </ContextMenu>
+                        </ui:Button.ContextMenu>
+                    </ui:Button>
+                    <ui:Button Content="{x:Static resources:Strings.Menu_Restart}" Appearance="Primary" Height="40" Padding="20,0" FontSize="15" Margin="12,0,0,0" Command="{Binding RestartCommand, Mode=OneTime}" />
+                    <ui:Button Content="{x:Static resources:Strings.Menu_Save}" Appearance="Primary" Height="40" Padding="20,0" FontSize="15" Margin="12,0,0,0" Command="{Binding SaveSettingsCommand, Mode=OneWay}" />
+                    <ui:Button Content="{x:Static resources:Strings.Common_Close}" Height="40" Padding="20,0" FontSize="15" Margin="12,0,0,0" Command="{Binding CloseWindowCommand, Mode=OneWay}" />
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </base:WpfUiWindow>

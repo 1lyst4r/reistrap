@@ -3770,42 +3770,6 @@ namespace Bloxstrap.Resources {
             }
         }
         
-        public static string Menu_Group_Play {
-            get {
-                return ResourceManager.GetString("Menu.Group.Play", resourceCulture);
-            }
-        }
-        
-        public static string Menu_Group_Customize {
-            get {
-                return ResourceManager.GetString("Menu.Group.Customize", resourceCulture);
-            }
-        }
-        
-        public static string Menu_Group_Advanced {
-            get {
-                return ResourceManager.GetString("Menu.Group.Advanced", resourceCulture);
-            }
-        }
-        
-        public static string Menu_Group_App {
-            get {
-                return ResourceManager.GetString("Menu.Group.App", resourceCulture);
-            }
-        }
-        
-        public static string Menu_SaveAndPlay {
-            get {
-                return ResourceManager.GetString("Menu.SaveAndPlay", resourceCulture);
-            }
-        }
-        
-        public static string Menu_UnsavedIndicator {
-            get {
-                return ResourceManager.GetString("Menu.UnsavedIndicator", resourceCulture);
-            }
-        }
-        
         public static string Menu_SaveAndLaunchPlayer {
             get {
                 return ResourceManager.GetString("Menu.SaveAndLaunchPlayer", resourceCulture);

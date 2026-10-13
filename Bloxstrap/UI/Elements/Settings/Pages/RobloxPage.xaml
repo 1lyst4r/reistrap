@@ -13,10 +13,6 @@
       Title="RobloxPage"
       Scrollable="True">
 
-    <ui:UiPage.Resources>
-        <ResourceDictionary Source="pack://application:,,,/UI/Style/SettingsPage.xaml" />
-    </ui:UiPage.Resources>
-
     <StackPanel Margin="0,0,14,14">
         <TextBlock Text="{x:Static resources:Strings.Menu_Roblox_Settings_Title}" Style="{StaticResource SectionTitle}" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Roblox_Settings_Description}" Style="{StaticResource SectionDescription}" />
