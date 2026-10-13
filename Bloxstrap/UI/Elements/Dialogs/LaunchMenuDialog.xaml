@@ -72,6 +72,11 @@
                                     <ui:SymbolIcon Symbol="Wrench24" />
                                 </MenuItem.Icon>
                             </MenuItem>
+                            <MenuItem Header="{x:Static resources:Strings.LaunchMenu_SafeLaunch}" Command="{Binding LaunchRobloxSafeCommand, Mode=OneTime}">
+                                <MenuItem.Icon>
+                                    <ui:SymbolIcon Symbol="Shield24" />
+                                </MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="{x:Static resources:Strings.About_Title}" Command="{Binding LaunchAboutCommand, Mode=OneTime}">
                                 <MenuItem.Icon>
                                     <ui:SymbolIcon Symbol="QuestionCircle24" />

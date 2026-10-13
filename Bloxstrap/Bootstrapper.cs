@@ -322,6 +322,8 @@ namespace Bloxstrap
                         Frontend.ShowBalloonTip(Strings.Bootstrapper_ExtractionFailed_Title, Strings.Bootstrapper_ExtractionFailed_Message, ToolTipIcon.Warning);
                     else if (!allModificationsApplied)
                         Frontend.ShowBalloonTip(Strings.Bootstrapper_ModificationsFailed_Title, Strings.Bootstrapper_ModificationsFailed_Message, ToolTipIcon.Warning);
+                    else if (App.LaunchSettings.SafeModeFlag.Active && !IsStudioLaunch)
+                        Frontend.ShowBalloonTip(Strings.Bootstrapper_SafeLaunch_Title, Strings.Bootstrapper_SafeLaunch_Message, ToolTipIcon.Info);
                 }
 
                 StartRoblox();
@@ -1592,9 +1594,13 @@ namespace Bloxstrap
 
             Directory.CreateDirectory(Paths.Modifications);
 
-            bool applyMods = IsStudioLaunch ? App.Settings.Prop.ApplyModsToStudio : App.Settings.Prop.ApplyModsToPlayer;
+            bool safeMode = App.LaunchSettings.SafeModeFlag.Active && !IsStudioLaunch;
 
-            if (!applyMods)
+            bool applyMods = !safeMode && (IsStudioLaunch ? App.Settings.Prop.ApplyModsToStudio : App.Settings.Prop.ApplyModsToPlayer);
+
+            if (safeMode)
+                App.Logger.WriteLine(LOG_IDENT, "Safe launch, skipping mods and Fast Flags");
+            else if (!applyMods)
                 App.Logger.WriteLine(LOG_IDENT, $"Mods are disabled for {_launchMode}");
 
             // check custom font mod
@@ -1670,7 +1676,7 @@ namespace Bloxstrap
                 }
             }
 
-            foreach (string file in Directory.GetFiles(Paths.Modifications, "*.*", SearchOption.AllDirectories))
+            foreach (string file in safeMode ? Array.Empty<string>() : Directory.GetFiles(Paths.Modifications, "*.*", SearchOption.AllDirectories))
             {
                 if (_cancelTokenSource.IsCancellationRequested)
                     return true;

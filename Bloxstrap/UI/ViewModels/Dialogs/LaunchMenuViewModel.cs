@@ -16,6 +16,8 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
         public ICommand LaunchRobloxStudioCommand => new RelayCommand(LaunchRobloxStudio);
 
+        public ICommand LaunchRobloxSafeCommand => new RelayCommand(() => CloseWindowRequest?.Invoke(this, NextAction.LaunchRobloxSafe));
+
         public ICommand LaunchAboutCommand => new RelayCommand(LaunchAbout);
 
         public ICommand OpenDiscordCommand => new RelayCommand(() => Frontend.ShowMessageBox(Strings.LaunchMenu_DiscordUnavailable, MessageBoxImage.Warning));

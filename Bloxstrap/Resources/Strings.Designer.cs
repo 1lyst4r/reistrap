@@ -6226,5 +6226,23 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("LaunchMenu.DiscordUnavailable", resourceCulture);
             }
         }
+        
+        public static string LaunchMenu_SafeLaunch {
+            get {
+                return ResourceManager.GetString("LaunchMenu.SafeLaunch", resourceCulture);
+            }
+        }
+        
+        public static string Bootstrapper_SafeLaunch_Title {
+            get {
+                return ResourceManager.GetString("Bootstrapper.SafeLaunch.Title", resourceCulture);
+            }
+        }
+        
+        public static string Bootstrapper_SafeLaunch_Message {
+            get {
+                return ResourceManager.GetString("Bootstrapper.SafeLaunch.Message", resourceCulture);
+            }
+        }
     }
 }

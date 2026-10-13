@@ -26,6 +26,12 @@ namespace Bloxstrap
                     LaunchRoblox(LaunchMode.Player);
                     break;
 
+                case NextAction.LaunchRobloxSafe:
+                    App.Logger.WriteLine(LOG_IDENT, "Opening Roblox in safe mode");
+                    App.LaunchSettings.SafeModeFlag.Active = true;
+                    LaunchRoblox(LaunchMode.Player);
+                    break;
+
                 case NextAction.LaunchRobloxStudio:
                     App.Logger.WriteLine(LOG_IDENT, "Opening Roblox Studio");
                     LaunchRoblox(LaunchMode.Studio);

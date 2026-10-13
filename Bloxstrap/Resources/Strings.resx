@@ -3275,4 +3275,13 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="LaunchMenu.DiscordUnavailable" xml:space="preserve">
     <value>reistrap Discord not available yet!</value>
   </data>
+  <data name="LaunchMenu.SafeLaunch" xml:space="preserve">
+    <value>Safe launch (no mods or Fast Flags)</value>
+  </data>
+  <data name="Bootstrapper.SafeLaunch.Title" xml:space="preserve">
+    <value>Safe launch</value>
+  </data>
+  <data name="Bootstrapper.SafeLaunch.Message" xml:space="preserve">
+    <value>Roblox is starting without your mods and Fast Flags. They come back the next time you launch normally.</value>
+  </data>
 </root>

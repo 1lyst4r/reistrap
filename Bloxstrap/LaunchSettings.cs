@@ -40,6 +40,8 @@ namespace Bloxstrap
 
         public LaunchFlag ForceFlag                 { get; } = new("force");
 
+        public LaunchFlag SafeModeFlag              { get; } = new("safemode");
+
 #if DEBUG
         public bool BypassUpdateCheck => true;
 #else
