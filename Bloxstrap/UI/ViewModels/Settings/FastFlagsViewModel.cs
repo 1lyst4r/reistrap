@@ -20,6 +20,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ICommand OpenFastFlagEditorCommand => new RelayCommand(OpenFastFlagEditor);
 
+        public int IgnoredFlagCount { get; } = App.FastFlags.Prop.Keys.Count(x => !FastFlagAllowlist.Contains(x));
+
+        public string IgnoredFlagsTitle => String.Format(Strings.Menu_FastFlags_Ignored_Title, IgnoredFlagCount);
+
+        public Visibility IgnoredFlagsVisibility => IgnoredFlagCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+
         public IReadOnlyList<AllowlistedFlagViewModel> AllowlistedFlags { get; } = FastFlagAllowlist.Flags.Select(x => new AllowlistedFlagViewModel(x)).ToList();
 
         public ObservableCollection<string> Profiles { get; } = new();

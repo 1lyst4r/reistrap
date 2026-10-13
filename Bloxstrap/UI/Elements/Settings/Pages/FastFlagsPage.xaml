@@ -13,6 +13,8 @@
       Scrollable="True"
       Loaded="Page_Loaded">
     <StackPanel Margin="0,0,14,14">
+        <ui:InfoBar Margin="0,0,0,8" Padding="8" IsOpen="True" IsClosable="False" Severity="Warning" Title="{Binding IgnoredFlagsTitle, Mode=OneTime}" Message="{x:Static resources:Strings.Menu_FastFlags_Ignored_Message}" Visibility="{Binding IgnoredFlagsVisibility, Mode=OneTime}" />
+
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_FastFlags_ManagerEnabled_Title}"
             Description="{x:Static resources:Strings.Menu_FastFlags_ManagerEnabled_Description}">

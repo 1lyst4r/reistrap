@@ -3350,4 +3350,13 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="Dialog.Crash.FixApplied" xml:space="preserve">
     <value>Done. Launch Roblox again to try it.</value>
   </data>
+  <data name="Menu.FastFlagEditor.Ignored" xml:space="preserve">
+    <value>Roblox ignores this flag because it isn't on the allowlist.</value>
+  </data>
+  <data name="Menu.FastFlags.Ignored.Title" xml:space="preserve">
+    <value>Roblox ignores {0} of your Fast Flags</value>
+  </data>
+  <data name="Menu.FastFlags.Ignored.Message" xml:space="preserve">
+    <value>They aren't on Roblox's allowlist, so they don't do anything. Open the Fast Flag Editor to see which ones they are (they're marked with a warning sign), or press Clean list there to remove them.</value>
+  </data>
 </root>

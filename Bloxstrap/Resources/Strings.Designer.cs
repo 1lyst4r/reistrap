@@ -6376,5 +6376,23 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Dialog.Crash.FixApplied", resourceCulture);
             }
         }
+        
+        public static string Menu_FastFlagEditor_Ignored {
+            get {
+                return ResourceManager.GetString("Menu.FastFlagEditor.Ignored", resourceCulture);
+            }
+        }
+        
+        public static string Menu_FastFlags_Ignored_Title {
+            get {
+                return ResourceManager.GetString("Menu.FastFlags.Ignored.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_FastFlags_Ignored_Message {
+            get {
+                return ResourceManager.GetString("Menu.FastFlags.Ignored.Message", resourceCulture);
+            }
+        }
     }
 }
