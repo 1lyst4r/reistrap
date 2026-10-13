@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -218,6 +219,23 @@ namespace Bloxstrap.UI.Elements.Base
                 SetCustomBackground(custom);
             else if (_backdrop == BackgroundType.Aero)
                 Wpf.Ui.Appearance.Background.Apply(this, BackgroundType.Aero, true);
+
+            if (custom is null && _backdrop != BackgroundType.None && PresentationSource.FromVisual(this) is HwndSource source)
+                source.AddHook(KeepBackdropActive);
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        private static IntPtr KeepBackdropActive(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            const int WM_NCACTIVATE = 0x0086;
+
+            if (msg != WM_NCACTIVATE || wParam != IntPtr.Zero)
+                return IntPtr.Zero;
+
+            handled = true;
+            return DefWindowProc(hwnd, msg, new IntPtr(1), lParam);
         }
     }
 }
