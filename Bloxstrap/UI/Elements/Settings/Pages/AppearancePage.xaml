@@ -24,12 +24,6 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_Language_Title}"
-            Description="{x:Static resources:Strings.Menu_Appearance_Language_Description}">
-            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding Languages, Mode=OneTime}" Text="{Binding SelectedLanguage, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Appearance_AccentTheme_Title}"
             Description="{x:Static resources:Strings.Menu_Appearance_AccentTheme_Description}">
             <StackPanel Orientation="Horizontal">
@@ -46,9 +40,9 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_AppFont_Title}"
-            Description="{x:Static resources:Strings.Menu_Appearance_AppFont_Description}">
-            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding AppFonts, Mode=OneTime}" SelectedItem="{Binding AppFont, Mode=TwoWay}" />
+            Header="{x:Static resources:Strings.Menu_Appearance_Language_Title}"
+            Description="{x:Static resources:Strings.Menu_Appearance_Language_Description}">
+            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding Languages, Mode=OneTime}" Text="{Binding SelectedLanguage, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
@@ -151,9 +145,9 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Appearance_DisableAnimations_Title}"
-            Description="{x:Static resources:Strings.Menu_Appearance_DisableAnimations_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding DisableAnimations, Mode=TwoWay}" />
+            Header="{x:Static resources:Strings.Menu_Appearance_AppFont_Title}"
+            Description="{x:Static resources:Strings.Menu_Appearance_AppFont_Description}">
+            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding AppFonts, Mode=OneTime}" SelectedItem="{Binding AppFont, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
@@ -174,6 +168,12 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Appearance_DisableAnimations_Title}"
+            Description="{x:Static resources:Strings.Menu_Appearance_DisableAnimations_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding DisableAnimations, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />

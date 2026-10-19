@@ -126,13 +126,15 @@
         </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_ModPack_Title}" Style="{StaticResource SectionTitle}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_ModPack_Description}" Style="{StaticResource SectionDescription}" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_Skybox_Title}" Style="{StaticResource SectionTitle}" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_Skybox_Description}" Style="{StaticResource SectionDescription}" />
 
-        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-            <ui:Button Icon="ArrowExportRtl24" Content="{x:Static resources:Strings.Common_Export}" Command="{Binding ExportModPackCommand}" />
-            <ui:Button Margin="8,0,0,0" Icon="ArrowImport24" Content="{x:Static resources:Strings.Common_Import}" Command="{Binding ImportModPackCommand}" />
-        </StackPanel>
+        <controls:OptionControl Header="{x:Static resources:Strings.Menu_Mods_Skybox_Current}" Description="{Binding SkyboxStatus}">
+            <StackPanel Orientation="Horizontal">
+                <ui:Button Icon="Folder24" Content="{x:Static resources:Strings.Menu_Mods_Skybox_Import}" Command="{Binding ImportSkyboxCommand}" />
+                <ui:Button Margin="8,0,0,0" Icon="Delete24" Appearance="Danger" Command="{Binding RemoveSkyboxCommand}" />
+            </StackPanel>
+        </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Mods_CursorSets_Title}" Style="{StaticResource SectionTitle}" />
@@ -154,20 +156,25 @@
         </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_Skybox_Title}" Style="{StaticResource SectionTitle}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_Skybox_Description}" Style="{StaticResource SectionDescription}" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_ModPack_Title}" Style="{StaticResource SectionTitle}" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Mods_ModPack_Description}" Style="{StaticResource SectionDescription}" />
 
-        <controls:OptionControl Header="{x:Static resources:Strings.Menu_Mods_Skybox_Current}" Description="{Binding SkyboxStatus}">
-            <StackPanel Orientation="Horizontal">
-                <ui:Button Icon="Folder24" Content="{x:Static resources:Strings.Menu_Mods_Skybox_Import}" Command="{Binding ImportSkyboxCommand}" />
-                <ui:Button Margin="8,0,0,0" Icon="Delete24" Appearance="Danger" Command="{Binding RemoveSkyboxCommand}" />
-            </StackPanel>
-        </controls:OptionControl>
+        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+            <ui:Button Icon="ArrowExportRtl24" Content="{x:Static resources:Strings.Common_Export}" Command="{Binding ExportModPackCommand}" />
+            <ui:Button Margin="8,0,0,0" Icon="ArrowImport24" Content="{x:Static resources:Strings.Common_Import}" Command="{Binding ImportModPackCommand}" />
+        </StackPanel>
 
         <Border Style="{StaticResource SectionSeparator}" />
         <TextBlock Text="{x:Static resources:Strings.Common_Miscellaneous}" Style="{StaticResource SectionTitle}" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Mods_Misc_Description}" Style="{StaticResource SectionDescription}" />
 
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Title}">
+            <StackPanel>
+                <ui:Button Icon="DocumentAdd16" Content="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Choose}" Command="{Binding ManageCustomFontCommand}" Visibility="{Binding ChooseCustomFontVisibility, Mode=OneWay}" />
+                <ui:Button Icon="Delete16" Content="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Remove}" Appearance="Danger" Command="{Binding ManageCustomFontCommand}" Visibility="{Binding DeleteCustomFontVisibility, Mode=OneWay}" />
+            </StackPanel>
+        </controls:OptionControl>
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Mods_ApplyToPlayer_Title}"
             Description="{x:Static resources:Strings.Menu_Mods_ApplyToPlayer_Description}">
@@ -180,12 +187,5 @@
             <ui:ToggleSwitch IsChecked="{Binding ApplyModsToStudio, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Title}">
-            <StackPanel>
-                <ui:Button Icon="DocumentAdd16" Content="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Choose}" Command="{Binding ManageCustomFontCommand}" Visibility="{Binding ChooseCustomFontVisibility, Mode=OneWay}" />
-                <ui:Button Icon="Delete16" Content="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Remove}" Appearance="Danger" Command="{Binding ManageCustomFontCommand}" Visibility="{Binding DeleteCustomFontVisibility, Mode=OneWay}" />
-            </StackPanel>
-        </controls:OptionControl>
     </StackPanel>
 </ui:UiPage>

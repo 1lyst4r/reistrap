@@ -22,29 +22,13 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Bloxstrap_PreReleases_Title}"
-            Description="{x:Static resources:Strings.Menu_Bloxstrap_PreReleases_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding UpdateToPreReleases, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Bloxstrap_Reset_Title}"
-            Description="{x:Static resources:Strings.Menu_Bloxstrap_Reset_Description}">
-            <ui:Button Icon="ArrowReset24" Appearance="Danger" Content="{x:Static resources:Strings.Menu_Bloxstrap_Reset_Button}" Command="{Binding ResetSettingsCommand}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Bloxstrap_Analytics_Title}"
-            Description="{Binding Source={x:Static resources:Strings.Menu_Bloxstrap_Analytics_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/info/privacy-policy/'}">
-            <ui:ToggleSwitch IsChecked="{Binding AnalyticsEnabled, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <!-- This does not need i18n as this is locked behind "Developer Mode" -->
-        <controls:OptionControl
-            Visibility="{Binding Path=WebEnvironmentVisibility, Mode=OneTime}"
-            Header="Web environment" 
-            Description="Site to use for metrics">
-            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding WebEnvironments, Mode=OneWay}" SelectedValue="{Binding WebEnvironment, Mode=TwoWay}" />
+            Header="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Title}"
+            Description="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Description}">
+            <StackPanel Orientation="Horizontal">
+                <ui:TextBox Width="140" Padding="10,5,10,5" PlaceholderText="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Placeholder}" Text="{Binding SetupCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ui:Button Margin="8,0,0,0" Icon="ArrowDownload24" Content="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Use}" Command="{Binding UseSetupCodeCommand}" />
+                <ui:Button Margin="8,0,0,0" Icon="Share24" Content="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Create}" Command="{Binding CreateSetupCodeCommand}" />
+            </StackPanel>
         </controls:OptionControl>
 
         <controls:OptionControl
@@ -53,16 +37,6 @@
             <StackPanel Orientation="Horizontal">
                 <ui:Button Icon="Save24" Content="{x:Static resources:Strings.Menu_Bloxstrap_Backup_Create}" Command="{Binding CreateBackupCommand}" />
                 <ui:Button Margin="8,0,0,0" Icon="ArrowImport24" Content="{x:Static resources:Strings.Menu_Bloxstrap_Backup_Restore}" Command="{Binding RestoreBackupCommand}" />
-            </StackPanel>
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Title}"
-            Description="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Description}">
-            <StackPanel Orientation="Horizontal">
-                <ui:TextBox Width="140" Padding="10,5,10,5" PlaceholderText="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Placeholder}" Text="{Binding SetupCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <ui:Button Margin="8,0,0,0" Icon="ArrowDownload24" Content="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Use}" Command="{Binding UseSetupCodeCommand}" />
-                <ui:Button Margin="8,0,0,0" Icon="Share24" Content="{x:Static resources:Strings.Menu_Bloxstrap_ShareSetup_Create}" Command="{Binding CreateSetupCodeCommand}" />
             </StackPanel>
         </controls:OptionControl>
 
@@ -98,6 +72,18 @@
                 </Grid>
             </StackPanel>
         </ui:CardExpander>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Bloxstrap_PreReleases_Title}"
+            Description="{x:Static resources:Strings.Menu_Bloxstrap_PreReleases_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding UpdateToPreReleases, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Bloxstrap_Analytics_Title}"
+            Description="{Binding Source={x:Static resources:Strings.Menu_Bloxstrap_Analytics_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/info/privacy-policy/'}">
+            <ui:ToggleSwitch IsChecked="{Binding AnalyticsEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
 
         <ui:CardExpander Margin="0,8,0,0" IsExpanded="True">
             <ui:CardExpander.Header>
@@ -137,5 +123,19 @@
                 <CheckBox Grid.Column="1" Name="ShouldExportLogs" Content="{x:Static resources:Strings.Menu_Bloxstrap_ExportData_ExportLogs}" IsChecked="{Binding ShouldExportLogs}" />
             </Grid>
         </ui:CardExpander>
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Bloxstrap_Reset_Title}"
+            Description="{x:Static resources:Strings.Menu_Bloxstrap_Reset_Description}">
+            <ui:Button Icon="ArrowReset24" Appearance="Danger" Content="{x:Static resources:Strings.Menu_Bloxstrap_Reset_Button}" Command="{Binding ResetSettingsCommand}" />
+        </controls:OptionControl>
+
+        <!-- This does not need i18n as this is locked behind "Developer Mode" -->
+        <controls:OptionControl
+            Visibility="{Binding Path=WebEnvironmentVisibility, Mode=OneTime}"
+            Header="Web environment" 
+            Description="Site to use for metrics">
+            <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding WebEnvironments, Mode=OneWay}" SelectedValue="{Binding WebEnvironment, Mode=TwoWay}" />
+        </controls:OptionControl>
+
     </StackPanel>
 </ui:UiPage>

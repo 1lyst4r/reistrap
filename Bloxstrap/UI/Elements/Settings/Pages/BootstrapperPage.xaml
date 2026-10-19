@@ -15,6 +15,18 @@
       Scrollable="True">
 
     <StackPanel Margin="0,0,14,14">
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_ExplainCrashes_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_ExplainCrashes_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding ExplainCrashes, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Behaviour_BackgroundUpdates_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_BackgroundUpdates_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding BackgroundUpdates, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Behaviour_ConfirmLaunches_Title}"
             Description="{x:Static resources:Strings.Menu_Behaviour_ConfirmLaunches_Description}">
@@ -27,25 +39,22 @@
             <ui:ToggleSwitch IsChecked="{Binding MultiInstanceLaunching, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Behaviour_BackgroundUpdates_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_BackgroundUpdates_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding BackgroundUpdates, Mode=TwoWay}" />
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_MuteInBackground_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_MuteInBackground_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding MuteInBackground, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Behaviour_ForceRobloxReinstall_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_ForceRobloxReinstall_Description}">
-            <controls:OptionControl.Style>
-                <Style TargetType="controls:OptionControl">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsRobloxInstallationMissing, Mode=OneTime}" Value="True">
-                            <Setter Property="IsEnabled" Value="False" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </controls:OptionControl.Style>
-            <ui:ToggleSwitch IsChecked="{Binding ForceRobloxReinstallation, Mode=TwoWay}" />
+            Header="{x:Static resources:Strings.Menu_Behaviour_Throttle_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_Throttle_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding ThrottleInBackground, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Behaviour_BatteryMode_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_BatteryMode_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding BatteryMode, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
@@ -58,60 +67,6 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Behaviour_Throttle_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_Throttle_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding ThrottleInBackground, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_MuteInBackground_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_MuteInBackground_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding MuteInBackground, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Behaviour_BatteryMode_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_BatteryMode_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding BatteryMode, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Hotkeys_Mute_Title}"
-            Description="{x:Static resources:Strings.Menu_Hotkeys_Mute_Description}">
-            <controls:HotkeyBox Text="{Binding HotkeyMute, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Hotkeys_BetterServer_Title}"
-            Description="{x:Static resources:Strings.Menu_Hotkeys_BetterServer_Description}">
-            <controls:HotkeyBox Text="{Binding HotkeyBetterServer, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Hotkeys_Screenshots_Title}"
-            Description="{x:Static resources:Strings.Menu_Hotkeys_Screenshots_Description}">
-            <controls:HotkeyBox Text="{Binding HotkeyScreenshots, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_Affinity_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_Affinity_Description}">
-            <ui:TextBox Width="200" Padding="10,5,10,5" PlaceholderText="0-3, 6" Text="{Binding RobloxCpuAffinity, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_CloseCrashHandler_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_CloseCrashHandler_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding CloseCrashHandler, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_ExplainCrashes_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_ExplainCrashes_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding ExplainCrashes, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl
@@ -141,10 +96,55 @@
             </controls:OptionControl>
         </StackPanel>
 
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Hotkeys_Mute_Title}"
+            Description="{x:Static resources:Strings.Menu_Hotkeys_Mute_Description}">
+            <controls:HotkeyBox Text="{Binding HotkeyMute, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Hotkeys_BetterServer_Title}"
+            Description="{x:Static resources:Strings.Menu_Hotkeys_BetterServer_Description}">
+            <controls:HotkeyBox Text="{Binding HotkeyBetterServer, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Hotkeys_Screenshots_Title}"
+            Description="{x:Static resources:Strings.Menu_Hotkeys_Screenshots_Description}">
+            <controls:HotkeyBox Text="{Binding HotkeyScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_CloseCrashHandler_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_CloseCrashHandler_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding CloseCrashHandler, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Behaviour_ForceLanguage_Title}"
             Description="{x:Static resources:Strings.Menu_Behaviour_ForceLanguage_Description}">
             <ui:ToggleSwitch IsChecked="{Binding ForceRobloxLanguage, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_Affinity_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_Affinity_Description}">
+            <ui:TextBox Width="200" Padding="10,5,10,5" PlaceholderText="0-3, 6" Text="{Binding RobloxCpuAffinity, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Behaviour_ForceRobloxReinstall_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_ForceRobloxReinstall_Description}">
+            <controls:OptionControl.Style>
+                <Style TargetType="controls:OptionControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsRobloxInstallationMissing, Mode=OneTime}" Value="True">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </controls:OptionControl.Style>
+            <ui:ToggleSwitch IsChecked="{Binding ForceRobloxReinstallation, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />
@@ -178,6 +178,20 @@
         <TextBlock Text="{x:Static resources:Strings.Menu_Behaviour_Channel_SectionTitle}" Style="{StaticResource SectionTitle}" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Behaviour_Channel_SectionDescription}" Style="{StaticResource SectionDescription}" />
 
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_BlockUpdates_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_BlockUpdates_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding BlockRobloxUpdates, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_DownloadThreads_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_DownloadThreads_Description}">
+            <StackPanel Orientation="Horizontal">
+                <Slider Width="180" Minimum="1" Maximum="8" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding DownloadThreads, Mode=TwoWay}" />
+                <TextBlock Width="36" Margin="8,0,0,0" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DownloadThreads, Mode=OneWay}" />
+            </StackPanel>
+        </controls:OptionControl>
         <controls:OptionControl Header="{x:Static resources:Strings.Menu_Behaviour_Channel_Player}">
             <StackPanel Orientation="Horizontal">
                 <ComboBox Width="200" Padding="10,5,10,5" IsEditable="True" ItemsSource="{Binding KnownChannels, Mode=OneTime}" Text="{Binding PlayerChannelTask.NewState, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
@@ -215,18 +229,6 @@
         </ItemsControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_BlockUpdates_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_BlockUpdates_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding BlockRobloxUpdates, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_StaticFolder_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_StaticFolder_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding UseStaticVersionFolder, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Behaviour_ChannelChange_Title}"
             Description="{x:Static resources:Strings.Menu_Behaviour_ChannelChange_Description}">
             <ComboBox Width="200" Padding="10,5,10,5" ItemsSource="{Binding ChannelChangeModes, Mode=OneTime}" SelectedItem="{Binding ChannelChangeMode, Mode=TwoWay}">
@@ -251,12 +253,10 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Behaviour_DownloadThreads_Title}"
-            Description="{x:Static resources:Strings.Menu_Behaviour_DownloadThreads_Description}">
-            <StackPanel Orientation="Horizontal">
-                <Slider Width="180" Minimum="1" Maximum="8" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding DownloadThreads, Mode=TwoWay}" />
-                <TextBlock Width="36" Margin="8,0,0,0" VerticalAlignment="Center" TextAlignment="Right" Text="{Binding DownloadThreads, Mode=OneWay}" />
-            </StackPanel>
+            Header="{x:Static resources:Strings.Menu_Behaviour_StaticFolder_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_StaticFolder_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding UseStaticVersionFolder, Mode=TwoWay}" />
         </controls:OptionControl>
+
     </StackPanel>
 </ui:UiPage>

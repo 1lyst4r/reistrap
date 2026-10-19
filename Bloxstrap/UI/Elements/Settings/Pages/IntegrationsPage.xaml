@@ -33,21 +33,6 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Integrations_ServerUptime_Title}"
-            Description="{x:Static resources:Strings.Menu_Integrations_ServerUptime_Description}"
-            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
-            <ui:ToggleSwitch IsChecked="{Binding ShowServerUptimeEnabled, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Integrations_DesktopApp_Title}" 
-            Description="{Binding Source={x:Static resources:Strings.Menu_Integrations_DesktopApp_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/features/dont-exit-to-desktop-app/'}"
-            HelpLink="https://bloxstraplabs.com/wiki/features/dont-exit-to-desktop-app/"
-            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
-            <ui:ToggleSwitch IsChecked="{Binding DisableAppPatchEnabled, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_AutoRejoin_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_AutoRejoin_Description}"
             controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
@@ -107,6 +92,13 @@
         </controls:OptionControl>
 
         <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Integrations_ServerUptime_Title}"
+            Description="{x:Static resources:Strings.Menu_Integrations_ServerUptime_Description}"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            <ui:ToggleSwitch IsChecked="{Binding ShowServerUptimeEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_TrayDoubleClick_Title}"
             Description="{x:Static resources:Strings.Menu_Integrations_TrayDoubleClick_Description}"
             controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
@@ -119,26 +111,12 @@
             </ComboBox>
         </controls:OptionControl>
 
-        <Border Style="{StaticResource SectionSeparator}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_Capture_Title}" Style="{StaticResource SectionTitle}" />
-        <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_Capture_Description}" Style="{StaticResource SectionDescription}" />
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Integrations_DisableScreenshots_Title}"
-            Description="{x:Static resources:Strings.Menu_Integrations_DisableScreenshots_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding DisableRobloxScreenshots, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Integrations_SortScreenshots_Title}"
-            Description="{x:Static resources:Strings.Menu_Integrations_SortScreenshots_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding SortScreenshots, Mode=TwoWay}" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Integrations_DisableRecordings_Title}"
-            Description="{x:Static resources:Strings.Menu_Integrations_DisableRecordings_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding DisableRobloxRecordings, Mode=TwoWay}" />
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Integrations_DesktopApp_Title}" 
+            Description="{Binding Source={x:Static resources:Strings.Menu_Integrations_DesktopApp_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/features/dont-exit-to-desktop-app/'}"
+            HelpLink="https://bloxstraplabs.com/wiki/features/dont-exit-to-desktop-app/"
+            controls:Reveal.Enabled="True" IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}">
+            <ui:ToggleSwitch IsChecked="{Binding DisableAppPatchEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />
@@ -223,6 +201,28 @@
             <ui:ToggleSwitch IsChecked="{Binding StudioShowScript, Mode=TwoWay}" />
         </controls:OptionControl>
 
+
+        <Border Style="{StaticResource SectionSeparator}" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_Capture_Title}" Style="{StaticResource SectionTitle}" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_Capture_Description}" Style="{StaticResource SectionDescription}" />
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Integrations_SortScreenshots_Title}"
+            Description="{x:Static resources:Strings.Menu_Integrations_SortScreenshots_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding SortScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Integrations_DisableScreenshots_Title}"
+            Description="{x:Static resources:Strings.Menu_Integrations_DisableScreenshots_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding DisableRobloxScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Integrations_DisableRecordings_Title}"
+            Description="{x:Static resources:Strings.Menu_Integrations_DisableRecordings_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding DisableRobloxRecordings, Mode=TwoWay}" />
+        </controls:OptionControl>
 
         <Border Style="{StaticResource SectionSeparator}" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_WindowControl_Title}" Style="{StaticResource SectionTitle}" />
