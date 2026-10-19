@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace Bloxstrap.Models.Persistable
 {
@@ -84,6 +84,10 @@ namespace Bloxstrap.Models.Persistable
         public ObservableCollection<GameProfile> GameProfiles { get; set; } = new();
         public bool ThrottleInBackground { get; set; } = false;
         public bool MuteInBackground { get; set; } = false;
+        public bool BatteryMode { get; set; } = false;
+        public string HotkeyMute { get; set; } = "";
+        public string HotkeyBetterServer { get; set; } = "";
+        public string HotkeyScreenshots { get; set; } = "";
         public bool SocdEnabled { get; set; } = false;
         public SocdLayout SocdLayout { get; set; } = SocdLayout.WASD;
         public SocdMode SocdMode { get; set; } = SocdMode.LastInput;

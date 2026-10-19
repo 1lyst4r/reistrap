@@ -108,6 +108,30 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.MuteInBackground = value;
         }
 
+        public bool BatteryMode
+        {
+            get => App.Settings.Prop.BatteryMode;
+            set => App.Settings.Prop.BatteryMode = value;
+        }
+
+        public string HotkeyMute
+        {
+            get => App.Settings.Prop.HotkeyMute;
+            set => App.Settings.Prop.HotkeyMute = value;
+        }
+
+        public string HotkeyBetterServer
+        {
+            get => App.Settings.Prop.HotkeyBetterServer;
+            set => App.Settings.Prop.HotkeyBetterServer = value;
+        }
+
+        public string HotkeyScreenshots
+        {
+            get => App.Settings.Prop.HotkeyScreenshots;
+            set => App.Settings.Prop.HotkeyScreenshots = value;
+        }
+
         public IReadOnlyList<string> KnownChannels { get; } = new[] { "production", "zcanary", "zintegration" };
 
         public ChannelTask PlayerChannelTask { get; } = new("RobloxPlayer");

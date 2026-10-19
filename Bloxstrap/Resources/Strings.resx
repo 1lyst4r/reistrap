@@ -3460,4 +3460,49 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
   <data name="Watcher.SessionRecap.Screenshots" xml:space="preserve">
     <value>You took {0} screenshots.</value>
   </data>
+  <data name="Menu.FastFlagEditor.History" xml:space="preserve">
+    <value>Earlier versions</value>
+  </data>
+  <data name="Menu.FastFlagEditor.History.Empty" xml:space="preserve">
+    <value>No earlier versions yet</value>
+  </data>
+  <data name="Menu.FastFlagEditor.History.Item" xml:space="preserve">
+    <value>{0} · {1} flags</value>
+  </data>
+  <data name="Menu.FastFlagEditor.History.Confirm" xml:space="preserve">
+    <value>Replace your current Fast Flags with this earlier version? Nothing changes until you save, and your current flags are kept as an earlier version when you do.</value>
+  </data>
+  <data name="Menu.Behaviour.BatteryMode.Title" xml:space="preserve">
+    <value>Battery mode</value>
+  </data>
+  <data name="Menu.Behaviour.BatteryMode.Description" xml:space="preserve">
+    <value>When your laptop is unplugged, Roblox starts at 30 FPS and lower graphics quality. Your normal settings come back when Roblox closes.</value>
+  </data>
+  <data name="Bootstrapper.BatteryMode.Title" xml:space="preserve">
+    <value>Battery mode is on</value>
+  </data>
+  <data name="Bootstrapper.BatteryMode.Message" xml:space="preserve">
+    <value>Your laptop is unplugged, so Roblox is starting at 30 FPS with lower graphics.</value>
+  </data>
+  <data name="Menu.Hotkeys.BoxTip" xml:space="preserve">
+    <value>Click here and press a shortcut, like Ctrl+Shift+M. Press Backspace to clear it.</value>
+  </data>
+  <data name="Menu.Hotkeys.Mute.Title" xml:space="preserve">
+    <value>Mute shortcut</value>
+  </data>
+  <data name="Menu.Hotkeys.Mute.Description" xml:space="preserve">
+    <value>Mutes or unmutes Roblox while it's open, even when you're in another window.</value>
+  </data>
+  <data name="Menu.Hotkeys.BetterServer.Title" xml:space="preserve">
+    <value>Find a better server shortcut</value>
+  </data>
+  <data name="Menu.Hotkeys.BetterServer.Description" xml:space="preserve">
+    <value>Moves you to a server of the same game with lower ping.</value>
+  </data>
+  <data name="Menu.Hotkeys.Screenshots.Title" xml:space="preserve">
+    <value>Screenshots folder shortcut</value>
+  </data>
+  <data name="Menu.Hotkeys.Screenshots.Description" xml:space="preserve">
+    <value>Opens your Roblox screenshots folder while Roblox is open.</value>
+  </data>
 </root>

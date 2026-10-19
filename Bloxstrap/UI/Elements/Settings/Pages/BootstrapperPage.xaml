@@ -72,6 +72,30 @@
             <ui:ToggleSwitch IsChecked="{Binding MuteInBackground, Mode=TwoWay}" />
         </controls:OptionControl>
 
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Behaviour_BatteryMode_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_BatteryMode_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding BatteryMode, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Hotkeys_Mute_Title}"
+            Description="{x:Static resources:Strings.Menu_Hotkeys_Mute_Description}">
+            <controls:HotkeyBox Text="{Binding HotkeyMute, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Hotkeys_BetterServer_Title}"
+            Description="{x:Static resources:Strings.Menu_Hotkeys_BetterServer_Description}">
+            <controls:HotkeyBox Text="{Binding HotkeyBetterServer, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Hotkeys_Screenshots_Title}"
+            Description="{x:Static resources:Strings.Menu_Hotkeys_Screenshots_Description}">
+            <controls:HotkeyBox Text="{Binding HotkeyScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Behaviour_Affinity_Title}"
             Description="{x:Static resources:Strings.Menu_Behaviour_Affinity_Description}">

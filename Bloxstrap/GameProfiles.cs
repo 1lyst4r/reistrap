@@ -39,6 +39,26 @@ namespace Bloxstrap
             };
         }
 
+        public const int BatteryFramerateCap = 30;
+
+        public const int BatteryQualityLevel = 3;
+
+        public static bool IsOnBattery() =>
+            System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Offline;
+
+        public static GameProfile ForBattery(GameProfile? profile)
+        {
+            int framerate = Int32.TryParse(profile?.FramerateCap, out int cap) && cap > 0 ? Math.Min(cap, BatteryFramerateCap) : BatteryFramerateCap;
+            int quality = Int32.TryParse(profile?.QualityLevel, out int level) && level > 0 ? Math.Min(level, BatteryQualityLevel) : BatteryQualityLevel;
+
+            return new GameProfile
+            {
+                Name = profile?.Name ?? "Battery mode",
+                FramerateCap = framerate.ToString(),
+                QualityLevel = quality.ToString()
+            };
+        }
+
         public static string? GetFastFlagProfilePath(GameProfile profile)
         {
             if (String.IsNullOrEmpty(profile.FastFlagProfile))

@@ -60,6 +60,14 @@ namespace Bloxstrap
 
         private DateTime _nextMuteAttempt;
 
+        private bool _manualMute;
+
+        private bool _backgroundMute;
+
+        private GlobalHotkeys? _hotkeys;
+
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
         private readonly List<(CustomIntegration Integration, int ProcessId)> _gameIntegrations = new();
 
         public static string GetLockName(bool isStudio) => isStudio ? "StudioWatcher" : "Watcher";
@@ -205,6 +213,33 @@ namespace Bloxstrap
 
             if (WindowControl is not null)
                 WindowControl.ShowNotification = (title, caption, duration) => _notifyIcon.ShowAlert(title, caption, duration, null);
+
+            StartHotkeys();
+        }
+
+        private void StartHotkeys()
+        {
+            var settings = App.Settings.Prop;
+
+            if (String.IsNullOrEmpty(settings.HotkeyMute) && String.IsNullOrEmpty(settings.HotkeyBetterServer) && String.IsNullOrEmpty(settings.HotkeyScreenshots))
+                return;
+
+            try
+            {
+                _hotkeys = new GlobalHotkeys();
+
+                _hotkeys.Register(settings.HotkeyMute, ToggleMute);
+                _hotkeys.Register(settings.HotkeyBetterServer, () => Task.Run(FindBetterServer));
+                _hotkeys.Register(settings.HotkeyScreenshots, () =>
+                {
+                    if (Directory.Exists(RobloxCaptureBlocker.ScreenshotsFolder))
+                        Utilities.ShellExecute(RobloxCaptureBlocker.ScreenshotsFolder);
+                });
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("Watcher::StartHotkeys", ex);
+            }
         }
 
         private bool ShouldShowCrosshair()
@@ -240,8 +275,17 @@ namespace Bloxstrap
             }
         }
 
-        private void SetRobloxMuted(bool muted)
+        private void ToggleMute()
         {
+            _manualMute = !_robloxMuted;
+            _nextMuteAttempt = DateTime.MinValue;
+            UpdateMute();
+        }
+
+        private void UpdateMute()
+        {
+            bool muted = _manualMute || _backgroundMute;
+
             if (muted == _robloxMuted || DateTime.Now < _nextMuteAttempt)
                 return;
 
@@ -254,7 +298,7 @@ namespace Bloxstrap
             }
             catch (Exception ex)
             {
-                App.Logger.WriteException("Watcher::SetRobloxMuted", ex);
+                App.Logger.WriteException("Watcher::UpdateMute", ex);
                 _nextMuteAttempt = DateTime.MaxValue;
             }
         }
@@ -330,7 +374,10 @@ namespace Bloxstrap
                     }
 
                     if (settings.MuteInBackground)
-                        SetRobloxMuted(!foreground);
+                    {
+                        _backgroundMute = !foreground;
+                        UpdateMute();
+                    }
                 }
 
                 if (_crosshair is not null)
@@ -849,9 +896,10 @@ namespace Bloxstrap
             _screenshotSorter?.Dispose();
             RobloxSingleton.Release();
 
-            _windowTimer?.Dispatcher.Invoke(() =>
+            _dispatcher.Invoke(() =>
             {
-                _windowTimer.Stop();
+                _windowTimer?.Stop();
+                _hotkeys?.Dispose();
 
                 if (_robloxMuted)
                 {
@@ -864,6 +912,7 @@ namespace Bloxstrap
                         App.Logger.WriteException("Watcher::Dispose", ex);
                     }
                 }
+
                 _crosshair?.Close();
             });
 

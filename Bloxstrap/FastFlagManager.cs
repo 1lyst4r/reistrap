@@ -151,6 +151,8 @@ namespace Bloxstrap
             foreach (var pair in Prop)
                 Prop[pair.Key] = pair.Value.ToString()!;
 
+            FlagHistory.Snapshot(OriginalProp, Prop);
+
             base.Save();
 
             // clone the dictionary

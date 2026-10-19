@@ -773,8 +773,19 @@ namespace Bloxstrap
             if (_launchMode == LaunchMode.Player && App.Settings.Prop.MultiInstanceLaunching)
                 RobloxSingleton.Hold();
 
-            if (_gameProfile is not null)
-                _restoreRobloxSettings = GameProfiles.ApplyRobloxSettings(_gameProfile);
+            var settingsProfile = _gameProfile;
+
+            if (_launchMode == LaunchMode.Player && App.Settings.Prop.BatteryMode && GameProfiles.IsOnBattery())
+            {
+                App.Logger.WriteLine(LOG_IDENT, "On battery, applying battery mode");
+                settingsProfile = GameProfiles.ForBattery(_gameProfile);
+
+                if (!App.LaunchSettings.QuietFlag.Active)
+                    Frontend.ShowBalloonTip(Strings.Bootstrapper_BatteryMode_Title, Strings.Bootstrapper_BatteryMode_Message, ToolTipIcon.Info);
+            }
+
+            if (settingsProfile is not null)
+                _restoreRobloxSettings = GameProfiles.ApplyRobloxSettings(settingsProfile);
 
             // v2.2.0 - byfron will trip if we keep a process handle open for over a minute, so we're doing this now
             try

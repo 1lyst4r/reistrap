@@ -6592,5 +6592,95 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Watcher.SessionRecap.Screenshots", resourceCulture);
             }
         }
+        
+        public static string Menu_FastFlagEditor_History {
+            get {
+                return ResourceManager.GetString("Menu.FastFlagEditor.History", resourceCulture);
+            }
+        }
+        
+        public static string Menu_FastFlagEditor_History_Empty {
+            get {
+                return ResourceManager.GetString("Menu.FastFlagEditor.History.Empty", resourceCulture);
+            }
+        }
+        
+        public static string Menu_FastFlagEditor_History_Item {
+            get {
+                return ResourceManager.GetString("Menu.FastFlagEditor.History.Item", resourceCulture);
+            }
+        }
+        
+        public static string Menu_FastFlagEditor_History_Confirm {
+            get {
+                return ResourceManager.GetString("Menu.FastFlagEditor.History.Confirm", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Behaviour_BatteryMode_Title {
+            get {
+                return ResourceManager.GetString("Menu.Behaviour.BatteryMode.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Behaviour_BatteryMode_Description {
+            get {
+                return ResourceManager.GetString("Menu.Behaviour.BatteryMode.Description", resourceCulture);
+            }
+        }
+        
+        public static string Bootstrapper_BatteryMode_Title {
+            get {
+                return ResourceManager.GetString("Bootstrapper.BatteryMode.Title", resourceCulture);
+            }
+        }
+        
+        public static string Bootstrapper_BatteryMode_Message {
+            get {
+                return ResourceManager.GetString("Bootstrapper.BatteryMode.Message", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_BoxTip {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.BoxTip", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_Mute_Title {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.Mute.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_Mute_Description {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.Mute.Description", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_BetterServer_Title {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.BetterServer.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_BetterServer_Description {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.BetterServer.Description", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_Screenshots_Title {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.Screenshots.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Hotkeys_Screenshots_Description {
+            get {
+                return ResourceManager.GetString("Menu.Hotkeys.Screenshots.Description", resourceCulture);
+            }
+        }
     }
 }

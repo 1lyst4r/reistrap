@@ -427,6 +427,35 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
             ReloadList();
         }
 
+        private void HistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = new System.Windows.Controls.ContextMenu { PlacementTarget = (UIElement)sender, Placement = PlacementMode.Bottom };
+            var snapshots = FlagHistory.List();
+
+            if (!snapshots.Any())
+                menu.Items.Add(new MenuItem { Header = Strings.Menu_FastFlagEditor_History_Empty, IsEnabled = false });
+
+            foreach (var snapshot in snapshots)
+            {
+                var item = new MenuItem { Header = String.Format(Strings.Menu_FastFlagEditor_History_Item, snapshot.Time.ToString("g"), snapshot.Count) };
+
+                item.Click += (_, _) =>
+                {
+                    var result = Frontend.ShowMessageBox(Strings.Menu_FastFlagEditor_History_Confirm, MessageBoxImage.Question, MessageBoxButton.YesNo);
+
+                    if (result != MessageBoxResult.Yes)
+                        return;
+
+                    FlagHistory.Restore(snapshot);
+                    ClearSearch();
+                };
+
+                menu.Items.Add(item);
+            }
+
+            menu.IsOpen = true;
+        }
+
         private void ExportJSONButton_Click(object sender, RoutedEventArgs e)
         {
             string json = JsonSerializer.Serialize(App.FastFlags.Prop, new JsonSerializerOptions { WriteIndented = true });
