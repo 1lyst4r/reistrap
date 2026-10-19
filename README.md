@@ -77,16 +77,20 @@ Mica, Acrylic or Aero window effects, accent colors with a color picker, custom 
 - Color mods, cursor sets and mod packs you can share with friends
 - See where your server is geographically located (courtesy of [RoValra](https://www.rovalra.com) and [ipinfo.io](https://ipinfo.io)) and how long it has been running
 - Region selector to join servers near you, or browse a game's servers by city
+- Find a better server with lower ping from the tray menu, without leaving the game
 - Quick Play to search games, pick a server and join from reistrap
 - Ability to configure graphics fidelity and UI experience
 - Edit Roblox's own settings, like raising the frame rate cap
 - Game profiles to use different settings for specific games
 - Run multiple Roblox instances at the same time
+- Battery mode that lowers the frame rate and graphics while your laptop is unplugged
+- Mute Roblox while it's in the background, plus keyboard shortcuts to mute, switch servers or open your screenshots
 - Automatically rejoin your server after being kicked for inactivity
 - Playtime tracking for every game, with session recaps, break reminders and a performance log
 - Rejoin your recently played games right from the launch menu
 - Window control for games made for Funkstrap, with a permission list for every game that uses it
 - Fast Flag profiles, with a warning for flags that aren't on the Roblox allowlist
+- Fast Flag history to go back to an earlier version of your flags
 - Switch Roblox channels, block Roblox updates or keep Roblox in a fixed install folder
 - Crosshair overlay, SOCD (snap tap), borderless windowed mode and custom window titles
 - Cache cleaner to free up disk space
