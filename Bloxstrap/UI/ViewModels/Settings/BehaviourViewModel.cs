@@ -102,6 +102,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.ThrottleInBackground = value;
         }
 
+        public bool MuteInBackground
+        {
+            get => App.Settings.Prop.MuteInBackground;
+            set => App.Settings.Prop.MuteInBackground = value;
+        }
+
         public IReadOnlyList<string> KnownChannels { get; } = new[] { "production", "zcanary", "zintegration" };
 
         public ChannelTask PlayerChannelTask { get; } = new("RobloxPlayer");

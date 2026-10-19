@@ -67,6 +67,12 @@
         </controls:OptionControl>
 
         <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Behaviour_MuteInBackground_Title}"
+            Description="{x:Static resources:Strings.Menu_Behaviour_MuteInBackground_Description}">
+            <ui:ToggleSwitch IsChecked="{Binding MuteInBackground, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Behaviour_Affinity_Title}"
             Description="{x:Static resources:Strings.Menu_Behaviour_Affinity_Description}">
             <ui:TextBox Width="200" Padding="10,5,10,5" PlaceholderText="0-3, 6" Text="{Binding RobloxCpuAffinity, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />

@@ -83,6 +83,7 @@ namespace Bloxstrap.Models.Persistable
         public double CrosshairGap { get; set; } = 3;
         public ObservableCollection<GameProfile> GameProfiles { get; set; } = new();
         public bool ThrottleInBackground { get; set; } = false;
+        public bool MuteInBackground { get; set; } = false;
         public bool SocdEnabled { get; set; } = false;
         public SocdLayout SocdLayout { get; set; } = SocdLayout.WASD;
         public SocdMode SocdMode { get; set; } = SocdMode.LastInput;

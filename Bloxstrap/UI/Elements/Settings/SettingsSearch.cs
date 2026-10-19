@@ -53,6 +53,7 @@ namespace Bloxstrap.UI.Elements.Settings
             ("bootstrapper", nameof(Strings.Menu_Behaviour_ForceRobloxReinstall_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_Priority_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_Throttle_Title)),
+            ("bootstrapper", nameof(Strings.Menu_Behaviour_MuteInBackground_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_Affinity_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_CloseCrashHandler_Title)),
             ("bootstrapper", nameof(Strings.Menu_Behaviour_ExplainCrashes_Title)),

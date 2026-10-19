@@ -3427,4 +3427,37 @@ Do you want reistrap to turn them off? This applies the next time Roblox launche
 
 {0}</value>
   </data>
+  <data name="Menu.Behaviour.MuteInBackground.Title" xml:space="preserve">
+    <value>Mute Roblox in the background</value>
+  </data>
+  <data name="Menu.Behaviour.MuteInBackground.Description" xml:space="preserve">
+    <value>Roblox goes quiet when you switch to another window, and its sound comes back when you return.</value>
+  </data>
+  <data name="ContextMenu.BetterServer" xml:space="preserve">
+    <value>Find a better server</value>
+  </data>
+  <data name="Watcher.BetterServer.Title" xml:space="preserve">
+    <value>Moving to a better server</value>
+  </data>
+  <data name="Watcher.BetterServer.Message" xml:space="preserve">
+    <value>Joining a server with {0} ms ping and {1} of {2} players.</value>
+  </data>
+  <data name="Watcher.BetterServer.None.Title" xml:space="preserve">
+    <value>No better server found</value>
+  </data>
+  <data name="Watcher.BetterServer.None.Message" xml:space="preserve">
+    <value>You're already on one of the best servers for this game.</value>
+  </data>
+  <data name="Watcher.BetterServer.Failed.Title" xml:space="preserve">
+    <value>Couldn't check servers</value>
+  </data>
+  <data name="Watcher.BetterServer.Failed.Message" xml:space="preserve">
+    <value>Roblox didn't send the server list. Try again in a bit.</value>
+  </data>
+  <data name="Watcher.SessionRecap.Screenshot" xml:space="preserve">
+    <value>You took 1 screenshot.</value>
+  </data>
+  <data name="Watcher.SessionRecap.Screenshots" xml:space="preserve">
+    <value>You took {0} screenshots.</value>
+  </data>
 </root>

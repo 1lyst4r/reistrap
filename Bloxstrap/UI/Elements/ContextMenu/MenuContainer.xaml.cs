@@ -109,7 +109,10 @@ namespace Bloxstrap.UI.Elements.ContextMenu
 
             Dispatcher.Invoke(() => {
                 if (_activityWatcher.Data.ServerType == ServerType.Public)
+                {
                     InviteDeeplinkMenuItem.Visibility = Visibility.Visible;
+                    BetterServerMenuItem.Visibility = Visibility.Visible;
+                }
 
                 ServerDetailsMenuItem.Visibility = Visibility.Visible;
             });
@@ -119,6 +122,7 @@ namespace Bloxstrap.UI.Elements.ContextMenu
         {
             Dispatcher.Invoke(() => {
                 InviteDeeplinkMenuItem.Visibility = Visibility.Collapsed;
+                BetterServerMenuItem.Visibility = Visibility.Collapsed;
                 ServerDetailsMenuItem.Visibility = Visibility.Collapsed;
 
                 _serverInformationWindow?.Close();
@@ -149,6 +153,8 @@ namespace Bloxstrap.UI.Elements.ContextMenu
         private void SocdMenuItem_Click(object sender, RoutedEventArgs e) => _watcher.Socd?.SetEnabled(((MenuItem)sender).IsChecked);
 
         private void InviteDeeplinkMenuItem_Click(object sender, RoutedEventArgs e) => Clipboard.SetDataObject(_activityWatcher?.Data.GetInviteDeeplink());
+
+        private void BetterServerMenuItem_Click(object sender, RoutedEventArgs e) => Task.Run(_watcher.FindBetterServer);
 
         private void ServerDetailsMenuItem_Click(object sender, RoutedEventArgs e) => ShowServerInformationWindow();
 

@@ -56,6 +56,10 @@ namespace Bloxstrap
 
         private bool _closedByReistrap;
 
+        private bool _robloxMuted;
+
+        private DateTime _nextMuteAttempt;
+
         private readonly List<(CustomIntegration Integration, int ProcessId)> _gameIntegrations = new();
 
         public static string GetLockName(bool isStudio) => isStudio ? "StudioWatcher" : "Watcher";
@@ -194,7 +198,7 @@ namespace Bloxstrap
             if (!String.IsNullOrWhiteSpace(settings.RobloxCpuAffinity))
                 SetRobloxAffinity(settings.RobloxCpuAffinity);
 
-            if (!String.IsNullOrEmpty(settings.RobloxWindowTitle) || settings.RobloxBorderless || settings.CrosshairEnabled || settings.ThrottleInBackground || anyProfileCrosshair || gameWindowInfo || _customIcon is not null)
+            if (!String.IsNullOrEmpty(settings.RobloxWindowTitle) || settings.RobloxBorderless || settings.CrosshairEnabled || settings.ThrottleInBackground || settings.MuteInBackground || anyProfileCrosshair || gameWindowInfo || _customIcon is not null)
                 StartWindowFeatures(settings.CrosshairEnabled || anyProfileCrosshair);
 
             _notifyIcon = new(this);
@@ -233,6 +237,25 @@ namespace Bloxstrap
             catch (Exception ex)
             {
                 App.Logger.WriteException("Watcher::SetRobloxPriority", ex);
+            }
+        }
+
+        private void SetRobloxMuted(bool muted)
+        {
+            if (muted == _robloxMuted || DateTime.Now < _nextMuteAttempt)
+                return;
+
+            _nextMuteAttempt = DateTime.Now.AddSeconds(2);
+
+            try
+            {
+                if (AudioSessions.SetMuted(_watcherData!.ProcessId, muted) > 0)
+                    _robloxMuted = muted;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("Watcher::SetRobloxMuted", ex);
+                _nextMuteAttempt = DateTime.MaxValue;
             }
         }
 
@@ -296,15 +319,18 @@ namespace Bloxstrap
                 if (settings.RobloxBorderless && WindowControl is not { Active: true })
                     _robloxWindow.ApplyBorderless();
 
-                if (settings.ThrottleInBackground)
+                if (settings.ThrottleInBackground || settings.MuteInBackground)
                 {
                     bool foreground = _robloxWindow.IsForeground;
 
-                    if (foreground != wasForeground)
+                    if (settings.ThrottleInBackground && foreground != wasForeground)
                     {
                         wasForeground = foreground;
                         SetRobloxPriority(foreground);
                     }
+
+                    if (settings.MuteInBackground)
+                        SetRobloxMuted(!foreground);
                 }
 
                 if (_crosshair is not null)
@@ -502,7 +528,36 @@ namespace Bloxstrap
             if (performance is not null)
                 message += " " + String.Format(Strings.Watcher_SessionRecap_Performance, performance.AverageCpu.ToString("0"), performance.AverageGpu.ToString("0"), performance.PeakMemoryMb.ToString("N0"));
 
+            int screenshots = CountScreenshots(activity.TimeJoined, activity.TimeLeft ?? DateTime.Now);
+
+            if (screenshots > 0)
+                message += " " + (screenshots == 1 ? Strings.Watcher_SessionRecap_Screenshot : String.Format(Strings.Watcher_SessionRecap_Screenshots, screenshots));
+
             _notifyIcon?.ShowAlert(Strings.Watcher_SessionRecap_Title, message, 8, null);
+        }
+
+        private static int CountScreenshots(DateTime from, DateTime to)
+        {
+            try
+            {
+                string folder = RobloxCaptureBlocker.ScreenshotsFolder;
+
+                if (!Directory.Exists(folder))
+                    return 0;
+
+                to = to.AddSeconds(10);
+
+                return Directory.EnumerateFiles(folder, "*.png", SearchOption.AllDirectories).Count(file =>
+                {
+                    var created = File.GetCreationTime(file);
+                    return created >= from && created <= to;
+                });
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("Watcher::CountScreenshots", ex);
+                return 0;
+            }
         }
 
         private DateTime _lastBreakReminder = DateTime.Now;
@@ -640,18 +695,82 @@ namespace Bloxstrap
 
             await Task.Delay(Math.Clamp(App.Settings.Prop.RejoinDelaySeconds, 0, 60) * 1000);
 
+            JoinServer(sameServer ? data.GetInviteDeeplink(false) : $"roblox://experiences/start?placeId={data.PlaceId}");
+        }
+
+        private void JoinServer(string deeplink)
+        {
+            const string LOG_IDENT = "Watcher::JoinServer";
+
             try
             {
-                Utilities.ShellExecute(sameServer ? data.GetInviteDeeplink(false) : $"roblox://experiences/start?placeId={data.PlaceId}");
+                Utilities.ShellExecute(deeplink);
             }
             catch (Exception ex)
             {
-                App.Logger.WriteLine(LOG_IDENT, "Failed to start rejoin");
+                App.Logger.WriteLine(LOG_IDENT, "Failed to start join");
                 App.Logger.WriteException(LOG_IDENT, ex);
                 return;
             }
 
             CloseProcess(_watcherData!.ProcessId, true);
+        }
+
+        public async Task FindBetterServer()
+        {
+            const string LOG_IDENT = "Watcher::FindBetterServer";
+
+            if (ActivityWatcher is not { InGame: true } || ActivityWatcher.Data.ServerType != ServerType.Public)
+                return;
+
+            var data = ActivityWatcher.Data;
+            var servers = new List<(string Id, int Playing, int MaxPlayers, double Ping, double Fps)>();
+
+            try
+            {
+                string json = await App.HttpClient.GetStringAsync($"https://games.roblox.com/v1/games/{data.PlaceId}/servers/Public?limit=100&excludeFullGames=true");
+                using var document = JsonDocument.Parse(json);
+
+                foreach (var server in document.RootElement.GetProperty("data").EnumerateArray())
+                {
+                    if (!server.TryGetProperty("id", out var id) || !server.TryGetProperty("ping", out var ping) || ping.ValueKind != JsonValueKind.Number)
+                        continue;
+
+                    servers.Add((
+                        id.GetString() ?? "",
+                        server.TryGetProperty("playing", out var playing) && playing.ValueKind == JsonValueKind.Number ? playing.GetInt32() : 0,
+                        server.TryGetProperty("maxPlayers", out var maxPlayers) && maxPlayers.ValueKind == JsonValueKind.Number ? maxPlayers.GetInt32() : 0,
+                        ping.GetDouble(),
+                        server.TryGetProperty("fps", out var fps) && fps.ValueKind == JsonValueKind.Number ? fps.GetDouble() : 60
+                    ));
+                }
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                _notifyIcon?.ShowAlert(Strings.Watcher_BetterServer_Failed_Title, Strings.Watcher_BetterServer_Failed_Message, 6, null);
+                return;
+            }
+
+            var current = servers.FirstOrDefault(x => x.Id == data.JobId);
+
+            var best = servers
+                .Where(x => x.Id != data.JobId && x.Playing < x.MaxPlayers && x.Fps >= 40)
+                .OrderBy(x => x.Ping)
+                .ThenByDescending(x => x.Playing)
+                .FirstOrDefault();
+
+            if (String.IsNullOrEmpty(best.Id) || (!String.IsNullOrEmpty(current.Id) && best.Ping >= current.Ping - 10))
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"No better server found ({servers.Count} checked)");
+                _notifyIcon?.ShowAlert(Strings.Watcher_BetterServer_None_Title, Strings.Watcher_BetterServer_None_Message, 6, null);
+                return;
+            }
+
+            App.Logger.WriteLine(LOG_IDENT, $"Moving to {best.Id} (ping={best.Ping}, players={best.Playing}/{best.MaxPlayers})");
+            _notifyIcon?.ShowAlert(Strings.Watcher_BetterServer_Title, String.Format(Strings.Watcher_BetterServer_Message, best.Ping.ToString("0"), best.Playing, best.MaxPlayers), 6, null);
+
+            JoinServer($"roblox://experiences/start?placeId={data.PlaceId}&gameInstanceId={best.Id}");
         }
 
         public async Task Run()
@@ -733,6 +852,18 @@ namespace Bloxstrap
             _windowTimer?.Dispatcher.Invoke(() =>
             {
                 _windowTimer.Stop();
+
+                if (_robloxMuted)
+                {
+                    try
+                    {
+                        AudioSessions.SetMuted(_watcherData!.ProcessId, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteException("Watcher::Dispose", ex);
+                    }
+                }
                 _crosshair?.Close();
             });
 

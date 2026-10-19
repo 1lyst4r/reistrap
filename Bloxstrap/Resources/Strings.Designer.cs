@@ -6526,5 +6526,71 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Bloxstrap.ShareSetup.Failed", resourceCulture);
             }
         }
+        
+        public static string Menu_Behaviour_MuteInBackground_Title {
+            get {
+                return ResourceManager.GetString("Menu.Behaviour.MuteInBackground.Title", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Behaviour_MuteInBackground_Description {
+            get {
+                return ResourceManager.GetString("Menu.Behaviour.MuteInBackground.Description", resourceCulture);
+            }
+        }
+        
+        public static string ContextMenu_BetterServer {
+            get {
+                return ResourceManager.GetString("ContextMenu.BetterServer", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_BetterServer_Title {
+            get {
+                return ResourceManager.GetString("Watcher.BetterServer.Title", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_BetterServer_Message {
+            get {
+                return ResourceManager.GetString("Watcher.BetterServer.Message", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_BetterServer_None_Title {
+            get {
+                return ResourceManager.GetString("Watcher.BetterServer.None.Title", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_BetterServer_None_Message {
+            get {
+                return ResourceManager.GetString("Watcher.BetterServer.None.Message", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_BetterServer_Failed_Title {
+            get {
+                return ResourceManager.GetString("Watcher.BetterServer.Failed.Title", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_BetterServer_Failed_Message {
+            get {
+                return ResourceManager.GetString("Watcher.BetterServer.Failed.Message", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_SessionRecap_Screenshot {
+            get {
+                return ResourceManager.GetString("Watcher.SessionRecap.Screenshot", resourceCulture);
+            }
+        }
+        
+        public static string Watcher_SessionRecap_Screenshots {
+            get {
+                return ResourceManager.GetString("Watcher.SessionRecap.Screenshots", resourceCulture);
+            }
+        }
     }
 }
