@@ -23,7 +23,7 @@ namespace Bloxstrap.Integrations
         private const string GameDisconnectedReasonEntry     = "[DFLog::RbxTransportDummyClient] Disconnected from server for reason:";
         private const string GameServerPrefixEntry           = "[FLog::Output] Server Prefix: ";
 
-        private const string GameJoiningEntryPattern         = @"! Joining game '([0-9a-f\-]{36})' place ([0-9]+) at ([0-9\.]+)";
+        private const string GameJoiningEntryPattern         = @"! Joining game '([0-9a-f\-]{36})' place ([0-9]+) at ([0-9\.]+|localhost)";
         private const string GameJoiningPrivateServerPattern = @"""accessCode"":""([0-9a-f\-]{36})""";
         private const string GameJoinReferralPattern         = @"referral_page:([^,]+)";
         private const string GameTeleportJoinTypePattern     = @"JoinTypeId""%3a(\d+)%2c";
@@ -253,6 +253,9 @@ namespace Bloxstrap.Integrations
                         App.Logger.WriteLine(LOG_IDENT, logMessage);
                         return;
                     }
+
+                    if (match.Groups[3].Value == "localhost")
+                        return;
 
                     InGame = false;
                     Data.PlaceId = long.Parse(match.Groups[2].Value);

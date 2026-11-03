@@ -49,15 +49,30 @@ namespace Bloxstrap
 
         private static string CrashesFolder => Path.Combine(Paths.LocalAppData, "Roblox", "logs", "crashes");
 
-        public static bool DidCrash(DateTime since)
+        public static bool DidCrash(DateTime since, string? logFile)
         {
             try
             {
                 if (!Directory.Exists(CrashesFolder))
                     return false;
 
-                return Directory.EnumerateFiles(CrashesFolder, "*.dmp", SearchOption.AllDirectories)
-                    .Any(x => File.GetLastWriteTime(x) >= since || File.GetCreationTime(x) >= since);
+                string? session = String.IsNullOrEmpty(logFile) ? null : Regex.Replace(Path.GetFileNameWithoutExtension(logFile), "_last$", "", RegexOptions.IgnoreCase);
+
+                foreach (string dump in Directory.EnumerateFiles(CrashesFolder, "*.dmp", SearchOption.AllDirectories))
+                {
+                    if (File.GetLastWriteTime(dump) < since && File.GetCreationTime(dump) < since)
+                        continue;
+
+                    string attachments = Path.Combine(CrashesFolder, "attachments", Path.GetFileNameWithoutExtension(dump));
+
+                    if (session is null || !Directory.Exists(attachments) || !Directory.EnumerateFiles(attachments, "*.log").Any())
+                        return true;
+
+                    if (Directory.EnumerateFiles(attachments, "*.log").Any(x => Path.GetFileName(x).Contains(session, StringComparison.OrdinalIgnoreCase)))
+                        return true;
+                }
+
+                return false;
             }
             catch (Exception ex)
             {

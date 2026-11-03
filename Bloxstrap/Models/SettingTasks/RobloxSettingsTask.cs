@@ -83,6 +83,19 @@ namespace Bloxstrap.Models.SettingTasks
             UpdatePending();
         }
 
+        public void Remove(string name)
+        {
+            var element = Find(name);
+
+            if (element is null)
+                return;
+
+            element.Remove();
+
+            _changed = true;
+            UpdatePending();
+        }
+
         public override void Execute()
         {
             const string LOG_IDENT = "RobloxSettingsTask::Execute";

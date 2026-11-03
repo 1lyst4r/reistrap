@@ -773,19 +773,20 @@ namespace Bloxstrap
             if (_launchMode == LaunchMode.Player && App.Settings.Prop.MultiInstanceLaunching)
                 RobloxSingleton.Hold();
 
-            var settingsProfile = _gameProfile;
+            bool batteryMode = _launchMode == LaunchMode.Player && App.Settings.Prop.BatteryMode && GameProfiles.IsOnBattery();
 
-            if (_launchMode == LaunchMode.Player && App.Settings.Prop.BatteryMode && GameProfiles.IsOnBattery())
+            var settingsProfile = batteryMode ? GameProfiles.ForBattery(_gameProfile) : _gameProfile;
+
+            if (settingsProfile is not null)
+                _restoreRobloxSettings = GameProfiles.ApplyRobloxSettings(settingsProfile);
+
+            if (batteryMode && _restoreRobloxSettings is not null)
             {
-                App.Logger.WriteLine(LOG_IDENT, "On battery, applying battery mode");
-                settingsProfile = GameProfiles.ForBattery(_gameProfile);
+                App.Logger.WriteLine(LOG_IDENT, "On battery, applied battery mode");
 
                 if (!App.LaunchSettings.QuietFlag.Active)
                     Frontend.ShowBalloonTip(Strings.Bootstrapper_BatteryMode_Title, Strings.Bootstrapper_BatteryMode_Message, ToolTipIcon.Info);
             }
-
-            if (settingsProfile is not null)
-                _restoreRobloxSettings = GameProfiles.ApplyRobloxSettings(settingsProfile);
 
             // v2.2.0 - byfron will trip if we keep a process handle open for over a minute, so we're doing this now
             try
@@ -868,7 +869,7 @@ namespace Bloxstrap
                     autoclosePids.Add(pid);
             }
 
-            bool usesWindowFeatures = App.Settings.Prop.CrosshairEnabled || App.Settings.Prop.RobloxBorderless || App.Settings.Prop.ThrottleInBackground || App.Settings.Prop.SocdEnabled || App.Settings.Prop.CloseCrashHandler || !String.IsNullOrWhiteSpace(App.Settings.Prop.RobloxCpuAffinity) || App.Settings.Prop.RobloxWindowIcon != RobloxWindowIcon.Default || App.Settings.Prop.MemoryTrimmer || App.Settings.Prop.BreakReminderMinutes > 0 || !String.IsNullOrEmpty(App.Settings.Prop.RobloxWindowTitle) || App.Settings.Prop.GameProfiles.Any(x => x.Crosshair == ProfileToggle.On);
+            bool usesWindowFeatures = App.Settings.Prop.CrosshairEnabled || App.Settings.Prop.RobloxBorderless || App.Settings.Prop.ThrottleInBackground || App.Settings.Prop.SocdEnabled || App.Settings.Prop.CloseCrashHandler || !String.IsNullOrWhiteSpace(App.Settings.Prop.RobloxCpuAffinity) || App.Settings.Prop.RobloxWindowIcon != RobloxWindowIcon.Default || App.Settings.Prop.MemoryTrimmer || App.Settings.Prop.BreakReminderMinutes > 0 || !String.IsNullOrEmpty(App.Settings.Prop.RobloxWindowTitle) || App.Settings.Prop.GameProfiles.Any(x => x.Crosshair == ProfileToggle.On) || App.Settings.Prop.MuteInBackground || !String.IsNullOrEmpty(App.Settings.Prop.HotkeyMute) || !String.IsNullOrEmpty(App.Settings.Prop.HotkeyScreenshots);
 
             if (App.Settings.Prop.EnableActivityTracking || App.Settings.Prop.ExplainCrashes || App.Settings.Prop.SortScreenshots || App.LaunchSettings.TestModeFlag.Active || autoclosePids.Any() || usesWindowFeatures || _restoreRobloxSettings is not null)
             {

@@ -209,13 +209,13 @@ namespace Bloxstrap.Integrations
 
                 UpdatePresence();
             }
-            else if (_placeOpened is not null && _placeId == 0 && PlaceIdPattern.Match(logMessage) is { Success: true } placeMatch)
+            else if (_placeOpened is not null && _placeId == 0 && PlaceIdPattern.Match(logMessage) is { Success: true } placeMatch && long.TryParse(placeMatch.Groups[1].Value, out long placeId) && placeId > 0)
             {
-                _placeId = long.Parse(placeMatch.Groups[1].Value);
+                _placeId = placeId;
             }
-            else if (_placeOpened is not null && _universeId == 0 && UniverseIdPattern.Match(logMessage) is { Success: true } universeMatch)
+            else if (_placeOpened is not null && _universeId == 0 && UniverseIdPattern.Match(logMessage) is { Success: true } universeMatch && long.TryParse(universeMatch.Groups[1].Value, out long universeId) && universeId > 0)
             {
-                _universeId = long.Parse(universeMatch.Groups[1].Value);
+                _universeId = universeId;
                 Task.Run(LoadUniverseDetails);
             }
             else if (_placeOpened is not null && _testStarted is null && logMessage.StartsWith(TestStartEntry, StringComparison.Ordinal))

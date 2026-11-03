@@ -1,17 +1,20 @@
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 using Bloxstrap.Integrations;
 
 namespace Bloxstrap.UI.Elements.Controls
 {
-    public class HotkeyBox : TextBox
+    public class HotkeyBox : Wpf.Ui.Controls.TextBox
     {
         public HotkeyBox()
         {
+            SetResourceReference(StyleProperty, typeof(Wpf.Ui.Controls.TextBox));
+
             IsReadOnly = true;
             IsReadOnlyCaretVisible = false;
+            ClearButtonEnabled = false;
+            PlaceholderText = Strings.Common_Off;
             MinWidth = 160;
             HorizontalContentAlignment = HorizontalAlignment.Center;
             ToolTip = Strings.Menu_Hotkeys_BoxTip;

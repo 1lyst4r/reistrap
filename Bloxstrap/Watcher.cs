@@ -775,7 +775,7 @@ namespace Bloxstrap
 
             try
             {
-                string json = await App.HttpClient.GetStringAsync($"https://games.roblox.com/v1/games/{data.PlaceId}/servers/Public?limit=100&excludeFullGames=true");
+                string json = await App.HttpClient.GetStringAsync($"https://games.roblox.com/v1/games/{data.PlaceId}/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true");
                 using var document = JsonDocument.Parse(json);
 
                 foreach (var server in document.RootElement.GetProperty("data").EnumerateArray())
@@ -802,7 +802,7 @@ namespace Bloxstrap
             var current = servers.FirstOrDefault(x => x.Id == data.JobId);
 
             var best = servers
-                .Where(x => x.Id != data.JobId && x.Playing < x.MaxPlayers && x.Fps >= 40)
+                .Where(x => x.Id != data.JobId && x.Playing > 0 && x.Playing < x.MaxPlayers && x.Ping > 0 && x.Fps >= 40)
                 .OrderBy(x => x.Ping)
                 .ThenByDescending(x => x.Playing)
                 .FirstOrDefault();
@@ -868,7 +868,7 @@ namespace Bloxstrap
 
             await Task.Delay(3000);
 
-            if (!CrashDiagnostics.DidCrash(_sessionStart))
+            if (!CrashDiagnostics.DidCrash(_sessionStart, _watcherData!.LogFile))
                 return;
 
             bool? joinedGame = ActivityWatcher is null ? null : ActivityWatcher.InGame || ActivityWatcher.History.Any();

@@ -118,10 +118,14 @@ namespace Bloxstrap
             if (!task.Exists)
                 return;
 
-            foreach (var pair in original.Where(x => !String.IsNullOrEmpty(x.Value)))
+            foreach (var pair in original)
             {
                 string[] parts = pair.Key.Split(':', 2);
-                task.Set(parts[0], parts[1], pair.Value);
+
+                if (String.IsNullOrEmpty(pair.Value))
+                    task.Remove(parts[1]);
+                else
+                    task.Set(parts[0], parts[1], pair.Value);
             }
 
             task.Execute();

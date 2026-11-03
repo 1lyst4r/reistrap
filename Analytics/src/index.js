@@ -180,7 +180,7 @@ async function dashboard(url, env) {
     ).all();
 
     const setups = await env.DB.prepare(
-        "SELECT COUNT(*) AS total, SUM(created >= datetime('now', '-7 day')) AS week FROM setups"
+        "SELECT COUNT(*) AS total, SUM(created >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-7 day')) AS week FROM setups"
     ).first();
 
     const table = (headers, rows) =>
