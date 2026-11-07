@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -160,6 +160,29 @@ namespace Bloxstrap.UI.Elements.Base
                 return;
             }
 
+            if (_backdrop != BackgroundType.None)
+            {
+                if (IsLoaded)
+                {
+                    Wpf.Ui.Appearance.Background.Apply(this, _backdrop, true);
+                    Background = custom;
+                }
+                else
+                {
+                    Loaded += (_, _) =>
+                    {
+                        var background = GetCustomBackground();
+                        if (background is null)
+                            return;
+
+                        Wpf.Ui.Appearance.Background.Apply(this, _backdrop, true);
+                        Background = background;
+                    };
+                }
+
+                return;
+            }
+
             var themeBackground = TryFindResource("ApplicationBackgroundBrush") as Brush;
 
             var group = new DrawingBrush
@@ -209,9 +232,6 @@ namespace Bloxstrap.UI.Elements.Base
             }
 
             var custom = AllowCustomBackground ? GetCustomBackground() : null;
-
-            if (AllowCustomBackground)
-                SetCustomBackground(custom);
 
             base.OnSourceInitialized(e);
 

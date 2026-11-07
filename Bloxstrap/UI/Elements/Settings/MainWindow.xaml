@@ -23,6 +23,10 @@
              Closing="WpfUiWindow_Closing"
              Closed="WpfUiWindow_Closed">
     <base:WpfUiWindow.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <ResourceDictionary Source="/reistrap;component/UI/Style/SettingsNavigation.xaml" />
+        </ResourceDictionary.MergedDictionaries>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="SplitLeftButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
@@ -32,6 +36,7 @@
         <Style x:Key="SplitRightButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
             <Setter Property="Border.CornerRadius" Value="0,4,4,0" />
         </Style>
+          </ResourceDictionary>
     </base:WpfUiWindow.Resources>
 
     <Grid>
