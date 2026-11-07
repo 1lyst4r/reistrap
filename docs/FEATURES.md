@@ -1,6 +1,6 @@
 # reistrap features
 
-Everything reistrap can do, as of v1.3.6.
+Everything reistrap can do, as of v1.3.9.
 
 ## Settings window
 
@@ -132,6 +132,23 @@ Everything reistrap can do, as of v1.3.6.
 - Automatic updates and pre-releases
 - Reset all settings
 - Analytics toggle
-- Backup and restore everything to one file
+- Backup and restore settings and supported content to one file
 - Import settings, Fast Flags and mods from another bootstrapper
 - Export diagnostic data and view logs
+
+## Additional tools
+
+- Share settings and Fast Flags using an eight-character setup code, with a preview before importing
+- Safe launch for one session without mods or Fast Flags
+- Screenshot previews in the Playtime page
+- Discover other Bloxstrap-based installations, including custom folders, or browse manually
+- Crash explanations with suggested troubleshooting steps
+- Sort Roblox screenshots into folders by game
+- Recent-game update indicators showing changes since you last played
+- Battery mode to reduce frame rate and graphics while unplugged
+- Automatically mute Roblox in the background
+- Keyboard shortcuts for muting Roblox, finding a better server and opening screenshots
+- Find a better server from the tray menu
+- Fast Flag history with previous snapshots and restore
+
+Backup includes Settings.json, GameStats.json, Modifications, FastFlagProfiles, CursorSets, CustomThemes and Roblox's GlobalBasicSettings_13.xml. External image/font files, logs and FlagHistory are not included.

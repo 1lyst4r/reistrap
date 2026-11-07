@@ -74,7 +74,7 @@ async function postStat(request, url, env) {
     const key = url.searchParams.get("key") || "";
     const value = url.searchParams.get("value") || "";
 
-    if (!(key in ALLOWED_STATS) || !VALUE_PATTERN.test(value))
+    if (!Object.prototype.hasOwnProperty.call(ALLOWED_STATS, key) || !VALUE_PATTERN.test(value))
         return new Response("Bad request", { status: 400 });
 
     const allowedValues = ALLOWED_STATS[key];

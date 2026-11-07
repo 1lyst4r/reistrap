@@ -2,11 +2,20 @@ namespace Bloxstrap
 {
     public static class Updater
     {
+        // Functions
+
+        public static GithubReleaseAsset? GetAsset(GithubRelease release) =>
+            release.Assets?.FirstOrDefault(asset =>
+                !String.IsNullOrEmpty(asset.Name) &&
+                asset.Name == Path.GetFileName(asset.Name) &&
+                (asset.Name.Equals("reistrap.exe", StringComparison.OrdinalIgnoreCase) ||
+                 asset.Name.Equals($"reistrap-{release.TagName}.exe", StringComparison.OrdinalIgnoreCase)));
+
         public static async Task<GithubRelease?> FindUpdate()
         {
             var release = await App.GetLatestRelease();
 
-            if (release?.Assets is null || !release.Assets.Any())
+            if (release is null || GetAsset(release) is null)
                 return null;
 
             var comparison = Utilities.CompareVersions(App.Version, release.TagName);
@@ -21,7 +30,7 @@ namespace Bloxstrap
         {
             const string LOG_IDENT = "Updater::Install";
 
-            var asset = release.Assets![0];
+            var asset = GetAsset(release) ?? throw new InvalidDataException("The release has no reistrap executable.");
             string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
 
             Directory.CreateDirectory(Paths.TempUpdates);

@@ -23,6 +23,11 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore
 
+    - name: Regression checks
+      run: |
+        dotnet run --project Tests/Regression.csproj -c Release
+        node Tests/analytics.mjs
+
     - name: Publish
       run: dotnet publish -p:PublishSingleFile=true -p:CommitHash=${{ github.sha }} -p:CommitRef=${{ github.ref_type }}/${{ github.ref_name }} -r win-x64 -c Release --self-contained false .\Bloxstrap\Bloxstrap.csproj
 
