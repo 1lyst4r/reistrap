@@ -119,6 +119,10 @@ It's not unlikely that Windows Smartscreen will show a popup when you run **reis
 
 Once installed, **reistrap** is added to your Start Menu, where you can access the menu and reconfigure your preferences if needed.
 
+## Code signing policy
+
+See the [code signing policy](docs/CODE_SIGNING_POLICY.md) and [privacy policy](docs/PRIVACY.md). Signing has not yet been configured.
+
 ## Code
 
 **reistrap** uses the [WPF UI](https://github.com/lepoco/wpfui) library for the user interface design.
