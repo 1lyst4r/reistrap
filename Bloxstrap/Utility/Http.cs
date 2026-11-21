@@ -2,13 +2,13 @@
 {
     internal static class Http
     {
-        public static async Task<T> GetJson<T>(string url)
+        public static async Task<T> GetJson<T>(string url, CancellationToken cancellationToken = default)
         {
-            var request = await App.HttpClient.GetAsync(url);
+            using var request = await App.HttpClient.GetAsync(url, cancellationToken);
 
             request.EnsureSuccessStatusCode();
 
-            string json = await request.Content.ReadAsStringAsync();
+            string json = await request.Content.ReadAsStringAsync(cancellationToken);
             
             return JsonSerializer.Deserialize<T>(json)!;
         }

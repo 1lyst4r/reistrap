@@ -78,30 +78,6 @@ namespace Bloxstrap.UI.ViewModels.Settings
             public string Name { get; set; } = "";
         }
 
-        private class ServersResponse
-        {
-            [JsonPropertyName("data")]
-            public List<ServerEntry> Data { get; set; } = new();
-        }
-
-        private class ServerEntry
-        {
-            [JsonPropertyName("id")]
-            public string Id { get; set; } = "";
-
-            [JsonPropertyName("playing")]
-            public int Playing { get; set; }
-
-            [JsonPropertyName("maxPlayers")]
-            public int MaxPlayers { get; set; }
-
-            [JsonPropertyName("ping")]
-            public int? Ping { get; set; }
-
-            [JsonPropertyName("fps")]
-            public double? Fps { get; set; }
-        }
-
         private readonly LastServer? _lastServer = GameStatsTracker.LoadLastServer();
 
         public string Query { get; set; } = "";
@@ -353,7 +329,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
             try
             {
-                var servers = await Http.GetJson<ServersResponse>($"https://games.roblox.com/v1/games/{placeId}/servers/Public?limit=25&sortOrder=Desc&excludeFullGames=true");
+                var servers = await Http.GetJson<ApiArrayResponse<PublicServer>>($"https://games.roblox.com/v1/games/{placeId}/servers/Public?limit=25&sortOrder=Desc&excludeFullGames=true");
 
                 if (request != _serversRequest)
                     return;

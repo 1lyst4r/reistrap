@@ -92,12 +92,12 @@ namespace Bloxstrap.Integrations
 
         private static List<ServerRegion>? _regions;
 
-        public static async Task<List<ServerRegion>> GetRegions()
+        public static async Task<List<ServerRegion>> GetRegions(CancellationToken cancellationToken = default)
         {
             if (_regions is not null)
                 return _regions;
 
-            var datacenters = await Http.GetJson<List<DatacenterEntry>>(DatacentersUrl) ?? new();
+            var datacenters = await Http.GetJson<List<DatacenterEntry>>(DatacentersUrl, cancellationToken) ?? new();
 
             _regions = datacenters
                 .Where(x => !x.Inactive && x.Location is not null && !String.IsNullOrEmpty(x.Location.City))
@@ -121,14 +121,14 @@ namespace Bloxstrap.Integrations
         private static double ParseCoordinate(List<string>? values, int index) =>
             values is not null && values.Count > index && double.TryParse(values[index], NumberStyles.Float, CultureInfo.InvariantCulture, out double value) ? value : 0;
 
-        public static async Task<(List<RegionServer> Servers, int? NextCursor)> GetServers(long placeId, ServerRegion region, int? cursor = null)
+        public static async Task<(List<RegionServer> Servers, int? NextCursor)> GetServers(long placeId, ServerRegion region, int? cursor = null, CancellationToken cancellationToken = default)
         {
             string url = $"{ServersUrl}?place_id={placeId}&region={region.Country}&city={Uri.EscapeDataString(region.City)}";
 
             if (cursor is not null)
                 url += $"&cursor={cursor}";
 
-            var response = await Http.GetJson<ServersResponse>(url);
+            var response = await Http.GetJson<ServersResponse>(url, cancellationToken);
 
             var servers = response?.Servers?
                 .Where(x => !String.IsNullOrEmpty(x.ServerId))
@@ -138,13 +138,13 @@ namespace Bloxstrap.Integrations
             return (servers, response?.NextCursor);
         }
 
-        public static async Task<List<ServerRegion>> GetNearestRegions()
+        public static async Task<List<ServerRegion>> GetNearestRegions(CancellationToken cancellationToken = default)
         {
-            var regions = await GetRegions();
+            var regions = await GetRegions(cancellationToken);
 
             try
             {
-                var ipinfo = await Http.GetJson<IpInfoResponse>("https://ipinfo.io/json");
+                var ipinfo = await Http.GetJson<IpInfoResponse>("https://ipinfo.io/json", cancellationToken);
                 string[] location = ipinfo?.Loc?.Split(',') ?? Array.Empty<string>();
 
                 if (location.Length == 2
@@ -152,7 +152,7 @@ namespace Bloxstrap.Integrations
                     && double.TryParse(location[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double lon))
                     return regions.OrderBy(x => Distance(lat, lon, x.Latitude, x.Longitude)).ToList();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
             {
                 App.Logger.WriteException("ServerRegions::GetNearestRegions", ex);
             }
@@ -171,34 +171,66 @@ namespace Bloxstrap.Integrations
             return 6371 * 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
         }
 
-        public static async Task<string?> FindServer(long placeId)
+        internal static Guid? PickServer(IEnumerable<RegionServer> servers, HashSet<Guid> available, bool randomize)
+        {
+            var matches = new List<Guid>();
+            foreach (var server in servers)
+            {
+                if (!Guid.TryParseExact(server.ServerId, "D", out var id) || !available.Contains(id))
+                    continue;
+
+                if (!randomize)
+                    return id;
+
+                matches.Add(id);
+            }
+
+            return matches.Count == 0 ? null : matches[Random.Shared.Next(matches.Count)];
+        }
+
+        internal static HashSet<Guid> GetAvailable(IEnumerable<PublicServer> servers)
+        {
+            var available = new HashSet<Guid>();
+            foreach (var server in servers)
+            {
+                if (server.Playing >= 0 && server.Playing < server.MaxPlayers && Guid.TryParseExact(server.Id, "D", out var id) && id != Guid.Empty)
+                    available.Add(id);
+            }
+            return available;
+        }
+
+        public static async Task<Guid?> FindServer(long placeId, CancellationToken cancellationToken)
         {
             const string LOG_IDENT = "ServerRegions::FindServer";
 
             var candidates = new List<ServerRegion>();
-            var regions = await GetRegions();
+            var regions = await GetRegions(cancellationToken);
 
             var preferred = regions.FirstOrDefault(x => x.Key == App.Settings.Prop.PreferredRegion);
 
             if (preferred is not null)
                 candidates.Add(preferred);
 
-            candidates.AddRange((await GetNearestRegions()).Where(x => x != preferred).Take(4));
+            candidates.AddRange((await GetNearestRegions(cancellationToken)).Where(x => x != preferred).Take(4));
+
+            var page = await Http.GetJson<ApiArrayResponse<PublicServer>>(
+                $"https://games.roblox.com/v1/games/{placeId}/servers/Public?limit=100&sortOrder=Asc&excludeFullGames=true", cancellationToken);
+            var available = GetAvailable(page?.Data ?? Array.Empty<PublicServer>());
+            if (available.Count == 0)
+                return null;
 
             foreach (var region in candidates)
             {
-                var (servers, _) = await GetServers(placeId, region);
+                var (servers, _) = await GetServers(placeId, region, cancellationToken: cancellationToken);
 
                 App.Logger.WriteLine(LOG_IDENT, $"{servers.Count} servers in {region.DisplayName}");
 
-                if (!servers.Any())
+                var id = PickServer(servers, available, App.Settings.Prop.RandomizeMatchmaking);
+                if (id is null)
                     continue;
 
-                var server = App.Settings.Prop.RandomizeMatchmaking ? servers[Random.Shared.Next(servers.Count)] : servers[0];
-
-                App.Logger.WriteLine(LOG_IDENT, $"Picked {server.ServerId} in {region.DisplayName}");
-
-                return server.ServerId;
+                App.Logger.WriteLine(LOG_IDENT, $"Picked {id} in {region.DisplayName}");
+                return id;
             }
 
             return null;
