@@ -23,7 +23,7 @@ namespace Bloxstrap
             try
             {
                 Directory.CreateDirectory(Folder);
-                File.WriteAllText(Path.Combine(Folder, $"{DateTime.Now:yyyyMMdd-HHmmss}.json"), JsonSerializer.Serialize(before, new JsonSerializerOptions { WriteIndented = true }));
+                File.WriteAllText(Path.Combine(Folder, $"{DateTime.Now:yyyyMMdd-HHmmss-fffffff}-{Guid.NewGuid():N}.json"), JsonSerializer.Serialize(before, new JsonSerializerOptions { WriteIndented = true }));
 
                 foreach (var old in List().Skip(MaxSnapshots))
                     File.Delete(old.Path);
@@ -43,7 +43,13 @@ namespace Bloxstrap
 
             foreach (string file in Directory.GetFiles(Folder, "*.json"))
             {
-                if (!DateTime.TryParseExact(Path.GetFileNameWithoutExtension(file), "yyyyMMdd-HHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
+                string name = Path.GetFileNameWithoutExtension(file);
+                int suffix = name.LastIndexOf('-');
+                if (suffix >= 0 && Guid.TryParseExact(name[(suffix + 1)..], "N", out _))
+                    name = name[..suffix];
+
+                if (!DateTime.TryParseExact(name, new[] { "yyyyMMdd-HHmmss", "yyyyMMdd-HHmmss-fffffff" },
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
                     continue;
 
                 int count = 0;

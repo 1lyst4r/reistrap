@@ -77,7 +77,7 @@ namespace Bloxstrap
             {
                 if (Prop.ContainsKey(key))
                 {
-                    if (value.ToString() == Prop[key].ToString())
+                    if (value.ToString() == Prop[key]?.ToString())
                         return;
 
                     App.Logger.WriteLine(LOG_IDENT, $"Changing of '{key}' from '{Prop[key]}' to '{value}' is pending");
@@ -148,8 +148,13 @@ namespace Bloxstrap
         {
             // convert all flag values to strings before saving
 
-            foreach (var pair in Prop)
-                Prop[pair.Key] = pair.Value.ToString()!;
+            foreach (var key in Prop.Keys.ToArray())
+            {
+                if (Prop[key] is null)
+                    Prop.Remove(key);
+                else
+                    Prop[key] = Prop[key].ToString()!;
+            }
 
             FlagHistory.Snapshot(OriginalProp, Prop);
 

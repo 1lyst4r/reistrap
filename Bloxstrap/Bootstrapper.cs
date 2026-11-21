@@ -505,6 +505,8 @@ namespace Bloxstrap
                 var pkgManifestData = await App.HttpClient.GetStringAsync(pkgManifestUrl);
 
                 _versionPackageManifest = new(pkgManifestData);
+                if (!_versionPackageManifest.Any(package => package.PackedSize > 0))
+                    throw new InvalidDataException("The deployment manifest contains no downloadable packages.");
             }
 
             // this can happen if version is set through arguments
@@ -711,30 +713,15 @@ namespace Bloxstrap
                 return;
             }
 
-            string? logFileName = null;
+            string logFolder = Path.Combine(Paths.LocalAppData, "Roblox", "logs");
+            Directory.CreateDirectory(logFolder);
 
-            string rbxDir = Path.Combine(Paths.LocalAppData, "Roblox");
-            if (!Directory.Exists(rbxDir))
-                Directory.CreateDirectory(rbxDir);
-
-            string rbxLogDir = Path.Combine(rbxDir, "logs");
-            if (!Directory.Exists(rbxLogDir))
-                Directory.CreateDirectory(rbxLogDir);
-
-            var logWatcher = new FileSystemWatcher()
-            {
-                Path = rbxLogDir,
-                Filter = "*.log",
-                EnableRaisingEvents = true
-            };
-
-            var logCreatedEvent = new AutoResetEvent(false);
-
+            var createdLog = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var logWatcher = new FileSystemWatcher(logFolder, "*.log");
             logWatcher.Created += (_, e) =>
             {
-                logWatcher.EnableRaisingEvents = false;
-                logFileName = e.FullPath;
-                logCreatedEvent.Set();
+                if (ActivityWatcher.IsClientLog(e.Name, IsStudioLaunch))
+                    createdLog.TrySetResult(e.FullPath);
             };
 
             if (_launchMode == LaunchMode.Player && App.Settings.Prop.MultiInstanceLaunching)
@@ -758,6 +745,7 @@ namespace Bloxstrap
             // v2.2.0 - byfron will trip if we keep a process handle open for over a minute, so we're doing this now
             try
             {
+                logWatcher.EnableRaisingEvents = true;
                 using var process = Process.Start(startInfo)!;
                 _appPid = process.Id;
 
@@ -781,19 +769,16 @@ namespace Bloxstrap
 
             App.Logger.WriteLine(LOG_IDENT, $"Started Roblox (PID {_appPid}), waiting for log file");
 
-            logCreatedEvent.WaitOne(TimeSpan.FromSeconds(15));
-
-            if (String.IsNullOrEmpty(logFileName))
+            if (!createdLog.Task.Wait(TimeSpan.FromSeconds(15)))
             {
                 App.Logger.WriteLine(LOG_IDENT, "Unable to identify log file");
                 RestoreGameProfileSettings();
                 Frontend.ShowPlayerErrorDialog();
                 return;
             }
-            else
-            {
-                App.Logger.WriteLine(LOG_IDENT, $"Got log file as {logFileName}");
-            }
+            string logFileName = createdLog.Task.Result;
+            logWatcher.EnableRaisingEvents = false;
+            App.Logger.WriteLine(LOG_IDENT, $"Got log file as {logFileName}");
 
             _mutex?.ReleaseAsync();
 
@@ -1024,19 +1009,9 @@ namespace Bloxstrap
             App.Logger.WriteLine(LOG_IDENT, "Checking for updates...");
 
 #if !DEBUG_UPDATER
-            var releaseInfo = await App.GetLatestRelease();
-
+            var releaseInfo = await Updater.FindUpdate();
             if (releaseInfo is null)
                 return false;
-
-            var versionComparison = Utilities.CompareVersions(App.Version, releaseInfo.TagName);
-
-            // check if we aren't using a deployed build, so we can update to one if a new version comes out
-            if (App.IsProductionBuild && versionComparison == VersionComparison.Equal || versionComparison == VersionComparison.GreaterThan)
-            {
-                App.Logger.WriteLine(LOG_IDENT, "No updates found");
-                return false;
-            }
 
             if (Dialog is not null)
                 Dialog.CancelEnabled = false;
@@ -1057,28 +1032,7 @@ namespace Bloxstrap
 
                 File.Copy(Paths.Process, downloadLocation, true);
 #else
-                var asset = releaseInfo.Assets![0];
-
-                string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
-
-                Directory.CreateDirectory(Paths.TempUpdates);
-
-                App.Logger.WriteLine(LOG_IDENT, $"Downloading {releaseInfo.TagName}...");
-                
-                if (!File.Exists(downloadLocation))
-                {
-                    string partial = downloadLocation + ".part";
-
-                    using (var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl))
-                    {
-                        response.EnsureSuccessStatusCode();
-
-                        await using var fileStream = new FileStream(partial, FileMode.Create, FileAccess.Write);
-                        await response.Content.CopyToAsync(fileStream);
-                    }
-
-                    File.Move(partial, downloadLocation, true);
-                }
+                string downloadLocation = await Updater.Download(releaseInfo);
 #endif
 
                 App.Logger.WriteLine(LOG_IDENT, $"Starting {version}...");
@@ -1324,7 +1278,7 @@ namespace Bloxstrap
             var cachedPackageHashes = Directory.GetFiles(Paths.Downloads).Select(x => Path.GetFileName(x));
 
             // package manifest states packed size and uncompressed size in exact bytes
-            int totalSizeRequired = 0;
+            long totalSizeRequired = 0;
 
             // packed size only matters if we don't already have the package cached on disk
             totalSizeRequired += _versionPackageManifest.Where(x => !cachedPackageHashes.Contains(x.Signature)).Sum(x => x.PackedSize);
@@ -1345,7 +1299,7 @@ namespace Bloxstrap
                 Dialog.ProgressMaximum = ProgressBarMaximum;
 
                 // compute total bytes to download
-                int totalPackedSize = _versionPackageManifest.Sum(package => package.PackedSize);
+                long totalPackedSize = _versionPackageManifest.Sum(package => package.PackedSize);
                 _progressIncrement = (double)ProgressBarMaximum / totalPackedSize;
 
                 if (Dialog is WinFormsDialogBase)
@@ -1497,11 +1451,11 @@ namespace Bloxstrap
 
             App.Logger.WriteLine(LOG_IDENT, "Registering approximate program size...");
 
-            int distributionSize = _versionPackageManifest.Sum(x => x.Size + x.PackedSize) / 1024;
+            long distributionSize = _versionPackageManifest.Sum(x => x.Size + x.PackedSize) / 1024;
 
-            AppData.DistributionState.Size = distributionSize;
+            AppData.DistributionState.Size = (int)Math.Min(distributionSize, int.MaxValue);
 
-            int totalSize = App.PlayerState.Prop.Size + App.StudioState.Prop.Size;
+            int totalSize = (int)Math.Min((long)App.PlayerState.Prop.Size + App.StudioState.Prop.Size, int.MaxValue);
 
             using (var uninstallKey = Registry.CurrentUser.CreateSubKey(App.UninstallKey))
             {
@@ -1843,11 +1797,12 @@ namespace Bloxstrap
                 if (_cancelTokenSource.IsCancellationRequested)
                     return;
 
-                int totalBytesRead = 0;
+                long totalBytesRead = 0;
 
                 try
                 {
-                    var response = await App.HttpClient.GetAsync(packageUrl, HttpCompletionOption.ResponseHeadersRead, _cancelTokenSource.Token);
+                    using var response = await App.HttpClient.GetAsync(packageUrl, HttpCompletionOption.ResponseHeadersRead, _cancelTokenSource.Token);
+                    response.EnsureSuccessStatusCode();
                     await using var stream = await response.Content.ReadAsStreamAsync(_cancelTokenSource.Token);
                     await using var fileStream = new FileStream(package.DownloadPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Delete);
 

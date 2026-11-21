@@ -64,7 +64,7 @@ namespace Bloxstrap.Integrations
 
         public List<ActivityData> History = new();
 
-        public bool IsDisposed = false;
+        public volatile bool IsDisposed = false;
 
         public ActivityWatcher(string? logFile = null)
         {
@@ -72,62 +72,53 @@ namespace Bloxstrap.Integrations
                 LogLocation = logFile;
         }
 
-        public async void Start()
+        internal static bool IsClientLog(string? name, bool studio)
+        {
+            if (name is null || !name.EndsWith(".log", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("CrashHandler", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            return name.Split('_').Contains(studio ? "Studio" : "Player", StringComparer.OrdinalIgnoreCase);
+        }
+
+        public async Task Start(bool studio = false)
         {
             const string LOG_IDENT = "ActivityWatcher::Start";
-
-            // okay, here's the process:
-            //
-            // - tail the latest log file from %localappdata%\roblox\logs
-            // - check for specific lines to determine player's game activity as shown below:
-            //
-            // - get the place id, job id and machine address from '! Joining game '{{JOBID}}' place {{PLACEID}} at {{MACHINEADDRESS}}' entry
-            // - confirm place join with 'serverId: {{MACHINEADDRESS}}|{{MACHINEPORT}}' entry
-            // - check for leaves/disconnects with 'Time to disconnect replication data: {{TIME}}' entry
-            //
-            // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
-            
-            FileInfo logFileInfo;
-
-            if (String.IsNullOrEmpty(LogLocation))
+            try
             {
-                string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
-
-                if (!Directory.Exists(logDirectory))
-                    return;
-
-                // we need to make sure we're fetching the absolute latest log file
-                // if roblox doesn't start quickly enough, we can wind up fetching the previous log file
-                // good rule of thumb is to find a log file that was created in the last 15 seconds or so
-
-                App.Logger.WriteLine(LOG_IDENT, "Opening Roblox log file...");
-
-                while (true)
+                if (String.IsNullOrEmpty(LogLocation))
                 {
-                    logFileInfo = new DirectoryInfo(logDirectory)
-                        .GetFiles()
-                        .Where(x => x.Name.Contains("Player", StringComparison.OrdinalIgnoreCase) && x.CreationTime <= DateTime.Now)
-                        .OrderByDescending(x => x.CreationTime)
-                        .First();
-
-                    if (logFileInfo.CreationTime.AddSeconds(15) > DateTime.Now)
-                        break;
-
-                    App.Logger.WriteLine(LOG_IDENT, $"Could not find recent enough log file, waiting... (newest is {logFileInfo.Name})");
-                    await Task.Delay(1000);
+                    string folder = Path.Combine(Paths.LocalAppData, "Roblox", "logs");
+                    DateTime since = DateTime.Now.AddSeconds(-15);
+                    while (!IsDisposed)
+                    {
+                        var file = Directory.Exists(folder) ? new DirectoryInfo(folder).EnumerateFiles("*.log")
+                            .Where(x => IsClientLog(x.Name, studio) && x.CreationTime >= since)
+                            .OrderByDescending(x => x.CreationTime).FirstOrDefault() : null;
+                        if (file is not null)
+                        {
+                            LogLocation = file.FullName;
+                            break;
+                        }
+                        await Task.Delay(1000);
+                    }
                 }
 
-                LogLocation = logFileInfo.FullName;
+                if (!IsDisposed)
+                    await ReadLog();
             }
-            else
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                logFileInfo = new FileInfo(LogLocation);
+                App.Logger.WriteException(LOG_IDENT, ex);
             }
+        }
 
+        private async Task ReadLog()
+        {
+            const string LOG_IDENT = "ActivityWatcher::ReadLog";
+            using var logFileStream = File.Open(LogLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             OnLogOpen?.Invoke(this, EventArgs.Empty);
             
-            var logFileStream = logFileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
             App.Logger.WriteLine(LOG_IDENT, $"Opened {LogLocation}");
 
             using var streamReader = new StreamReader(logFileStream);

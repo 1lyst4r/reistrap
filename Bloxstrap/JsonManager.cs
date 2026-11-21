@@ -58,6 +58,7 @@
                 {
                     App.Logger.WriteLine(LOG_IDENT, $"Could not find {FileLocation}.");
                     Loaded = true;
+                    LastFileHash = null;
 
                     return false;
                 }
@@ -78,20 +79,22 @@
 
                     if (!String.IsNullOrEmpty(message))
                         Frontend.ShowMessageBox($"{message}\n\n{ex.Message}", System.Windows.MessageBoxImage.Warning);
-
-                    try
-                    {
-                        // Create a backup of loaded file
-                        File.Copy(FileLocation, FileLocation + ".bak", true);
-                    }
-                    catch (Exception copyEx)
-                    {
-                        App.Logger.WriteLine(LOG_IDENT, $"Failed to create backup file: {FileLocation}.bak");
-                        App.Logger.WriteException(LOG_IDENT, copyEx);
-                    }
                 }
 
                 Loaded = true;
+                if (ex is IOException or UnauthorizedAccessException)
+                    return false;
+
+                try
+                {
+                    File.Copy(FileLocation, FileLocation + ".bak", true);
+                }
+                catch (Exception copyEx) when (copyEx is IOException or UnauthorizedAccessException)
+                {
+                    App.Logger.WriteException(LOG_IDENT, copyEx);
+                    return false;
+                }
+
                 Save();
 
                 return false;
@@ -104,7 +107,9 @@
             {
                 try
                 {
-                    return File.ReadAllText(FileLocation);
+                    using var stream = File.Open(FileLocation, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
+                    using var reader = new StreamReader(stream);
+                    return reader.ReadToEnd();
                 }
                 catch (IOException) when (i < 10 && File.Exists(FileLocation))
                 {
@@ -119,13 +124,21 @@
             
             App.Logger.WriteLine(LOG_IDENT, $"Saving to {FileLocation}...");
 
-            Directory.CreateDirectory(Path.GetDirectoryName(FileLocation)!);
-
             try
             {
+                string folder = Path.GetDirectoryName(FileLocation)!;
+                Directory.CreateDirectory(folder);
                 string contents = JsonSerializer.Serialize(Prop, new JsonSerializerOptions { WriteIndented = true });
-
-                File.WriteAllText(FileLocation, contents);
+                string temporary = Path.Combine(folder, $"{Guid.NewGuid():N}.tmp");
+                try
+                {
+                    File.WriteAllText(temporary, contents);
+                    File.Move(temporary, FileLocation, true);
+                }
+                finally
+                {
+                    File.Delete(temporary);
+                }
 
                 LastFileHash = MD5Hash.FromString(contents);
             }
@@ -154,6 +167,7 @@
                     File.Delete(FileLocation);
 
                     Loaded = false;
+                    LastFileHash = null;
                     App.Logger.WriteLine(LOG_IDENT, "Delete complete!");
                 }
                 else
@@ -172,11 +186,14 @@
 
         public bool HasFileOnDiskChanged()
         {
-            // check if a file has been created since launch
-            if (string.IsNullOrEmpty(LastFileHash) && File.Exists(FileLocation))
-                return true;
-
-            return LastFileHash != MD5Hash.FromFile(FileLocation);
+            try
+            {
+                return MD5Hash.FromString(ReadFile()) != LastFileHash;
+            }
+            catch (IOException ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+            {
+                return LastFileHash is not null;
+            }
         }
     }
 

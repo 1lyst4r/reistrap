@@ -16,3 +16,12 @@ const response = await worker.fetch(new Request('https://example.test/metrics/po
 assert.equal(response.status, 200);
 assert.equal(writes, 1);
 console.log('5 analytics regression checks passed.');
+
+const setup = JSON.stringify({settings: {label: '\u3042'.repeat(24000)}, flags: {}});
+const oversized = await worker.fetch(new Request('https://example.test/setup', { method: 'POST', body: setup }), {});
+assert.equal(oversized.status, 413);
+console.log('Setup size check passed.');
+
+const invalidReport = await worker.fetch(new Request('https://example.test/exception/unknown?token=test'), { DASHBOARD_TOKEN: 'test' });
+assert.equal(invalidReport.status, 404);
+console.log('Dashboard routing check passed.');

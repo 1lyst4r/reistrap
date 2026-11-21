@@ -67,11 +67,26 @@ namespace Bloxstrap.Utility
             if (fileName.IndexOfAny(_invalidPathChars) != -1 || fileName.EndsWith('.') || fileName.EndsWith(' '))
                 return ValidationResult.IllegalCharacter;
 
-            string fileNameNoExt = Path.GetFileNameWithoutExtension(fileName).ToUpperInvariant();
+            string fileNameNoExt = fileName.Split('.', 2)[0].TrimEnd(' ').ToUpperInvariant();
             if (_reservedNames.Contains(fileNameNoExt))
                 return ValidationResult.ReservedFileName;
 
             return ValidationResult.Ok;
+        }
+
+        internal static string GameFileName(string title, string fallback)
+        {
+            var invalid = Path.GetInvalidFileNameChars();
+            string name = new string(title.Where(c => !invalid.Contains(c)).ToArray()).Trim();
+            if (name.Length > 80)
+                name = name[..80];
+            if (name.Length > 0 && char.IsHighSurrogate(name[^1]))
+                name = name[..^1];
+            name = name.TrimEnd(' ', '.');
+            if (name.Length == 0)
+                return fallback;
+
+            return IsFileNameValid(name) == ValidationResult.ReservedFileName ? "_" + name : name;
         }
 
         public static ValidationResult IsPathValid(string path)

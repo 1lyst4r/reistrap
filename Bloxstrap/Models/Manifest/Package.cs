@@ -12,9 +12,9 @@ namespace Bloxstrap.Models.Manifest
 
         public string Signature { get; set; } = "";
 
-        public int PackedSize { get; set; }
+        public long PackedSize { get; set; }
 
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         public string DownloadPath => Path.Combine(Paths.Downloads, Signature);
 

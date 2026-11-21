@@ -106,15 +106,15 @@ async function postException(request, env) {
 // Setup codes
 
 async function postSetup(request, env) {
-    const text = await request.text();
+    const body = await request.arrayBuffer();
 
-    if (text.length > SETUP_MAX_BYTES)
+    if (body.byteLength > SETUP_MAX_BYTES)
         return json({ error: "too large" }, 413);
 
     let data;
 
     try {
-        data = JSON.parse(text);
+        data = JSON.parse(new TextDecoder().decode(body));
     } catch {
         return json({ error: "bad request" }, 400);
     }
@@ -256,13 +256,12 @@ export default {
         if (request.method === "GET" && setupMatch)
             return getSetup(setupMatch[1].toUpperCase(), env);
 
-        if (request.method === "GET" && (url.pathname === "/" || url.pathname.startsWith("/exception/"))) {
+        const exception = url.pathname.match(/^\/exception\/([0-9]+)$/);
+        if (request.method === "GET" && (url.pathname === "/" || exception)) {
             if (!isAuthorized(url, env))
                 return new Response("Not found", { status: 404 });
 
-            const match = url.pathname.match(/^\/exception\/([0-9]+)$/);
-
-            return match ? viewException(Number(match[1]), env) : dashboard(url, env);
+            return exception ? viewException(Number(exception[1]), env) : dashboard(url, env);
         }
 
         return new Response("Not found", { status: 404 });

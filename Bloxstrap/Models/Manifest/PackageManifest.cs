@@ -16,26 +16,25 @@ namespace Bloxstrap.Models.Manifest
             if (version != "v0")
                 throw new NotSupportedException($"Unexpected package manifest version: {version} (expected v0!)");
 
-            while (true)
+            while (reader.ReadLine() is string fileName)
             {
-                string? fileName = reader.ReadLine();
-                string? signature = reader.ReadLine();
+                if (String.IsNullOrWhiteSpace(fileName))
+                {
+                    if (String.IsNullOrWhiteSpace(reader.ReadToEnd()))
+                        break;
+                    throw new InvalidDataException("Package name missing from manifest");
+                }
 
+                string? signature = reader.ReadLine();
                 string? rawPackedSize = reader.ReadLine();
                 string? rawSize = reader.ReadLine();
-
-                if (string.IsNullOrEmpty(fileName) ||
-                    string.IsNullOrEmpty(signature) ||
-                    string.IsNullOrEmpty(rawPackedSize) ||
-                    string.IsNullOrEmpty(rawSize))
-                    break;
-
-                // ignore launcher
                 if (fileName == "RobloxPlayerLauncher.exe")
-                    break;
+                    continue;
 
-                int packedSize = int.Parse(rawPackedSize);
-                int size = int.Parse(rawSize);
+                if (String.IsNullOrWhiteSpace(signature)
+                    || !long.TryParse(rawPackedSize, NumberStyles.None, CultureInfo.InvariantCulture, out long packedSize)
+                    || !long.TryParse(rawSize, NumberStyles.None, CultureInfo.InvariantCulture, out long size))
+                    throw new InvalidDataException($"Incomplete or invalid package manifest entry: {fileName}");
 
                 Add(new Package
                 {

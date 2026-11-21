@@ -82,10 +82,7 @@ namespace Bloxstrap
                 ?? throw new InvalidOperationException($"Could not load details for universe {universeId}");
 
             string name = details.Data.Name;
-            string safeName = String.Concat(name.Split(Path.GetInvalidFileNameChars())).Trim();
-
-            if (String.IsNullOrEmpty(safeName))
-                safeName = placeId.ToString();
+            string safeName = PathValidator.GameFileName(name, placeId.ToString());
 
             string iconPath = Paths.Application;
 

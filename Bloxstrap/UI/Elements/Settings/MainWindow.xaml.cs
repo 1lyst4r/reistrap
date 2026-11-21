@@ -86,6 +86,7 @@ namespace Bloxstrap.UI.Elements.Settings
                 App.Logger.WriteException("MainWindow::UpdateButton_Click", ex);
                 Frontend.ShowMessageBox(String.Format(Strings.Bootstrapper_AutoUpdateFailed, _update.TagName), MessageBoxImage.Information);
                 Utilities.ShellExecute(App.ProjectDownloadLink);
+                UpdateButton.Content = String.Format(Strings.Menu_UpdateAvailable, _update.TagName);
                 UpdateButton.IsEnabled = true;
             }
         }

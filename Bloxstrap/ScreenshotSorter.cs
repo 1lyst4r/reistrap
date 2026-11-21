@@ -14,13 +14,8 @@ namespace Bloxstrap
 
         public static string GetGameFolder(string gameName)
         {
-            var invalid = Path.GetInvalidFileNameChars();
-            string name = new string(gameName.Where(x => !invalid.Contains(x)).ToArray()).Trim().TrimEnd('.');
-
-            if (name.Length > 80)
-                name = name[..80].Trim();
-
-            return Path.Combine(RobloxCaptureBlocker.ScreenshotsFolder, String.IsNullOrEmpty(name) ? Strings.Common_Unknown : name);
+            string name = PathValidator.GameFileName(gameName, Strings.Common_Unknown);
+            return Path.Combine(RobloxCaptureBlocker.ScreenshotsFolder, name);
         }
 
         public ScreenshotSorter(ActivityWatcher? activity)

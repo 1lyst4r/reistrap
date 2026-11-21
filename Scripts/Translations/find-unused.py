@@ -5,18 +5,18 @@ directory = input("Enter project path (the one containing Bloxstrap.csproj): ")
 existing = []
 found = []
 
-with open(f"{directory}\\Resources\\Strings.resx", "r") as file:
+with open(f"{directory}\\Resources\\Strings.resx", "r", encoding="utf-8-sig") as file:
 	existing = re.findall("name=\"([a-zA-Z0-9.]+)\" xml:space=\"preserve\"", file.read())
 
-for filename in glob.glob(f"{directory}\\**\\*.*", recursive=True):
-	if "\\bin\\" in filename or "\\obj\\" in filename or "\\Resources\\" in filename:
+for filename in glob.iglob(f"{directory}\\**\\*.*", recursive=True):
+	if not filename.lower().endswith((".cs", ".xaml")) or "\\bin\\" in filename or "\\obj\\" in filename or "\\Resources\\" in filename:
 		continue
 
 	try:
-		with open(filename, "r") as file:
+		with open(filename, "r", encoding="utf-8-sig") as file:
 			contents = file.read()
 
-			matches = re.findall("Strings.([a-zA-Z0-9_]+)", contents)
+			matches = re.findall(r"Strings\.([a-zA-Z0-9_]+)", contents)
 			for match in matches:
 				if not '_' in match:
 					continue

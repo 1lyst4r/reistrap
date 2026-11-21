@@ -16,7 +16,7 @@ namespace Bloxstrap
 
         private static readonly string[] BackupFolders = { "Modifications", "FastFlagProfiles", "CursorSets", "CustomThemes" };
 
-        private static int AddFolder(ZipArchive archive, string folder, string entryPrefix, Func<string, bool>? include = null)
+        private static int AddFolder(ZipArchive archive, string folder, string entryPrefix, string destination, string temporary, Func<string, bool>? include = null)
         {
             int added = 0;
 
@@ -25,6 +25,10 @@ namespace Bloxstrap
 
             foreach (string file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories))
             {
+                string path = Path.GetFullPath(file);
+                if (path.Equals(destination, StringComparison.OrdinalIgnoreCase) || path.Equals(temporary, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 string relative = Path.GetRelativePath(folder, file).Replace('\\', '/');
 
                 if (include is not null && !include(relative))
@@ -52,15 +56,32 @@ namespace Bloxstrap
             entry.ExtractToFile(target, true);
         }
 
+        private static void WriteArchive(string destination, Action<ZipArchive, string> populate)
+        {
+            string temporary = Path.Combine(Path.GetDirectoryName(destination)!, $"{Guid.NewGuid():N}.tmp");
+            try
+            {
+                using (var archive = ZipFile.Open(temporary, ZipArchiveMode.Create))
+                    populate(archive, temporary);
+
+                File.Move(temporary, destination, true);
+            }
+            finally
+            {
+                File.Delete(temporary);
+            }
+        }
+
         // Mod Packs
 
         public static int ExportModPack(string zipPath)
         {
-            File.Delete(zipPath);
-
-            using var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
-
-            return AddFolder(archive, Paths.Modifications, ModPackFolder, x => !x.StartsWith("ClientSettings/", StringComparison.OrdinalIgnoreCase));
+            string destination = Path.GetFullPath(zipPath);
+            int count = 0;
+            WriteArchive(destination, (archive, temporary) =>
+                count = AddFolder(archive, Paths.Modifications, ModPackFolder, destination, temporary,
+                    x => !x.StartsWith("ClientSettings/", StringComparison.OrdinalIgnoreCase)));
+            return count;
         }
 
         public static int ImportModPack(string zipPath)
@@ -97,18 +118,27 @@ namespace Bloxstrap
 
         public static void CreateBackup(string zipPath)
         {
-            File.Delete(zipPath);
+            string destination = Path.GetFullPath(zipPath);
+            WriteArchive(destination, (archive, temporary) =>
+            {
+                foreach (string name in BackupFiles)
+                {
+                    string file = Path.Combine(Paths.Base, name);
+                    if (File.Exists(file))
+                        archive.CreateEntryFromFile(file, AppFolder + name);
+                    else if (name == "Settings.json")
+                    {
+                        using var stream = archive.CreateEntry(AppFolder + name).Open();
+                        JsonSerializer.Serialize(stream, App.Settings.Prop);
+                    }
+                }
 
-            using var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
+                foreach (string folder in BackupFolders)
+                    AddFolder(archive, Path.Combine(Paths.Base, folder), $"{AppFolder}{folder}/", destination, temporary);
 
-            foreach (string file in BackupFiles.Select(x => Path.Combine(Paths.Base, x)).Where(File.Exists))
-                archive.CreateEntryFromFile(file, AppFolder + Path.GetFileName(file));
-
-            foreach (string folder in BackupFolders)
-                AddFolder(archive, Path.Combine(Paths.Base, folder), $"{AppFolder}{folder}/");
-
-            if (File.Exists(RobloxSettingsTask.FileLocation))
-                archive.CreateEntryFromFile(RobloxSettingsTask.FileLocation, RobloxSettingsEntry);
+                if (File.Exists(RobloxSettingsTask.FileLocation))
+                    archive.CreateEntryFromFile(RobloxSettingsTask.FileLocation, RobloxSettingsEntry);
+            });
         }
 
         public static void RestoreBackup(string zipPath)

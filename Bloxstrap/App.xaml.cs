@@ -164,14 +164,14 @@ namespace Bloxstrap
                 if (Settings.Prop.UpdateToPreReleases)
                 {
                     var releases = await Http.GetJson<List<GithubRelease>>($"https://api.github.com/repos/{ProjectRepository}/releases?per_page=10");
-                    releaseInfo = releases?.FirstOrDefault(x => x.Assets is not null && x.Assets.Any() && IsVersionTag(x.TagName));
+                    releaseInfo = releases?.FirstOrDefault(x => IsVersionTag(x.TagName) && Updater.GetAsset(x) is not null);
                 }
                 else
                 {
                     releaseInfo = await Http.GetJson<GithubRelease>($"https://api.github.com/repos/{ProjectRepository}/releases/latest");
                 }
 
-                if (releaseInfo is null || releaseInfo.Assets is null || !IsVersionTag(releaseInfo.TagName))
+                if (releaseInfo is null || !IsVersionTag(releaseInfo.TagName) || Updater.GetAsset(releaseInfo) is null)
                 {
                     Logger.WriteLine(LOG_IDENT, "Encountered invalid data");
                     return null;

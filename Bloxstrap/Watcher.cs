@@ -828,7 +828,8 @@ namespace Bloxstrap
             if (App.Settings.Prop.MultiInstanceLaunching && !_watcherData.IsStudio)
                 RobloxSingleton.Hold();
 
-            ActivityWatcher?.Start();
+            if (ActivityWatcher is not null)
+                _ = ActivityWatcher.Start(_watcherData.IsStudio);
 
             while (Utilities.GetProcessesSafe().Any(x => x.Id == _watcherData.ProcessId))
             {

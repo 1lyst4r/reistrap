@@ -20,7 +20,7 @@
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            TaskCompletionSource taskCompletionSource = new();
+            TaskCompletionSource taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
             _releaseEvent = new ManualResetEventSlim();
             _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -65,7 +65,7 @@
                     }
                 },
                 state: null,
-                cancellationToken,
+                CancellationToken.None,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
 

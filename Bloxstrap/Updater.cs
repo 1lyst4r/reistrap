@@ -26,32 +26,41 @@ namespace Bloxstrap
             return release;
         }
 
-        public static async Task Install(GithubRelease release, params string[] args)
+        internal static Task<string> Download(GithubRelease release) => Download(release, App.HttpClient, Paths.TempUpdates);
+
+        internal static async Task<string> Download(GithubRelease release, HttpClient client, string updateFolder)
         {
-            const string LOG_IDENT = "Updater::Install";
+            const string LOG_IDENT = "Updater::Download";
 
             var asset = GetAsset(release) ?? throw new InvalidDataException("The release has no reistrap executable.");
-            string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
+            string folder = Path.Combine(updateFolder, MD5Hash.FromString(release.TagName));
+            string downloadLocation = Path.Combine(folder, asset.Name);
 
-            Directory.CreateDirectory(Paths.TempUpdates);
+            Directory.CreateDirectory(folder);
 
             App.Logger.WriteLine(LOG_IDENT, $"Downloading {release.TagName}");
 
-            if (!File.Exists(downloadLocation))
+            string partial = downloadLocation + $".{Guid.NewGuid():N}.part";
+            try
             {
-                string partial = downloadLocation + ".part";
-
-                using (var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl))
-                {
-                    response.EnsureSuccessStatusCode();
-
-                    await using var fileStream = new FileStream(partial, FileMode.Create, FileAccess.Write);
-                    await response.Content.CopyToAsync(fileStream);
-                }
+                using var response = await client.GetAsync(asset.BrowserDownloadUrl);
+                response.EnsureSuccessStatusCode();
+                await using (var stream = new FileStream(partial, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                    await response.Content.CopyToAsync(stream);
 
                 File.Move(partial, downloadLocation, true);
+                return downloadLocation;
             }
+            finally
+            {
+                File.Delete(partial);
+            }
+        }
 
+        public static async Task Install(GithubRelease release, params string[] args)
+        {
+            const string LOG_IDENT = "Updater::Install";
+            string downloadLocation = await Download(release);
             var startInfo = new ProcessStartInfo { FileName = downloadLocation };
             startInfo.ArgumentList.Add("-upgrade");
 

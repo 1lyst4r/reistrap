@@ -16,8 +16,8 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
         {
             AppearanceViewModel viewModel = (AppearanceViewModel)DataContext;
 
-            viewModel.SelectedCustomTheme = (string)((ListBox)sender).SelectedItem;
-            viewModel.SelectedCustomThemeName = viewModel.SelectedCustomTheme;
+            viewModel.SelectedCustomTheme = ((ListBox)sender).SelectedItem as string;
+            viewModel.SelectedCustomThemeName = viewModel.SelectedCustomTheme ?? "";
 
             viewModel.OnPropertyChanged(nameof(viewModel.SelectedCustomTheme));
             viewModel.OnPropertyChanged(nameof(viewModel.SelectedCustomThemeName));

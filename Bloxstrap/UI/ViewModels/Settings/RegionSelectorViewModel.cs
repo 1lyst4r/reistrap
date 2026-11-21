@@ -24,6 +24,8 @@ namespace Bloxstrap.UI.ViewModels.Settings
         private long _placeId;
 
         private int? _nextCursor;
+        private ServerRegion? _searchRegion;
+        private int _request;
 
         public ObservableCollection<ServerRegion> Regions { get; } = new();
 
@@ -119,19 +121,29 @@ namespace Bloxstrap.UI.ViewModels.Settings
         {
             const string LOG_IDENT = "RegionSelectorViewModel::Search";
 
-            if (SelectedRegion is null || String.IsNullOrWhiteSpace(GameQuery))
+            var region = more ? _searchRegion : SelectedRegion;
+            if (region is null || (more ? _nextCursor is null : String.IsNullOrWhiteSpace(GameQuery)))
                 return;
+
+            int request = ++_request;
+            int? cursor = more ? _nextCursor : null;
+            _nextCursor = null;
+            OnPropertyChanged(nameof(LoadMoreVisibility));
 
             try
             {
                 if (!more)
                 {
                     Servers.Clear();
-                    _nextCursor = null;
+                    _searchRegion = region;
 
                     SetStatus(Strings.Menu_RegionSelector_Searching);
 
-                    _placeId = GameShortcuts.ParsePlaceId(GameQuery) ?? await GameShortcuts.FindPlaceByName(GameQuery) ?? 0;
+                    long placeId = GameShortcuts.ParsePlaceId(GameQuery) ?? await GameShortcuts.FindPlaceByName(GameQuery) ?? 0;
+                    if (request != _request)
+                        return;
+
+                    _placeId = placeId;
 
                     if (_placeId == 0)
                     {
@@ -140,7 +152,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
                     }
                 }
 
-                var (servers, nextCursor) = await ServerRegions.GetServers(_placeId, SelectedRegion, more ? _nextCursor : null);
+                var (servers, nextCursor) = await ServerRegions.GetServers(_placeId, region, cursor);
+                if (request != _request)
+                    return;
 
                 foreach (var server in servers)
                 {
@@ -163,6 +177,11 @@ namespace Bloxstrap.UI.ViewModels.Settings
             }
             catch (Exception ex)
             {
+                if (request != _request)
+                    return;
+
+                _nextCursor = cursor;
+                OnPropertyChanged(nameof(LoadMoreVisibility));
                 App.Logger.WriteException(LOG_IDENT, ex);
                 SetStatus(String.Format(Strings.Menu_QuickPlay_Error, ex.Message));
             }

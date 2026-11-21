@@ -69,6 +69,8 @@ if (MatchmakingLink.Parse(BrowserLink("request=RequestGameJob&placeId=123")) != 
     throw new Exception("Unexpected matchmaking override for an explicit or ambiguous browser request");
 Console.WriteLine("Browser join and server selection regression checks passed.");
 
+RepositoryChecks.Run();
+
 // Functions
 static string BrowserLink(string query) =>
     "roblox-player:1+launchmode:play+placelauncherurl:" + HttpUtility.UrlEncode(browserUrl + query) + "+gameLocale:en_us";

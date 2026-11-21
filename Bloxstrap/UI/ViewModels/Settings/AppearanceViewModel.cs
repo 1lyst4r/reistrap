@@ -567,7 +567,11 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public string? SelectedCustomTheme
         {
             get => App.Settings.Prop.SelectedCustomTheme;
-            set => App.Settings.Prop.SelectedCustomTheme = value;
+            set
+            {
+                App.Settings.Prop.SelectedCustomTheme = value;
+                OnPropertyChanged(nameof(IsCustomThemeSelected));
+            }
         }
 
         public string SelectedCustomThemeName { get; set; } = "";

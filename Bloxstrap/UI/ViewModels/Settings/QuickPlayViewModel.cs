@@ -289,6 +289,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
             Subplaces.Clear();
 
             int request = ++_placesRequest;
+            var servers = LoadServers(game.PlaceId);
 
             try
             {
@@ -313,7 +314,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 App.Logger.WriteException(LOG_IDENT, ex);
             }
 
-            await LoadServers(game.PlaceId);
+            await servers;
         }
 
         private async Task LoadServers(long placeId)
